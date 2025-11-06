@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DSBApp"
+rootProject.name = "ScheduleApp"
 include(":app")
- 

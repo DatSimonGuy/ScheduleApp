@@ -1,4 +1,4 @@
-package com.example.dsbapp.ui.theme
+package com.example.scheduleapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.example.dsbapp
+package com.example.scheduleapp
 
 import org.junit.Test
 

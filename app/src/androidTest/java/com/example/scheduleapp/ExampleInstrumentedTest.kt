@@ -1,4 +1,4 @@
-package com.example.dsbapp
+package com.example.scheduleapp
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
