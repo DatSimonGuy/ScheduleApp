@@ -2,6 +2,7 @@ package com.example.scheduleapp.elements.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BorderVertical
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -24,7 +25,7 @@ import androidx.navigation.compose.rememberNavController
 fun Navbar(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val startDestination: Destination = Destination.all[0]
-    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.displayName) }
+    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.displayName!!) }
 
     Scaffold(
         modifier = modifier,
@@ -37,7 +38,7 @@ fun Navbar(modifier: Modifier = Modifier) {
                         selected = selectedDestination == destination.displayName,
                         onClick = {
                             navController.navigate(route = destination)
-                            selectedDestination = destination.displayName
+                            selectedDestination = destination.displayName!!
                         },
                         icon = {
                             Icon(
@@ -45,11 +46,14 @@ fun Navbar(modifier: Modifier = Modifier) {
                                     Destination.Home -> Icons.Default.Home
                                     Destination.Schedule -> Icons.Default.DateRange
                                     Destination.Settings -> Icons.Default.Settings
+                                    else -> {
+                                        Icons.Default.BorderVertical
+                                    }
                                 },
-                                contentDescription = stringResource(destination.displayName)
+                                contentDescription = stringResource(destination.displayName!!)
                             )
                         },
-                        label = { Text(stringResource(destination.displayName)) }
+                        label = { Text(stringResource(destination.displayName!!)) }
                     )
                 }
             }
