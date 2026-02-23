@@ -1,16 +1,23 @@
 package com.example.scheduleapp.elements.schedule
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
 import com.example.scheduleapp.elements.timetable.HourHeight
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 
 data class ScheduleUiState(
     val hourHeight: HourHeight = HourHeight.MEDIUM,
@@ -25,9 +32,18 @@ class ScheduleViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ScheduleUiState())
     val uiState = _uiState.asStateFlow()
-    val currentSchedule get() = uiState.value.schedules[uiState.value.selectedSchedule ?: ""]
+    val currentScheduleFlow = combine(
+        _uiState.map { it.selectedSchedule },
+        scheduleRepository.scheduleMap
+    ) { selectedName, map ->
+        map[selectedName ?: ""]
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     init {
+        viewModelScope.launch {
+            scheduleRepository.scheduleMap.collect { scheduleMap -> Log.e("", scheduleMap.schedules.toString()) }
+        }
+
         viewModelScope.launch {
             settingsRepository.settingsFlow.collect { settings ->
                 _uiState.update { currentState ->
@@ -72,5 +88,19 @@ class ScheduleViewModel(
                 selectedSchedule = name
             )
         }
+    }
+
+    fun addNewLesson(dayOfWeek: DayOfWeek, lesson: Lesson) {
+        viewModelScope.launch {
+            scheduleRepository.addLesson(uiState.value.selectedSchedule ?: "", dayOfWeek, lesson)
+        }
+    }
+
+    fun getLesson(id: String): Lesson? {
+        var lesson: Lesson? = null
+        viewModelScope.launch {
+            lesson = scheduleRepository.getLesson(uiState.value.selectedSchedule ?: "", id)
+        }
+        return lesson
     }
 }

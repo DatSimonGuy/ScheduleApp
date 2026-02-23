@@ -2,8 +2,8 @@ package com.example.scheduleapp.elements.navigation
 
 import androidx.annotation.StringRes
 import com.example.scheduleapp.R
-import com.example.scheduleapp.data.repository.SettingsRepository
 import kotlinx.serialization.Serializable
+import java.time.DayOfWeek
 
 @Serializable
 sealed class Destination(
@@ -32,4 +32,11 @@ sealed class SettingsDestination(
     object AppearanceSettings: SettingsDestination()
     @Serializable
     object AboutSettings: SettingsDestination()
+}
+
+@Serializable
+sealed class ScheduleDestination(
+): Destination(null) {
+    @Serializable
+    data class LessonScreen(val lessonId: String): ScheduleDestination()
 }

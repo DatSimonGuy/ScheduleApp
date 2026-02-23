@@ -32,7 +32,8 @@ fun TimeTable(
     modifier: Modifier = Modifier,
     title: String = "",
     hourHeight: HourHeight,
-    lessons: List<Lesson>
+    lessons: List<Lesson>,
+    onLessonClick: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column (
@@ -79,7 +80,7 @@ fun TimeTable(
                     }
                 }
                 lessons.forEach {
-                    LessonBlock(hourHeight = hourHeight, lesson = it)
+                    LessonBlock(hourHeight = hourHeight, lesson = it, onClick = onLessonClick)
                 }
             }
         }

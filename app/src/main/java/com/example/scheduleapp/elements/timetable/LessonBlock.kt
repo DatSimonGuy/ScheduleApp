@@ -24,7 +24,8 @@ import com.example.scheduleapp.data.classes.Lesson
 fun LessonBlock(
     modifier: Modifier = Modifier,
     hourHeight: HourHeight,
-    lesson: Lesson
+    lesson: Lesson,
+    onClick: (String) -> Unit
 ) {
     val topOffset = hourHeight.value * lesson.startTime.hour
     val height = hourHeight.value * lesson.duration
@@ -34,7 +35,7 @@ fun LessonBlock(
             .offset(y=topOffset)
             .height(height)
             .clickable(onClick = {
-
+                onClick(lesson.id)
             }),
         colors = CardDefaults.cardColors(
             containerColor = Color.Red

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
 import com.example.scheduleapp.elements.schedule.ScheduleScreen
@@ -16,6 +17,7 @@ import com.example.scheduleapp.elements.settings.SettingsViewModel
 import com.example.scheduleapp.elements.settings.SettingsViewModelFactory
 import com.example.scheduleapp.elements.schedule.ScheduleViewModel
 import com.example.scheduleapp.elements.schedule.ScheduleViewModelFactory
+import com.example.scheduleapp.elements.schedule.parts.LessonPage
 import com.example.scheduleapp.elements.settings.subpages.AboutSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.AppearanceSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.SchedulesSettingsPage
@@ -42,15 +44,16 @@ fun AppNavHost(
         modifier = modifier
     ) {
         val settingsVMFactory = SettingsViewModelFactory(settingsRepository, scheduleRepository)
+        val scheduleVMFactory = ScheduleViewModelFactory(settingsRepository, scheduleRepository)
         composable<Destination.Home> {
 
         }
 
         composable<Destination.Schedule> {
             val viewModel: ScheduleViewModel = viewModel(
-                factory = ScheduleViewModelFactory(settingsRepository, scheduleRepository)
+                factory = scheduleVMFactory
             )
-            ScheduleScreen(viewModel)
+            ScheduleScreen(navController, viewModel)
         }
 
         composable<Destination.Settings> {
@@ -70,6 +73,12 @@ fun AppNavHost(
         composable<SettingsDestination.AboutSettings> {
             val viewModel: SettingsViewModel = viewModel(factory = settingsVMFactory)
             AboutSettingsPage(viewModel)
+        }
+
+        composable<ScheduleDestination.LessonScreen> { backEntry ->
+            val lessonRoute: ScheduleDestination.LessonScreen = backEntry.toRoute()
+            val viewModel: ScheduleViewModel = viewModel(factory = scheduleVMFactory)
+            LessonPage(lessonRoute.lessonId, viewModel)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.scheduleapp.data.classes
 
-import androidx.compose.runtime.Composable
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 

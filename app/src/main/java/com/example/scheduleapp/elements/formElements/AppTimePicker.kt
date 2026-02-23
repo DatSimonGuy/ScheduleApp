@@ -1,5 +1,6 @@
 package com.example.scheduleapp.elements.formElements
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
@@ -46,7 +48,7 @@ fun AppTimePicker(
                     .fillMaxHeight(0.64f)
             ) {
                 Column(
-                    Modifier.fillMaxSize().padding(16.dp)
+                    Modifier.background(MaterialTheme.colorScheme.surface).fillMaxSize().padding(16.dp)
                 ) {
                     TimePicker(
                         timePickerState,

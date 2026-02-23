@@ -10,11 +10,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,27 +31,27 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppDatePicker(
+fun AppDateRangePicker(
     modifier: Modifier = Modifier,
     label: String,
-    datePickerState: DatePickerState,
+    dateRangePickerState: DateRangePickerState
 ) {
-    var dateString = datePickerState.getSelectedDate().toString()
+    var dateString = "${dateRangePickerState.getSelectedStartDate()} - ${dateRangePickerState.getSelectedEndDate()}"
     if ("null" in dateString) {
-        dateString = LocalDate.now().toString()
+        dateString = "${LocalDate.now()} - ${LocalDate.now()}"
     }
     var textState = rememberTextFieldState(dateString)
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
     if (showDatePicker) {
-        AppDatePickerDialog(
+        AppDateRangePickerDialog (
             onDismissRequest = {
                 showDatePicker = false
             },
-            datePickerState,
+            dateRangePickerState,
             label,
-            onConfirm = {
-                textState.setTextAndPlaceCursorAtEnd(it.toString())
+            onConfirm = { start, end ->
+                textState.setTextAndPlaceCursorAtEnd("${start} - ${end}")
             }
         )
     }

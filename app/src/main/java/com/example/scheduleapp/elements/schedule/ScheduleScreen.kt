@@ -26,17 +26,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.formElements.ChoiceDialog
 import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
+import com.example.scheduleapp.elements.navigation.ScheduleDestination
 import com.example.scheduleapp.elements.schedule.parts.AddSchedulePrompt
 import com.example.scheduleapp.elements.timetable.TimeTable
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ScheduleScreen(
+    navController: NavController,
     viewModel: ScheduleViewModel
 ) {
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
@@ -45,6 +50,7 @@ fun ScheduleScreen(
     var fabExpanded by rememberSaveable { mutableStateOf(false) }
     var showScheduleSelector by rememberSaveable { mutableStateOf(false) }
     var showAddLessonFrom by rememberSaveable { mutableStateOf(false) }
+    val curentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         pagerState.scrollToPage(LocalDate.now().dayOfWeek.value - 1)
@@ -79,8 +85,22 @@ fun ScheduleScreen(
             onDismissRequest = {
                 showAddLessonFrom = false
             },
-            onSuccess = {
-
+            onSuccess = { subject, room, teacher, type, occurrence, startTime, endTime, startDate, endDate, selectedDates ->
+                val selectedDay = DayOfWeek.of(pagerState.currentPage%7+1)
+                val newLesson = Lesson(
+                    id = UUID.randomUUID().toString(),
+                    subject = subject,
+                    room = room,
+                    teacher = teacher,
+                    lessonType = type,
+                    occurrence = occurrence,
+                    startTime = startTime,
+                    endTime = endTime,
+                    startDate = startDate,
+                    endDate = endDate,
+                    activeDays = selectedDates
+                )
+                viewModel.addNewLesson(selectedDay, newLesson)
             }
         )
     }
@@ -147,7 +167,10 @@ fun ScheduleScreen(
             TimeTable(
                 title = "${ui.selectedSchedule} - ${day.name}",
                 hourHeight = ui.hourHeight,
-                lessons = viewModel.currentSchedule?.lessons[day] ?: emptyList()
+                lessons = curentSchedule?.lessons[day] ?: emptyList(),
+                onLessonClick = {
+                    navController.navigate(ScheduleDestination.LessonScreen(it))
+                }
             )
         }
     }

@@ -102,35 +102,33 @@ fun SchedulesSettingsPage(
             }
         }
     ) { paddingValues ->
-        Column (
+        LazyColumn (
             Modifier.padding(paddingValues).fillMaxHeight()
         ) {
-            LazyColumn {
-                ui.schedules.schedules.forEach { (key, schedule) ->
-                    item {
-                        ListItem(
-                            modifier = Modifier.clickable {
-                                selectionMap[key] = !(selectionMap[key] ?: false)
-                            },
-                            headlineContent = { Text(key) },
-                            trailingContent = {
-                                Checkbox(
-                                    selectionMap[key] == true,
-                                    onCheckedChange = { selectionMap[key] = it }
-                                )
-                            },
-                            leadingContent = {
-                                IconButton(
-                                    onClick = {
-                                        editedSchedule = Triple(key, true, schedule)
-                                        newScheduleFormExpanded = true
-                                    }
-                                ) {
-                                    Icon(Icons.Default.Edit, "")
+            ui.schedules.schedules.forEach { (key, schedule) ->
+                item {
+                    ListItem(
+                        modifier = Modifier.clickable {
+                            selectionMap[key] = !(selectionMap[key] ?: false)
+                        },
+                        headlineContent = { Text(key) },
+                        trailingContent = {
+                            Checkbox(
+                                selectionMap[key] == true,
+                                onCheckedChange = { selectionMap[key] = it }
+                            )
+                        },
+                        leadingContent = {
+                            IconButton(
+                                onClick = {
+                                    editedSchedule = Triple(key, true, schedule)
+                                    newScheduleFormExpanded = true
                                 }
+                            ) {
+                                Icon(Icons.Default.Edit, "")
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }

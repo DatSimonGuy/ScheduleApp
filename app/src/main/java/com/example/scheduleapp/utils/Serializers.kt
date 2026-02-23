@@ -1,11 +1,15 @@
 package com.example.scheduleapp.utils
 
+import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
@@ -27,24 +31,34 @@ object LocalDateSerializer : KSerializer<LocalDate> {
 }
 
 object LocalDateListSerializer : KSerializer<List<LocalDate>> {
-    override val descriptor = PrimitiveSerialDescriptor("LocalDate", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: List<LocalDate>) = encoder.encodeString(value.joinToString(separator = ";") { it.toString() })
-    override fun deserialize(decoder: Decoder): List<LocalDate> = decoder.decodeString().split(";").map { LocalDate.parse(it) }.toList()
+    private val listSerializer = ListSerializer(LocalDateSerializer)
+
+    override val descriptor: SerialDescriptor = listSerializer.descriptor
+
+    override fun serialize(encoder: Encoder, value: List<LocalDate>) {
+        listSerializer.serialize(encoder, value)
+    }
+
+    override fun deserialize(decoder: Decoder): List<LocalDate> {
+        return listSerializer.deserialize(decoder)
+    }
 }
 
-
 object ScheduleMapSerializer : Serializer<ScheduleMap> {
-    override val defaultValue = ScheduleMap()
+
+    override val defaultValue: ScheduleMap = ScheduleMap()
 
     override suspend fun readFrom(input: InputStream): ScheduleMap {
-        return try {
-            Json.decodeFromString(ScheduleMap.serializer(), input.readBytes().decodeToString())
-        } catch (e: Exception) {
-            defaultValue
+        try {
+            val json = input.readBytes().decodeToString()
+            return Json.decodeFromString(ScheduleMap.serializer(), json)
+        } catch (e: SerializationException) {
+            throw CorruptionException("Cannot read ScheduleMap", e)
         }
     }
 
     override suspend fun writeTo(t: ScheduleMap, output: OutputStream) {
-        output.write(Json.encodeToString(ScheduleMap.serializer(), t).toByteArray())
+        val json = Json.encodeToString(ScheduleMap.serializer(), t)
+        output.write(json.toByteArray())
     }
 }
