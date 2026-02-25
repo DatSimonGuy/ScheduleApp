@@ -27,6 +27,8 @@ sealed class Destination(
 sealed class SettingsDestination(
 ): Destination(null) {
     @Serializable
+    object SettingsPage: SettingsDestination()
+    @Serializable
     object SchedulesSettings: SettingsDestination()
     @Serializable
     object AppearanceSettings: SettingsDestination()
@@ -37,6 +39,8 @@ sealed class SettingsDestination(
 @Serializable
 sealed class ScheduleDestination(
 ): Destination(null) {
+    @Serializable
+    object ScheduleScreen: ScheduleDestination()
     @Serializable
     data class LessonScreen(val scheduleName: String, val lessonId: String): ScheduleDestination()
 }

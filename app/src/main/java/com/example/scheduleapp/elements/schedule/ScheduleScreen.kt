@@ -7,7 +7,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.AssignmentInd
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
@@ -19,7 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,25 +34,23 @@ import com.example.scheduleapp.elements.schedule.parts.AddSchedulePrompt
 import com.example.scheduleapp.elements.timetable.TimeTable
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ScheduleScreen(
     navController: NavController,
-    viewModel: ScheduleViewModel
+    viewModel: ScheduleViewModel,
 ) {
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = { Int.MAX_VALUE })
     var showScheduleForm by rememberSaveable { mutableStateOf(false) }
     var fabExpanded by rememberSaveable { mutableStateOf(false) }
     var showScheduleSelector by rememberSaveable { mutableStateOf(false) }
     var showAddLessonFrom by rememberSaveable { mutableStateOf(false) }
-    val curentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        pagerState.scrollToPage(LocalDate.now().dayOfWeek.value - 1)
-    }
+    val currentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
 
     if (showScheduleForm) {
         NewScheduleForm(
@@ -85,23 +81,10 @@ fun ScheduleScreen(
             onDismissRequest = {
                 showAddLessonFrom = false
             },
-            onSuccess = { subject, room, teacher, type, occurrence, startTime, endTime, startDate, endDate, selectedDates ->
-                val selectedDay = DayOfWeek.of(pagerState.currentPage%7+1)
-                val newLesson = Lesson(
-                    id = UUID.randomUUID().toString(),
-                    subject = subject,
-                    room = room,
-                    teacher = teacher,
-                    lessonType = type,
-                    occurrence = occurrence,
-                    startTime = startTime,
-                    endTime = endTime,
-                    startDate = startDate,
-                    endDate = endDate,
-                    activeDays = selectedDates
-                )
-                viewModel.addNewLesson(selectedDay, newLesson)
-            }
+            onSuccess = { lesson, selectedDay ->
+                viewModel.addNewLesson(selectedDay, lesson)
+            },
+            DayOfWeek.of(pagerState.currentPage%7+1)
         )
     }
 
@@ -165,9 +148,9 @@ fun ScheduleScreen(
         ) { page ->
             val day = DayOfWeek.of(page % 7 + 1)
             TimeTable(
-                title = "${ui.selectedSchedule} - ${day.name}",
+                title = "${ui.selectedSchedule} - ${day.getDisplayName(TextStyle.FULL, Locale.getDefault())}",
                 hourHeight = ui.hourHeight,
-                lessons = curentSchedule?.lessons[day] ?: emptyList(),
+                lessons = currentSchedule?.lessons[day] ?: emptyList(),
                 onLessonClick = {
                     navController.navigate(ScheduleDestination.LessonScreen(ui.selectedSchedule ?: "", it))
                 }

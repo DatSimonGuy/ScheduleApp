@@ -59,7 +59,6 @@ import java.time.LocalTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LessonPage(
-    scheduleName: String,
     lessonId: String,
     viewModel: ScheduleViewModel
 ) {
@@ -82,7 +81,7 @@ fun LessonPage(
                                 .padding(bottom = 16.dp)
 
     LaunchedEffect(Unit) {
-        lesson = viewModel.getLesson(scheduleName, lessonId)
+        lesson = viewModel.getLesson(ui.value.selectedSchedule ?: "", lessonId)
         subject = lesson?.subject ?: ""
         room = lesson?.room ?: ""
         teacher = lesson?.teacher ?: ""
@@ -132,7 +131,7 @@ fun LessonPage(
                     }
                     Button(
                         onClick = {
-                            viewModel.removeLesson(scheduleName, lessonId)
+                            viewModel.removeLesson(ui.value.selectedSchedule ?: "", lessonId)
                             viewModel.navController.popBackStack()
                         }
                     ) {
@@ -187,7 +186,7 @@ fun LessonPage(
                                     dateRangeState.getSelectedEndDate(),
                                     selectedDates
                                 )
-                                viewModel.updateLesson(scheduleName, newLesson)
+                                viewModel.updateLesson(ui.value.selectedSchedule ?: "", newLesson)
                                 editing = false
                             }
                         ) {

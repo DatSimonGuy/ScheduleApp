@@ -39,16 +39,19 @@ import com.example.scheduleapp.elements.formElements.AppDateRangePicker
 import com.example.scheduleapp.elements.formElements.AppTimePicker
 import com.example.scheduleapp.elements.formElements.FormSelector
 import com.example.scheduleapp.elements.formElements.MultipleDatesPicker
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddLessonForm(
     onDismissRequest: () -> Unit,
-    onSuccess: (String, String, String, LessonType, Occurrence, LocalTime, LocalTime, LocalDate?, LocalDate?, List<LocalDate>) -> Unit,
+    onSuccess: (Lesson, DayOfWeek) -> Unit,
+    startingDay: DayOfWeek = DayOfWeek.MONDAY
 ) {
-    var sheetState = rememberModalBottomSheetState(true)
+    val sheetState = rememberModalBottomSheetState(true)
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState
@@ -58,6 +61,7 @@ fun AddLessonForm(
         var teacher by rememberSaveable { mutableStateOf("") }
         var lessonType by rememberSaveable { mutableStateOf(LessonType.LECTURE.name) }
         var occurrence by rememberSaveable { mutableStateOf(Occurrence.WEEKLY.name) }
+        var dayOfWeek by rememberSaveable { mutableStateOf(startingDay.name) }
         val startTimeState = rememberTimePickerState()
         val endTimeState = rememberTimePickerState()
         val startDateState = rememberDatePickerState()
@@ -103,6 +107,15 @@ fun AddLessonForm(
                 },
                 items = LessonType.entries.map { it.name },
                 selectedItem = lessonType
+            )
+            FormSelector(
+                modifier = formFieldModifier,
+                label = "Day of week",
+                onValueChanged = {
+                    dayOfWeek = it
+                },
+                items = DayOfWeek.entries.map { it.name },
+                selectedItem = dayOfWeek
             )
             Row(
                 Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
@@ -156,16 +169,21 @@ fun AddLessonForm(
                 Button(
                     onClick = {
                         onSuccess(
-                            subject,
-                            room,
-                            teacher,
-                            LessonType.valueOf(lessonType),
-                            Occurrence.valueOf(occurrence),
-                            LocalTime.of(startTimeState.hour, startTimeState.minute),
-                            LocalTime.of(endTimeState.hour, endTimeState.minute),
-                            if (occurrence == Occurrence.ONCE.name) startDateState.getSelectedDate() else dateRangeState.getSelectedStartDate(),
-                            dateRangeState.getSelectedEndDate(),
-                            selectedDates.toList()
+                            Lesson(
+                                UUID.randomUUID().toString(),
+                                subject,
+                                LocalTime.of(startTimeState.hour, startTimeState.minute),
+                                LocalTime.of(endTimeState.hour, endTimeState.minute),
+                                room,
+                                teacher,
+                                LessonType.valueOf(lessonType),
+                                Occurrence.valueOf(occurrence),
+
+                                if (occurrence == Occurrence.ONCE.name) startDateState.getSelectedDate() else dateRangeState.getSelectedStartDate(),
+                                dateRangeState.getSelectedEndDate(),
+                                selectedDates.toList()
+                            ),
+                            DayOfWeek.valueOf(dayOfWeek),
                         )
                         onDismissRequest()
                     }

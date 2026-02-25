@@ -26,7 +26,7 @@ data class ScheduleUiState(
     val hourHeight: HourHeight = HourHeight.MEDIUM,
     val schedules: ScheduleMap = ScheduleMap(),
     val selectedSchedule: String? = null,
-    val showAddSchedule: Boolean = false
+    val showAddSchedule: Boolean = false,
 )
 
 class ScheduleViewModel(

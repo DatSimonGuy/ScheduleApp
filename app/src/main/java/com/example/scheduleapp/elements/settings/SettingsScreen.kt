@@ -17,7 +17,8 @@ import com.example.scheduleapp.elements.settings.parts.SettingsCategory
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: SettingsViewModel
 ) {
     val categories = mapOf(
         "Schedules" to SettingsDestination.SchedulesSettings,
