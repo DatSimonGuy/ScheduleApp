@@ -3,6 +3,7 @@ package com.example.scheduleapp.data.classes
 import com.example.scheduleapp.utils.LocalDateListSerializer
 import com.example.scheduleapp.utils.LocalDateSerializer
 import com.example.scheduleapp.utils.LocalTimeSerializer
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 import java.time.Duration
 import java.time.LocalDate
@@ -27,5 +28,5 @@ data class Lesson(
     @Serializable(with = LocalDateListSerializer::class)
     val activeDays: List<LocalDate>?
 ) {
-    val duration: Int get() = Duration.between(startTime, endTime).toHours().toInt()
+    val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
 }

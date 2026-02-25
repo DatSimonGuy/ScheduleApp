@@ -153,7 +153,8 @@ fun ScheduleScreen(
                 lessons = currentSchedule?.lessons[day] ?: emptyList(),
                 onLessonClick = {
                     navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))
-                }
+                },
+                lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle
             )
         }
     }

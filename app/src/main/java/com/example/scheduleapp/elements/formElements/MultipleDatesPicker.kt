@@ -73,13 +73,15 @@ fun MultipleDatesPicker(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Selected dates:", Modifier.padding(start = 16.dp))
-            IconButton(
-                onClick = {
-                    showDatePickerDialog = true
+            Text("Selected dates:", Modifier.padding(16.dp))
+            if(enabled) {
+                IconButton(
+                    onClick = {
+                        showDatePickerDialog = true
+                    }
+                ) {
+                    Icon(Icons.Default.Add, "")
                 }
-            ) {
-                Icon(Icons.Default.Add, "")
             }
         }
         for (date in selectedDates) {
@@ -93,7 +95,7 @@ fun MultipleDatesPicker(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(date.toString(), Modifier.padding(start = 16.dp))
+                Text(date.toString(), Modifier.padding(16.dp))
                 if(enabled) {
                     IconButton(
                         onClick = {

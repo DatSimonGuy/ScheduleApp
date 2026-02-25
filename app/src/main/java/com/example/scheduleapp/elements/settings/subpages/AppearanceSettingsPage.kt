@@ -17,6 +17,7 @@ import com.example.scheduleapp.elements.formElements.SettingsSelector
 import com.example.scheduleapp.elements.formElements.ToggleCard
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 import com.example.scheduleapp.elements.timetable.HourHeight
+import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,9 +46,21 @@ fun AppearanceSettingsPage(
                 label = "Hour cell height",
                 onSelectionChange = {
                     viewModel.onHourHeightChange(HourHeight.valueOf(it))
+                    if (it == HourHeight.SHORT.name && ui.lessonBlockDisplayStyle == LessonBlockDisplayStyle.EXTENDED) {
+                        viewModel.onLessonBlockDisplayStyleChange(LessonBlockDisplayStyle.NORMAL)
+                    }
                 },
                 items = HourHeight.entries.map { it.name },
                 selectedItem = ui.hourHeight.name
+            )
+            SettingsSelector(
+                modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
+                label = "Lesson block display style",
+                onSelectionChange = {
+                    viewModel.onLessonBlockDisplayStyleChange(LessonBlockDisplayStyle.valueOf(it))
+                },
+                items = LessonBlockDisplayStyle.entries.filter { it.ordinal - 1 <= ui.hourHeight.ordinal }.map { it.name },
+                selectedItem = ui.lessonBlockDisplayStyle.name
             )
         }
     }

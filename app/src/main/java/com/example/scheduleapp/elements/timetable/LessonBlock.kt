@@ -1,80 +1,68 @@
 package com.example.scheduleapp.elements.timetable
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.CompactDisplay
+import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.ExtendedDisplay
+import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.NormalDisplay
 import com.example.scheduleapp.utils.textColorForBackground
+
 
 @Composable
 fun LessonBlock(
     modifier: Modifier = Modifier,
     hourHeight: HourHeight,
     lesson: Lesson,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    displayStyle: LessonBlockDisplayStyle
 ) {
     val topOffset = (hourHeight.value + 10.dp) * lesson.startTime.hour + 16.dp
     val height = (hourHeight.value + 10.dp) * lesson.duration - 8.dp
     val textColor = textColorForBackground(lesson.lessonType.color)
+    var style by rememberSaveable { mutableStateOf(displayStyle) }
+
+    LaunchedEffect(height) {
+        style = when {
+            height < 100.dp -> LessonBlockDisplayStyle.COMPACT
+            height < 150.dp -> LessonBlockDisplayStyle.NORMAL
+            else -> LessonBlockDisplayStyle.EXTENDED
+        }
+    }
+
     ElevatedCard(
         modifier
             .fillMaxWidth()
-            .offset(y=topOffset)
+            .offset(y = topOffset)
             .height(height)
             .clickable(onClick = {
                 onClick(lesson.id)
             }),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Red
+            containerColor = lesson.lessonType.color
         )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(lesson.lessonType.color)
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = lesson.subject,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                color = textColor
-            )
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = lesson.startTime.toString() + " - " + lesson.endTime.toString(),
-                textAlign = TextAlign.Center,
-                color = textColor
-            )
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = lesson.room,
-                textAlign = TextAlign.Center,
-                color = textColor
-            )
+        when(style) {
+            LessonBlockDisplayStyle.NORMAL -> NormalDisplay(lesson, textColor)
+            LessonBlockDisplayStyle.COMPACT -> CompactDisplay(lesson, textColor)
+            LessonBlockDisplayStyle.EXTENDED -> ExtendedDisplay(lesson, textColor)
         }
     }
 }

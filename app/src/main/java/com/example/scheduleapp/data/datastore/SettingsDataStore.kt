@@ -12,6 +12,7 @@ val Context.settingsDataStore by preferencesDataStore(
 
 object SettingKeys {
     val hourHeight = stringPreferencesKey("hourHeight")
+    val lessonBlockDisplayStyle = stringPreferencesKey("lessonBlockDisplayStyle")
     val addScheduleInFab = booleanPreferencesKey("fabAddSchedule")
     val defaultSchedule = stringPreferencesKey("defaultSchedule")
 }

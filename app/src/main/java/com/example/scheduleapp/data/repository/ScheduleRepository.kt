@@ -60,7 +60,7 @@ class ScheduleRepository(private val context: Context) {
                         it.id == lessonId
                     } != null
                 }
-            val lessons = day.value.dropWhile { it.id == lessonId }
+            val lessons = day.value.filterNot { it.id == lessonId }
             val updatedLessonMap = schedule.lessons.toMutableMap().apply {
                 put(day.key, lessons)
             }

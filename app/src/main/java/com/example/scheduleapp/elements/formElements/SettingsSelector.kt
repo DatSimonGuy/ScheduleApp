@@ -55,7 +55,10 @@ fun SettingsSelector(
             onDismiss = {
                 isSelectorVisible = false
             },
-            onSelectionChange = onSelectionChange,
+            onSelectionChange = {
+                onSelectionChange(it)
+                isSelectorVisible = false
+            },
             label = label,
             items = items,
             selectedItem = selectedItem

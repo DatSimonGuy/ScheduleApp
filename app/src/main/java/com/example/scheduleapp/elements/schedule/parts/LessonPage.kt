@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
@@ -83,6 +85,7 @@ fun LessonPage(
     val selectedDates = remember { mutableStateListOf<LocalDate>() }
     val fieldModifier = Modifier.fillMaxWidth(0.95f)
                                 .padding(bottom = 16.dp)
+    val scrollState = rememberScrollState()
 
     fun fillAllFields(lesson: Lesson) {
         subject = lesson.subject
@@ -99,6 +102,9 @@ fun LessonPage(
         lesson.lessonType.let {
             selectedType = it.name
         }
+        lesson.occurrence.let {
+            selectedOccurrence = it.name
+        }
         lesson.startDate.let { startDate ->
             startDateState.setSelectedDate(startDate)
             lesson.endDate?.let {
@@ -106,6 +112,7 @@ fun LessonPage(
             }
         }
         lesson.activeDays?.let {
+            selectedDates.removeAll { true }
             selectedDates.addAll(it)
         }
     }
@@ -214,7 +221,7 @@ fun LessonPage(
         }
     ) { paddingValues ->
         Column(
-            Modifier.fillMaxWidth().padding(paddingValues),
+            Modifier.fillMaxWidth().padding(paddingValues).verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(

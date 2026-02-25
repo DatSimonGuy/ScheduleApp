@@ -8,6 +8,7 @@ import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
 import com.example.scheduleapp.elements.timetable.HourHeight
+import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 data class Settings(
     val hourHeight: HourHeight = HourHeight.MEDIUM,
+    val lessonBlockDisplayStyle: LessonBlockDisplayStyle = LessonBlockDisplayStyle.NORMAL,
     val schedules: ScheduleMap = ScheduleMap(),
     var addScheduleInFab: Boolean = false,
     var defaultSchedule: String? = null
@@ -37,6 +39,7 @@ class SettingsViewModel(
                 _uiState.update { currentState ->
                     currentState.copy(
                         hourHeight = HourHeight.valueOf(settings.hourHeight),
+                        lessonBlockDisplayStyle = LessonBlockDisplayStyle.valueOf(settings.lessonBlockDisplayStyle),
                         addScheduleInFab = settings.addScheduleInFab,
                         defaultSchedule = settings.defaultSchedule
                     )
@@ -57,6 +60,12 @@ class SettingsViewModel(
     fun onHourHeightChange(hourHeight: HourHeight) {
         viewModelScope.launch {
             repository.setHourHeight(hourHeight)
+        }
+    }
+
+    fun onLessonBlockDisplayStyleChange(style: LessonBlockDisplayStyle) {
+        viewModelScope.launch {
+            repository.setLessonBlockDisplayStyle(style)
         }
     }
 

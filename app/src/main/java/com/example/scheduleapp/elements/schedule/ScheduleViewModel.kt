@@ -10,6 +10,7 @@ import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
 import com.example.scheduleapp.elements.timetable.HourHeight
+import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +25,7 @@ import java.time.DayOfWeek
 
 data class ScheduleUiState(
     val hourHeight: HourHeight = HourHeight.MEDIUM,
+    val lessonBlockDisplayStyle: LessonBlockDisplayStyle = LessonBlockDisplayStyle.NORMAL,
     val schedules: ScheduleMap = ScheduleMap(),
     val selectedSchedule: String? = null,
     val showAddSchedule: Boolean = false,
@@ -49,6 +51,7 @@ class ScheduleViewModel(
                 _uiState.update { currentState ->
                     currentState.copy(
                         hourHeight = HourHeight.valueOf(settings.hourHeight),
+                        lessonBlockDisplayStyle = LessonBlockDisplayStyle.valueOf(settings.lessonBlockDisplayStyle),
                         showAddSchedule = settings.addScheduleInFab,
                         selectedSchedule = settings.defaultSchedule
                     )

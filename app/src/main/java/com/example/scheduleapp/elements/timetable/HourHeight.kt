@@ -4,7 +4,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 enum class HourHeight(val value: Dp) {
-    TALL(160.dp),
+    SHORT(80.dp),
     MEDIUM(120.dp),
-    SHORT(80.dp)
+    TALL(160.dp)
 }
