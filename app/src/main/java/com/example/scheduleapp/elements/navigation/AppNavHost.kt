@@ -71,7 +71,7 @@ fun AppNavHost(
             composable<ScheduleDestination.LessonScreen> { backStackEntry ->
                 val viewModel = backStackEntry.scheduleViewModel(navController, scheduleVMFactory)
                 val lessonRoute = backStackEntry.toRoute<ScheduleDestination.LessonScreen>()
-                LessonPage(lessonRoute.lessonId, viewModel)
+                LessonPage(lessonRoute.lessonId, viewModel, lessonRoute.dayOfWeek)
             }
         }
 

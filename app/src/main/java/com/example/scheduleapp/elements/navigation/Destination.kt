@@ -42,5 +42,5 @@ sealed class ScheduleDestination(
     @Serializable
     object ScheduleScreen: ScheduleDestination()
     @Serializable
-    data class LessonScreen(val scheduleName: String, val lessonId: String): ScheduleDestination()
+    data class LessonScreen(val dayOfWeek: DayOfWeek, val lessonId: String): ScheduleDestination()
 }

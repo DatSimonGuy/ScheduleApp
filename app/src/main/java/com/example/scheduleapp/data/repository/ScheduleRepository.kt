@@ -45,29 +45,9 @@ class ScheduleRepository(private val context: Context) {
         }
     }
 
-    suspend fun updateLesson(scheduleName: String, lesson: Lesson) {
-        context.scheduleDataStore.updateData { currentDb ->
-            val currentSchedule = currentDb.schedules[scheduleName] ?: return@updateData currentDb
-            val day = currentSchedule.lessons
-                .asSequence()
-                .first { day ->
-                    day.value.find {
-                        it.id == lesson.id
-                    } != null
-                }
-            val lessons = day.value.map {
-                if (it.id == lesson.id) lesson else it
-            }
-            val updatedLessonMap = currentSchedule.lessons.toMutableMap().apply {
-                put(day.key, lessons)
-            }
-            val updatedSchedulesMap = currentDb.schedules.toMutableMap().apply {
-                put(scheduleName, currentSchedule.copy(lessons = updatedLessonMap))
-            }
-            currentDb.copy(
-                schedules = updatedSchedulesMap
-            )
-        }
+    suspend fun updateLesson(scheduleName: String, lesson: Lesson, dayOfWeek: DayOfWeek) {
+        removeLesson(scheduleName, lesson.id)
+        addLesson(scheduleName, dayOfWeek, lesson)
     }
 
     suspend fun removeLesson(scheduleName: String, lessonId: String) {

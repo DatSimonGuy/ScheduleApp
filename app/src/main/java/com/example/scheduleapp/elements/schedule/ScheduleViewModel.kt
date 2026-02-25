@@ -96,9 +96,9 @@ class ScheduleViewModel(
         }
     }
 
-    fun updateLesson(scheduleName: String, lesson: Lesson) {
+    fun updateLesson(scheduleName: String, lesson: Lesson, dayOfWeek: DayOfWeek) {
         viewModelScope.launch {
-            scheduleRepository.updateLesson(scheduleName, lesson)
+            scheduleRepository.updateLesson(scheduleName, lesson, dayOfWeek)
         }
     }
 

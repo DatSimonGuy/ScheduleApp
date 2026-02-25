@@ -38,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,6 +54,7 @@ import com.example.scheduleapp.elements.formElements.AppTimePicker
 import com.example.scheduleapp.elements.formElements.FormSelector
 import com.example.scheduleapp.elements.formElements.MultipleDatesPicker
 import com.example.scheduleapp.elements.schedule.ScheduleViewModel
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -60,7 +62,8 @@ import java.time.LocalTime
 @Composable
 fun LessonPage(
     lessonId: String,
-    viewModel: ScheduleViewModel
+    viewModel: ScheduleViewModel,
+    selectedDay: DayOfWeek = DayOfWeek.MONDAY
 ) {
     val ui = viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -72,38 +75,45 @@ fun LessonPage(
     val endTimeState = rememberTimePickerState()
     var selectedType by rememberSaveable { mutableStateOf(LessonType.LECTURE.name) }
     var selectedOccurrence by rememberSaveable { mutableStateOf(Occurrence.WEEKLY.name) }
+    var dayOfWeek by rememberSaveable { mutableStateOf(selectedDay.name) }
     val startDateState = rememberDatePickerState()
     val dateRangeState = rememberDateRangePickerState()
     var editing by rememberSaveable { mutableStateOf(false) }
     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
-    val selectedDates by rememberSaveable { mutableStateOf(mutableStateListOf<LocalDate>()) }
+    val selectedDates = remember { mutableStateListOf<LocalDate>() }
     val fieldModifier = Modifier.fillMaxWidth(0.95f)
                                 .padding(bottom = 16.dp)
 
-    LaunchedEffect(Unit) {
-        lesson = viewModel.getLesson(ui.value.selectedSchedule ?: "", lessonId)
-        subject = lesson?.subject ?: ""
-        room = lesson?.room ?: ""
-        teacher = lesson?.teacher ?: ""
-        lesson?.startTime?.let {
+    fun fillAllFields(lesson: Lesson) {
+        subject = lesson.subject
+        room = lesson.room
+        teacher = lesson.teacher
+        lesson.startTime.let {
             startTimeState.hour = it.hour
             startTimeState.minute = it.minute
         }
-        lesson?.endTime?.let {
+        lesson.endTime.let {
             endTimeState.hour = it.hour
             endTimeState.minute = it.minute
         }
-        lesson?.lessonType?.let {
+        lesson.lessonType.let {
             selectedType = it.name
         }
-        lesson?.startDate?.let { startDate ->
+        lesson.startDate.let { startDate ->
             startDateState.setSelectedDate(startDate)
-            lesson?.endDate?.let {
+            lesson.endDate?.let {
                 dateRangeState.setSelection(startDate, it)
             }
         }
-        lesson?.activeDays?.let {
+        lesson.activeDays?.let {
             selectedDates.addAll(it)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        lesson = viewModel.getLesson(ui.value.selectedSchedule ?: "", lessonId)
+        lesson?.let {
+            fillAllFields(it)
         }
     }
 
@@ -159,6 +169,11 @@ fun LessonPage(
                     IconButton(
                         onClick = {
                             editing = !editing
+                            if (!editing) {
+                                lesson?.let {
+                                    fillAllFields(it)
+                                }
+                            }
                         }
                     ) {
                         if(!editing) {
@@ -186,7 +201,8 @@ fun LessonPage(
                                     dateRangeState.getSelectedEndDate(),
                                     selectedDates
                                 )
-                                viewModel.updateLesson(ui.value.selectedSchedule ?: "", newLesson)
+                                viewModel.updateLesson(ui.value.selectedSchedule ?: "", newLesson,
+                                    DayOfWeek.valueOf(dayOfWeek))
                                 editing = false
                             }
                         ) {
@@ -228,6 +244,16 @@ fun LessonPage(
                     teacher = it
                 }
             )
+            FormSelector(
+                fieldModifier,
+                "Day of week",
+                {
+                    dayOfWeek = it
+                },
+                DayOfWeek.entries.map { it.name },
+                dayOfWeek,
+                editing
+            )
             Row(
                 Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
                 horizontalArrangement = Arrangement.SpaceAround
@@ -239,22 +265,22 @@ fun LessonPage(
             FormSelector(
                 fieldModifier,
                 "Lesson type",
-                onValueChanged = {
+                {
                     selectedType = it
                 },
                 LessonType.entries.map { it.name },
-                selectedItem = selectedType,
-                enabled = editing
+                selectedType,
+                editing
             )
             FormSelector(
                 fieldModifier,
                 "Occurrence",
-                onValueChanged = {
+                {
                     selectedOccurrence = it
                 },
                 Occurrence.entries.map { it.name },
-                selectedItem = selectedOccurrence,
-                enabled = editing
+                selectedOccurrence,
+                editing
             )
             val currentOccurrence = Occurrence.valueOf(selectedOccurrence)
             if (currentOccurrence != Occurrence.ONCE && currentOccurrence != Occurrence.SELECTED_DAYS) {
