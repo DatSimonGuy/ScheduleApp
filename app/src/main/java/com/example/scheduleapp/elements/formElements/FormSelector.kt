@@ -25,13 +25,14 @@ fun FormSelector(
     label: String,
     onValueChanged: (String) -> Unit,
     items: List<String>,
-    selectedItem: String
+    selectedItem: String,
+    enabled: Boolean = true
 ) {
     var pickerExpanded by rememberSaveable { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         modifier = modifier,
         expanded = pickerExpanded,
-        onExpandedChange = { pickerExpanded = !pickerExpanded }
+        onExpandedChange = { pickerExpanded = !pickerExpanded && enabled }
     ) {
         OutlinedTextField(
             value = selectedItem,

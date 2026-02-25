@@ -47,7 +47,6 @@ import java.time.LocalTime
 fun AddLessonForm(
     onDismissRequest: () -> Unit,
     onSuccess: (String, String, String, LessonType, Occurrence, LocalTime, LocalTime, LocalDate?, LocalDate?, List<LocalDate>) -> Unit,
-    editedLesson: Lesson? = null
 ) {
     var sheetState = rememberModalBottomSheetState(true)
     ModalBottomSheet(
@@ -164,7 +163,7 @@ fun AddLessonForm(
                             Occurrence.valueOf(occurrence),
                             LocalTime.of(startTimeState.hour, startTimeState.minute),
                             LocalTime.of(endTimeState.hour, endTimeState.minute),
-                            startDateState.getSelectedDate() ?: dateRangeState.getSelectedStartDate(),
+                            if (occurrence == Occurrence.ONCE.name) startDateState.getSelectedDate() else dateRangeState.getSelectedStartDate(),
                             dateRangeState.getSelectedEndDate(),
                             selectedDates.toList()
                         )

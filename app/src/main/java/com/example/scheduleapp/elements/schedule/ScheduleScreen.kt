@@ -169,7 +169,7 @@ fun ScheduleScreen(
                 hourHeight = ui.hourHeight,
                 lessons = curentSchedule?.lessons[day] ?: emptyList(),
                 onLessonClick = {
-                    navController.navigate(ScheduleDestination.LessonScreen(it))
+                    navController.navigate(ScheduleDestination.LessonScreen(ui.selectedSchedule ?: "", it))
                 }
             )
         }

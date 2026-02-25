@@ -44,7 +44,7 @@ fun AppNavHost(
         modifier = modifier
     ) {
         val settingsVMFactory = SettingsViewModelFactory(settingsRepository, scheduleRepository)
-        val scheduleVMFactory = ScheduleViewModelFactory(settingsRepository, scheduleRepository)
+        val scheduleVMFactory = ScheduleViewModelFactory(navController, settingsRepository, scheduleRepository)
         composable<Destination.Home> {
 
         }
@@ -78,7 +78,7 @@ fun AppNavHost(
         composable<ScheduleDestination.LessonScreen> { backEntry ->
             val lessonRoute: ScheduleDestination.LessonScreen = backEntry.toRoute()
             val viewModel: ScheduleViewModel = viewModel(factory = scheduleVMFactory)
-            LessonPage(lessonRoute.lessonId, viewModel)
+            LessonPage(lessonRoute.scheduleName, lessonRoute.lessonId, viewModel)
         }
     }
 }

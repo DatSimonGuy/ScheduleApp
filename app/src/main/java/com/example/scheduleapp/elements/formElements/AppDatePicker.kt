@@ -39,6 +39,7 @@ fun AppDatePicker(
     modifier: Modifier = Modifier,
     label: String,
     datePickerState: DatePickerState,
+    enabled: Boolean = true
 ) {
     var dateString = datePickerState.getSelectedDate().toString()
     if ("null" in dateString) {
@@ -71,17 +72,19 @@ fun AppDatePicker(
             },
             enabled = false
         )
-        OutlinedButton(
-            onClick = {
-                showDatePicker = true
-            },
-            Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(top = 8.dp),
-            shape = RoundedCornerShape(4.dp),
-        ) {
-            Icon(Icons.Default.Edit, "")
+        if(enabled) {
+            OutlinedButton(
+                onClick = {
+                    showDatePicker = true
+                },
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(top = 8.dp),
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Icon(Icons.Default.Edit, "")
+            }
         }
     }
 }

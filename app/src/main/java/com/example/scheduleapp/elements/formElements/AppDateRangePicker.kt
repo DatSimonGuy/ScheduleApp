@@ -34,7 +34,8 @@ import java.time.LocalDate
 fun AppDateRangePicker(
     modifier: Modifier = Modifier,
     label: String,
-    dateRangePickerState: DateRangePickerState
+    dateRangePickerState: DateRangePickerState,
+    enabled: Boolean = true
 ) {
     var dateString = "${dateRangePickerState.getSelectedStartDate()} - ${dateRangePickerState.getSelectedEndDate()}"
     if ("null" in dateString) {
@@ -67,17 +68,19 @@ fun AppDateRangePicker(
             },
             enabled = false
         )
-        OutlinedButton(
-            onClick = {
-                showDatePicker = true
-            },
-            Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(top = 8.dp),
-            shape = RoundedCornerShape(4.dp),
-        ) {
-            Icon(Icons.Default.Edit, "")
+        if (enabled) {
+            OutlinedButton(
+                onClick = {
+                    showDatePicker = true
+                },
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(top = 8.dp),
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Icon(Icons.Default.Edit, "")
+            }
         }
     }
 }

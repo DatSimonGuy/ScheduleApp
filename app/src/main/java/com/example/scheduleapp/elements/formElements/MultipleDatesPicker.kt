@@ -35,7 +35,8 @@ import java.time.YearMonth
 @Composable
 fun MultipleDatesPicker(
     modifier: Modifier = Modifier,
-    selectedDates: MutableList<LocalDate>
+    selectedDates: MutableList<LocalDate>,
+    enabled: Boolean = true
 ) {
     val datePickerState = rememberDatePickerState()
     var showDatePickerDialog by rememberSaveable { mutableStateOf(false) }
@@ -93,12 +94,14 @@ fun MultipleDatesPicker(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(date.toString(), Modifier.padding(start = 16.dp))
-                IconButton(
-                    onClick = {
-                        selectedDates -= date
+                if(enabled) {
+                    IconButton(
+                        onClick = {
+                            selectedDates -= date
+                        }
+                    ) {
+                        Icon(Icons.Default.Delete, "")
                     }
-                ) {
-                    Icon(Icons.Default.Delete, "")
                 }
             }
         }

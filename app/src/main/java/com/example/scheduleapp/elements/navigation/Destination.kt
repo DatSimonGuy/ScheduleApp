@@ -38,5 +38,5 @@ sealed class SettingsDestination(
 sealed class ScheduleDestination(
 ): Destination(null) {
     @Serializable
-    data class LessonScreen(val lessonId: String): ScheduleDestination()
+    data class LessonScreen(val scheduleName: String, val lessonId: String): ScheduleDestination()
 }

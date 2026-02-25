@@ -1,8 +1,11 @@
 package com.example.scheduleapp.elements.timetable
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -19,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.utils.textColorForBackground
 
 @Composable
 fun LessonBlock(
@@ -27,8 +31,9 @@ fun LessonBlock(
     lesson: Lesson,
     onClick: (String) -> Unit
 ) {
-    val topOffset = hourHeight.value * lesson.startTime.hour
-    val height = hourHeight.value * lesson.duration
+    val topOffset = (hourHeight.value + 10.dp) * lesson.startTime.hour + 16.dp
+    val height = (hourHeight.value + 10.dp) * lesson.duration - 8.dp
+    val textColor = textColorForBackground(lesson.lessonType.color)
     ElevatedCard(
         modifier
             .fillMaxWidth()
@@ -43,10 +48,11 @@ fun LessonBlock(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(lesson.lessonType.color)
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -54,17 +60,20 @@ fun LessonBlock(
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = textColor
             )
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = lesson.startTime.toString() + " - " + lesson.endTime.toString(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = textColor
             )
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = lesson.room,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = textColor
             )
         }
     }

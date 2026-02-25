@@ -32,7 +32,8 @@ import androidx.compose.ui.window.Dialog
 @Composable
 fun AppTimePicker(
     modifier: Modifier = Modifier,
-    timePickerState: TimePickerState
+    timePickerState: TimePickerState,
+    enabled: Boolean = true
 ) {
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
 
@@ -74,7 +75,9 @@ fun AppTimePicker(
     val formattedTime = String.format("%02d:%02d", timePickerState.hour, timePickerState.minute)
     Text(
         formattedTime,
-        modifier.clickable{
+        modifier.clickable(
+            enabled
+        ){
             showTimePicker = true
         }.padding(16.dp),
         fontSize = 20.sp
