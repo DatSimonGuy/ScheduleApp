@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
+import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
@@ -32,7 +33,8 @@ fun TimeTable(
     hourHeight: HourHeight,
     lessons: List<Lesson>,
     onLessonClick: (String) -> Unit,
-    lessonBlockDisplayStyle: LessonBlockDisplayStyle
+    lessonBlockDisplayStyle: LessonBlockDisplayStyle,
+    date: LocalDate
 ) {
     val scrollState = rememberScrollState()
     Column (
@@ -79,7 +81,7 @@ fun TimeTable(
                     }
                 }
                 lessons.forEach {
-                    LessonBlock(hourHeight = hourHeight, lesson = it, onClick = onLessonClick, displayStyle = lessonBlockDisplayStyle)
+                    LessonBlock(hourHeight = hourHeight, lesson = it, onClick = onLessonClick, displayStyle = lessonBlockDisplayStyle, date = date)
                 }
             }
         }

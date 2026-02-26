@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.CompactDis
 import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.ExtendedDisplay
 import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.NormalDisplay
 import com.example.scheduleapp.utils.textColorForBackground
+import java.time.LocalDate
 
 
 @Composable
@@ -32,7 +34,8 @@ fun LessonBlock(
     hourHeight: HourHeight,
     lesson: Lesson,
     onClick: (String) -> Unit,
-    displayStyle: LessonBlockDisplayStyle
+    displayStyle: LessonBlockDisplayStyle,
+    date: LocalDate
 ) {
     val topOffset = (hourHeight.value + 10.dp) * lesson.startTime.hour + 16.dp
     val height = (hourHeight.value + 10.dp) * lesson.duration - 8.dp
@@ -52,6 +55,7 @@ fun LessonBlock(
             .fillMaxWidth()
             .offset(y = topOffset)
             .height(height)
+            .alpha(if (lesson.isActive(date)) 1.0f else 0.5f)
             .clickable(onClick = {
                 onClick(lesson.id)
             }),

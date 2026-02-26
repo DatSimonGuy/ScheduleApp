@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.data.classes.LessonType
@@ -53,7 +56,9 @@ fun LessonFormFields(
             onValueChange = {
                 state.subject.value = it
             },
-            isError = subjectError != null
+            singleLine = true,
+            isError = subjectError != null,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
         subjectError?.let {
             Text(
@@ -69,7 +74,9 @@ fun LessonFormFields(
             label = { Text("Room") },
             onValueChange = {
                 state.room.value = it
-            }
+            },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
         OutlinedTextField(
             value = state.teacher.value,
@@ -78,7 +85,8 @@ fun LessonFormFields(
             label = { Text("Teacher") },
             onValueChange = {
                 state.teacher.value = it
-            }
+            },
+            singleLine = true,
         )
         FormSelector(
             fieldModifier,

@@ -29,4 +29,13 @@ data class Lesson(
     val activeDays: List<LocalDate>?
 ) {
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
+    fun isActive(
+        date: LocalDate
+    ): Boolean {
+        return when(occurrence) {
+            Occurrence.ONCE -> startDate?.isEqual(date)
+            Occurrence.SELECTED_DAYS -> activeDays?.contains(date) == true
+            else -> if(startDate != null && endDate != null) date in startDate..endDate else false
+        } == true
+    }
 }

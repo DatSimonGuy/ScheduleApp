@@ -64,7 +64,7 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
             startDate = if (occurrence.value == Occurrence.ONCE.name)
                 startDate.getSelectedDate()
             else dateRange.getSelectedStartDate() ?: LocalDate.now(),
-            endDate = dateRange.getSelectedEndDate(),
+            endDate = dateRange.getSelectedEndDate() ?: LocalDate.now(),
             activeDays = selectedDates.toList()
         )
         return lesson to (null to null)
