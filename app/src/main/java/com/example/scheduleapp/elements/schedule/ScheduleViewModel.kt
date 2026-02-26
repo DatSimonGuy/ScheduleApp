@@ -71,10 +71,13 @@ class ScheduleViewModel(
         }
     }
 
-    fun addSchedule(scheduleName: String, schedule: Schedule) {
-        viewModelScope.launch {
-            scheduleRepository.saveSchedule(scheduleName, schedule)
+    suspend fun addSchedule(scheduleName: String, schedule: Schedule): String? {
+        val error = scheduleRepository.saveSchedule(scheduleName, schedule)
+        error?.let {
+            return it
         }
+        setCurrentSchedule(scheduleName)
+        return null
     }
 
     fun setCurrentSchedule(name: String) {

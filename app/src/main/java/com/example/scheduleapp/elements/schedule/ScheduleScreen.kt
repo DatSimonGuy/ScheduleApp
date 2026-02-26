@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ import com.example.scheduleapp.elements.forms.NewScheduleForm
 import com.example.scheduleapp.elements.navigation.ScheduleDestination
 import com.example.scheduleapp.elements.schedule.parts.AddSchedulePrompt
 import com.example.scheduleapp.elements.timetable.TimeTable
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -57,6 +59,7 @@ fun ScheduleScreen(
     var showAddLessonFrom by rememberSaveable { mutableStateOf(false) }
     val currentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
     val snackHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
 
     LaunchedEffect(ui.selectedSchedule) {
@@ -79,7 +82,15 @@ fun ScheduleScreen(
         NewScheduleForm(
             onDismissRequest = { showScheduleForm = false },
             onSuccess = { name, schedule ->
-                viewModel.addSchedule(name, schedule)
+                scope.launch {
+                    val error = viewModel.addSchedule(name, schedule)
+                    error?.let {
+                        snackHostState.showSnackbar(
+                            it,
+                            withDismissAction = true
+                        )
+                    }
+                }
             }
         )
     }

@@ -2,7 +2,9 @@ package com.example.scheduleapp.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.example.scheduleapp.data.api.DSBApi
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.datastore.scheduleDataStore
@@ -13,12 +15,22 @@ import java.time.DayOfWeek
 class ScheduleRepository(private val context: Context) {
     val scheduleMap: Flow<ScheduleMap> = context.scheduleDataStore.data
 
-    suspend fun saveSchedule(name: String, schedule: Schedule) {
+    suspend fun saveSchedule(name: String, schedule: Schedule): String? {
+        if (schedule.saveLocation == SaveLocation.DSB && schedule.chatId != null) {
+            val api = DSBApi(schedule.chatId, "")
+            val (presentSchedule, _) = api.getSchedule(name)
+            if (presentSchedule != null) {
+                return "This schedule already exists"
+            }
+            val error = api.createSchedule(name)
+            error?.let { return it }
+        }
         context.scheduleDataStore.updateData { currentDb ->
             currentDb.copy(
                 schedules = currentDb.schedules + (name to schedule)
             )
         }
+        return null
     }
 
     suspend fun deleteSchedule(name: String) {
