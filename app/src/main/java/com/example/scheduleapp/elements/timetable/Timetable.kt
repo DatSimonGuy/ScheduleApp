@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @Composable
 fun TimeTable(
@@ -37,12 +40,20 @@ fun TimeTable(
     date: LocalDate
 ) {
     val scrollState = rememberScrollState()
+    val dateFormatter = DateTimeFormatter
+        .ofLocalizedDate(FormatStyle.SHORT)
+        .withLocale(Locale.getDefault())
     Column (
         modifier.fillMaxSize()
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = title,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = dateFormatter.format(date),
             textAlign = TextAlign.Center
         )
         Row (

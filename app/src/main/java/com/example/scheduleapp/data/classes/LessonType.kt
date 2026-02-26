@@ -11,7 +11,8 @@ enum class LessonType (val color: Color) {
     LECTURE(Color.Blue),
     EXERCISE(Color.Magenta),
     SEMINAR(Color.Green),
-    PROJECT(Color(0xFFFFA500));
+    PROJECT(Color(0xFFFFA500)),
+    EXAM(Color.Yellow);
 
     @StringRes
     fun getDisplayName(): Int {
@@ -21,6 +22,7 @@ enum class LessonType (val color: Color) {
             EXERCISE -> R.string.exercise
             SEMINAR -> R.string.seminar
             PROJECT -> R.string.project
+            EXAM -> R.string.exam
         }
     }
 }

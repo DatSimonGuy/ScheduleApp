@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.CompactDisplay
 import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.ExtendedDisplay
@@ -56,6 +57,7 @@ fun LessonBlock(
             .offset(y = topOffset)
             .height(height)
             .alpha(if (lesson.isActive(date)) 1.0f else 0.5f)
+            .zIndex(if (lesson.isActive(date)) 1f else 0f)
             .clickable(onClick = {
                 onClick(lesson.id)
             }),

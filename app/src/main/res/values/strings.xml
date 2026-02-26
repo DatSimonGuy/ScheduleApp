@@ -13,4 +13,5 @@
     <string name="everyTwo">Every two</string>
     <string name="everyThree">Every three</string>
     <string name="selectedDays">Selected days</string>
+    <string name="exam">Exam</string>
 </resources>
