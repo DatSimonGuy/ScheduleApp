@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.example.scheduleapp.data.api.DSBApi
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.ScheduleRepository
@@ -69,19 +71,9 @@ class ScheduleViewModel(
         }
     }
 
-    fun addNewSchedule(name: String, isPrivate: Boolean) {
+    fun addSchedule(scheduleName: String, schedule: Schedule) {
         viewModelScope.launch {
-            if (isPrivate) {
-                scheduleRepository.saveSchedule(name, Schedule())
-                if (uiState.value.selectedSchedule == null) {
-                    settingsRepository.setDefaultSchedule(name)
-                }
-                _uiState.update {
-                    it.copy(
-                        selectedSchedule = name
-                    )
-                }
-            }
+            scheduleRepository.saveSchedule(scheduleName, schedule)
         }
     }
 

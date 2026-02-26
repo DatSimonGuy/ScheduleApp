@@ -6,6 +6,8 @@ import java.time.DayOfWeek
 @Serializable
 data class Schedule(
     val lessons: Map<DayOfWeek, List<Lesson>> = DayOfWeek.entries.associateWith { emptyList() },
+    val saveLocation: SaveLocation = SaveLocation.LOCAL,
+    val chatId: Long? = null
 )
 
 @Serializable

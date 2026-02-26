@@ -15,17 +15,23 @@ import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.scheduleapp.data.api.DSBApi
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.elements.formElements.ChoiceDialog
 import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
@@ -50,13 +56,30 @@ fun ScheduleScreen(
     var showScheduleSelector by rememberSaveable { mutableStateOf(false) }
     var showAddLessonFrom by rememberSaveable { mutableStateOf(false) }
     val currentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
+    val snackHostState = remember { SnackbarHostState() }
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
+
+    LaunchedEffect(ui.selectedSchedule) {
+        if (currentSchedule != null && currentSchedule?.saveLocation == SaveLocation.DSB) {
+            val (remoteSchedule, error) = DSBApi(currentSchedule!!.chatId!!, "")
+                .getSchedule(ui.selectedSchedule ?: "")
+            if (error != null) {
+                snackHostState.showSnackbar(
+                    error,
+                    withDismissAction = true
+                )
+            }
+            if (remoteSchedule != null) {
+                viewModel.addSchedule(ui.selectedSchedule ?: "", remoteSchedule)
+            }
+        }
+    }
 
     if (showScheduleForm) {
         NewScheduleForm(
             onDismissRequest = { showScheduleForm = false },
-            onSuccess = { name, isPrivate ->
-                viewModel.addNewSchedule(name, isPrivate)
+            onSuccess = { name, schedule ->
+                viewModel.addSchedule(name, schedule)
             }
         )
     }
@@ -140,6 +163,11 @@ fun ScheduleScreen(
                     icon = { Icon(Icons.Default.AddCircleOutline, "") }
                 )
             }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackHostState
+            )
         }
     ) { paddingValues ->
         HorizontalPager(

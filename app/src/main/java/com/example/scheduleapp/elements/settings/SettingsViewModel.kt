@@ -81,19 +81,15 @@ class SettingsViewModel(
         }
     }
 
-    fun addNewSchedule(name: String, isPrivate: Boolean, schedule: Schedule = Schedule()) {
+    fun addNewSchedule(name: String, schedule: Schedule = Schedule()) {
         viewModelScope.launch {
-            if (isPrivate) {
-                scheduleRepository.saveSchedule(name, schedule)
-            }
+            scheduleRepository.saveSchedule(name, schedule)
         }
     }
 
     fun deleteSchedule(name: String, isPrivate: Boolean) {
         viewModelScope.launch {
-            if (isPrivate) {
-                scheduleRepository.deleteSchedule(name)
-            }
+            scheduleRepository.deleteSchedule(name)
         }
         if (uiState.value.schedules.count() < 1) {
             onDefaultScheduleChange(null)

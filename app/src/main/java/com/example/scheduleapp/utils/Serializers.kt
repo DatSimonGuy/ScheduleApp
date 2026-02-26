@@ -17,6 +17,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 object LocalTimeSerializer : KSerializer<LocalTime> {
     override val descriptor = PrimitiveSerialDescriptor("LocalTime", PrimitiveKind.STRING)
@@ -25,9 +26,16 @@ object LocalTimeSerializer : KSerializer<LocalTime> {
 }
 
 object LocalDateSerializer : KSerializer<LocalDate> {
+    private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     override val descriptor = PrimitiveSerialDescriptor("LocalDate", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: LocalDate) = encoder.encodeString(value.toString())
-    override fun deserialize(decoder: Decoder): LocalDate = LocalDate.parse(decoder.decodeString())
+    override fun serialize(encoder: Encoder, value: LocalDate) = encoder.encodeString(formatter.format(value))
+    override fun deserialize(decoder: Decoder): LocalDate = decoder.decodeString().let {
+        if(it.isEmpty()) {
+            LocalDate.now()
+        } else {
+            LocalDate.parse(it, formatter)
+        }
+    }
 }
 
 object LocalDateListSerializer : KSerializer<List<LocalDate>> {

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -14,6 +16,15 @@ android {
     compileSdk = 36
 
     defaultConfig {
+        val keystoreFile = project.rootProject.file("local.properties")
+        val properties = Properties()
+        properties.load(keystoreFile.inputStream())
+        val apiServerUrl = properties.getProperty("API_SERVER_URL") ?: ""
+        buildConfigField(
+            type = "String",
+            name = "API_SERVER_URL",
+            value = apiServerUrl
+        )
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
@@ -38,11 +49,14 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("io.ktor:ktor-client-core:3.4.0")
+    implementation("io.ktor:ktor-client-cio:3.4.0")
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

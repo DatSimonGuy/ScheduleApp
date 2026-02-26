@@ -49,6 +49,9 @@ fun LessonBlock(
             height < 150.dp -> LessonBlockDisplayStyle.NORMAL
             else -> LessonBlockDisplayStyle.EXTENDED
         }
+        if (style.ordinal > displayStyle.ordinal) {
+            style = displayStyle
+        }
     }
 
     ElevatedCard(

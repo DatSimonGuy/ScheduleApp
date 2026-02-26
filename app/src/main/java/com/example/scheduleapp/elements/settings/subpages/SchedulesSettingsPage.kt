@@ -51,12 +51,15 @@ fun SchedulesSettingsPage(
     if (newScheduleFormExpanded) {
         NewScheduleForm(
             onDismissRequest = { newScheduleFormExpanded = false; editedSchedule = null },
-            onSuccess = { name, isPrivate ->
-                viewModel.addNewSchedule(name, isPrivate, editedSchedule?.third ?: Schedule())
+            onSuccess = { name, schedule ->
+                viewModel.addNewSchedule(name, editedSchedule?.third ?: schedule)
                 editedSchedule?.let { viewModel.deleteSchedule(it.first, it.second) }
+                viewModel.addNewSchedule(name, schedule)
+                newScheduleFormExpanded = false
             },
             editedSchedule?.first ?: "",
-            editedSchedule?.second ?: true,
+            editedSchedule?.second ?: false,
+            editedSchedule?.third?.chatId
         )
     }
     Scaffold(
