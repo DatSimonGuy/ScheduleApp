@@ -2,7 +2,6 @@ package com.example.scheduleapp.utils
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
-import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
@@ -20,9 +19,15 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 object LocalTimeSerializer : KSerializer<LocalTime> {
-    override val descriptor = PrimitiveSerialDescriptor("LocalTime", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: LocalTime) = encoder.encodeString(value.toString())
-    override fun deserialize(decoder: Decoder): LocalTime = LocalTime.parse(decoder.decodeString())
+    private val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("LocalTime", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: LocalTime) {
+        encoder.encodeString(value.format(formatter))
+    }
+    override fun deserialize(decoder: Decoder): LocalTime {
+        return LocalTime.parse(decoder.decodeString(), formatter)
+    }
 }
 
 object LocalDateSerializer : KSerializer<LocalDate> {

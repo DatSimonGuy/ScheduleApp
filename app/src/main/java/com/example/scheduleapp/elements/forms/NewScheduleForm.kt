@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toString
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,20 +23,18 @@ import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.elements.formElements.ToggleCard
+import com.example.scheduleapp.elements.forms.states.ScheduleFormState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewScheduleForm(
     onDismissRequest: () -> Unit,
     onSuccess: (String, Schedule) -> Unit,
-    initialName: String = "",
-    initialPrivateState: Boolean = false,
-    initialChatId: Long? = null
+    formState: ScheduleFormState,
+    extraFieldsEnabled: Boolean = true
 ) {
-    var scheduleName by rememberSaveable { mutableStateOf(initialName) }
-    var chatId by rememberSaveable { mutableStateOf(initialChatId?.toString() ?: "") }
-    var isBot by rememberSaveable { mutableStateOf(initialPrivateState) }
     var chatIdError by rememberSaveable { mutableStateOf<String?>(null) }
+    var chatId by rememberSaveable { mutableStateOf(formState.chatId.value?.toString() ?: "") }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest
@@ -48,8 +45,8 @@ fun NewScheduleForm(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 8.dp),
             singleLine = true,
-            value = scheduleName,
-            onValueChange = { scheduleName = it },
+            value = formState.name.value,
+            onValueChange = { formState.name.value = it },
             label = { Text("Schedule name") }
         )
         ToggleCard(
@@ -58,12 +55,13 @@ fun NewScheduleForm(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 8.dp),
             label = "Save schedule in DSB",
-            checked = isBot,
+            checked = !formState.isPrivate.value,
+            enabled = extraFieldsEnabled,
             onCheckedChange = { value ->
-                isBot = value
+                formState.isPrivate.value = !value
             }
         )
-        if (isBot) {
+        if (!formState.isPrivate.value) {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
@@ -71,8 +69,16 @@ fun NewScheduleForm(
                     .padding(bottom = 8.dp),
                 singleLine = true,
                 value = chatId,
-                onValueChange = { chatId = it },
+                onValueChange = {
+                    try {
+                        formState.chatId.value = it.toLong()
+                    } catch (_: NumberFormatException) {
+                        formState.chatId.value = null
+                    }
+                    chatId = it
+                },
                 label = { Text("Chat id") },
+                enabled = extraFieldsEnabled,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = chatIdError != null
             )
@@ -99,20 +105,19 @@ fun NewScheduleForm(
             }
             Button(
                 onClick = {
-                    if(chatId.isEmpty() && isBot) {
+                    if(formState.chatId.value == null && !formState.isPrivate.value) {
                         chatIdError = "Chat id cannot be empty"
                         return@Button
                     } else {
                         chatIdError = null
                     }
                     onSuccess(
-                        scheduleName,
+                        formState.name.value,
                         Schedule(
-                            saveLocation = if(isBot) SaveLocation.DSB else SaveLocation.LOCAL,
-                            chatId = if(isBot) chatId.toLong() else null
+                            saveLocation = if(formState.isPrivate.value) SaveLocation.LOCAL else SaveLocation.DSB,
+                            chatId = if(formState.isPrivate.value) null else formState.chatId.value
                         )
                     )
-                    onDismissRequest()
                 }
             ) {
                 Text("Ok")

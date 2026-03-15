@@ -1,19 +1,16 @@
 package com.example.scheduleapp.elements.settings
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
+import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
 import com.example.scheduleapp.elements.timetable.HourHeight
 import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,12 +20,14 @@ data class Settings(
     val lessonBlockDisplayStyle: LessonBlockDisplayStyle = LessonBlockDisplayStyle.NORMAL,
     val schedules: ScheduleMap = ScheduleMap(),
     var addScheduleInFab: Boolean = false,
-    var defaultSchedule: String? = null
+    var defaultSchedule: String? = null,
+    var recentChatId: Long? = null
 )
 
 class SettingsViewModel(
     private val repository: SettingsRepository,
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val preferenceRepository: PreferenceRepository
 ) : ViewModel() {
     val _uiState = MutableStateFlow(Settings())
     val uiState = _uiState.asStateFlow()
@@ -51,6 +50,15 @@ class SettingsViewModel(
                 _uiState.update { currentState ->
                     currentState.copy(
                         schedules = scheduleMap
+                    )
+                }
+            }
+        }
+        viewModelScope.launch {
+            preferenceRepository.preferences.collect { preferences ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        recentChatId = preferences.recentChatId
                     )
                 }
             }
@@ -81,18 +89,43 @@ class SettingsViewModel(
         }
     }
 
-    fun addNewSchedule(name: String, schedule: Schedule = Schedule()) {
-        viewModelScope.launch {
-            scheduleRepository.saveSchedule(name, schedule)
+    suspend fun addNewSchedule(name: String, schedule: Schedule = Schedule()): String? {
+        val error = scheduleRepository.saveSchedule(name, schedule)
+        error?.let {
+            return it
         }
+        return null
     }
 
-    fun deleteSchedule(name: String, isPrivate: Boolean) {
-        viewModelScope.launch {
-            scheduleRepository.deleteSchedule(name)
+    suspend fun importSchedules(chatId: Long, list: List<String>): String? {
+        val error = scheduleRepository.importSchedules(chatId, list)
+        error?.let {
+            return it
         }
+        return null
+    }
+
+    suspend fun getSchedules(chatId: Long): Pair<List<String>?, String?> {
+        return scheduleRepository.getAvailableSchedules(chatId)
+    }
+
+    suspend fun removeSchedule(name: String, schedule: Schedule, localOnly: Boolean): String? {
+        val error = scheduleRepository.removeSchedule(name, schedule, localOnly)
+        error?.let { return it }
         if (uiState.value.schedules.count() < 1) {
             onDefaultScheduleChange(null)
+        }
+        return null
+    }
+
+    suspend fun editSchedule(oldName: String, newName: String, schedule: Schedule): String? {
+        val error = scheduleRepository.editSchedule(oldName, newName, schedule)
+        return error
+    }
+
+    fun setScheduleFormPreferences(chatId: Long? = null) {
+        viewModelScope.launch {
+            preferenceRepository.setRecentChatId(chatId)
         }
     }
 }

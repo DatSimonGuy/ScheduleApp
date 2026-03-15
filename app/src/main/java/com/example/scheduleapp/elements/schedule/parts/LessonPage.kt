@@ -1,5 +1,6 @@
 package com.example.scheduleapp.elements.schedule.parts
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,7 +51,7 @@ fun LessonPage(
 ) {
     val ui = viewModel.uiState.collectAsStateWithLifecycle()
     var lesson: Lesson? = null
-    val formState = rememberLessonFormState(lesson, selectedDay)
+    val formState = rememberLessonFormState(null, selectedDay)
     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
     var editing by rememberSaveable { mutableStateOf(false) }
     var subjectError by rememberSaveable { mutableStateOf<String?>(null) }
@@ -61,6 +62,7 @@ fun LessonPage(
         lesson?.let {
             formState.fillFields(it)
         }
+        Log.e("", lesson?.id.toString())
     }
 
     if (showConfirmDialog) {
@@ -98,7 +100,10 @@ fun LessonPage(
                         }
                         Button(
                             onClick = {
-                                viewModel.removeLesson(ui.value.selectedSchedule ?: "", lessonId)
+                                viewModel.removeLesson(
+                                    ui.value.selectedSchedule ?: "", lessonId,
+                                    selectedDay
+                                )
                                 viewModel.navController.popBackStack()
                             }
                         ) {
@@ -150,8 +155,11 @@ fun LessonPage(
                                     timeError = errs.second
                                     return@IconButton
                                 }
-                                viewModel.updateLesson(ui.value.selectedSchedule ?: "", lesson,
-                                    DayOfWeek.valueOf(formState.dayOfWeek.value))
+                                viewModel.updateLesson(
+                                    ui.value.selectedSchedule ?: "", lesson,
+                                    selectedDay,
+                                    DayOfWeek.valueOf(formState.dayOfWeek.value)
+                                )
                                 editing = false
                             }
                         ) {

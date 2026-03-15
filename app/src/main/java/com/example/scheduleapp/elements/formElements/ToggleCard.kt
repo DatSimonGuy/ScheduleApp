@@ -28,6 +28,7 @@ fun ToggleCard(
     modifier: Modifier = Modifier,
     label: String,
     checked: Boolean,
+    enabled: Boolean = true,
     onCheckedChange: (Boolean) -> Unit
 ) {
     ElevatedCard(
@@ -45,6 +46,7 @@ fun ToggleCard(
             Spacer(Modifier.weight(1f))
             Switch(
                 checked = checked,
+                enabled = enabled,
                 onCheckedChange = { value ->
                     onCheckedChange(value)
                 }

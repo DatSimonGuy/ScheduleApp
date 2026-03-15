@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,11 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.data.api.DSBApi
-import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.elements.formElements.ChoiceDialog
 import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
+import com.example.scheduleapp.elements.forms.states.rememberScheduleFormState
 import com.example.scheduleapp.elements.navigation.ScheduleDestination
 import com.example.scheduleapp.elements.schedule.parts.AddSchedulePrompt
 import com.example.scheduleapp.elements.timetable.TimeTable
@@ -44,7 +45,6 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -57,28 +57,25 @@ fun ScheduleScreen(
     var fabExpanded by rememberSaveable { mutableStateOf(false) }
     var showScheduleSelector by rememberSaveable { mutableStateOf(false) }
     var showAddLessonFrom by rememberSaveable { mutableStateOf(false) }
+    var isRefreshing by rememberSaveable { mutableStateOf(false) }
     val currentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
     val snackHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val scheduleFormState = rememberScheduleFormState()
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
 
     LaunchedEffect(ui.selectedSchedule) {
-        if (currentSchedule != null && currentSchedule?.saveLocation == SaveLocation.DSB) {
-            val (remoteSchedule, error) = DSBApi(currentSchedule!!.chatId!!, "")
-                .getSchedule(ui.selectedSchedule ?: "")
-            if (error != null) {
-                snackHostState.showSnackbar(
-                    error,
-                    withDismissAction = true
-                )
-            }
-            if (remoteSchedule != null) {
-                viewModel.addSchedule(ui.selectedSchedule ?: "", remoteSchedule)
+        ui.selectedSchedule?.let { selected ->
+            currentSchedule?.let {
+                viewModel.updateSchedule(selected, it)
             }
         }
     }
 
     if (showScheduleForm) {
+        scheduleFormState.fillFields(
+            chatId = ui.preferences?.recentChatId
+        )
         NewScheduleForm(
             onDismissRequest = { showScheduleForm = false },
             onSuccess = { name, schedule ->
@@ -90,8 +87,14 @@ fun ScheduleScreen(
                             withDismissAction = true
                         )
                     }
+                    viewModel.setRecentChatId(
+                        schedule.chatId
+                    )
+                    scheduleFormState.fillFields("")
                 }
-            }
+                showScheduleForm = false
+            },
+            scheduleFormState
         )
     }
 
@@ -116,7 +119,15 @@ fun ScheduleScreen(
                 showAddLessonFrom = false
             },
             onSuccess = { lesson, selectedDay ->
-                viewModel.addNewLesson(selectedDay, lesson)
+                scope.launch {
+                    val error = viewModel.addNewLesson(selectedDay, lesson)
+                    error?.let {
+                        snackHostState.showSnackbar(
+                            error,
+                            withDismissAction = true
+                        )
+                    }
+                }
             },
             DayOfWeek.of(pagerState.currentPage%7+1)
         )
@@ -176,26 +187,39 @@ fun ScheduleScreen(
             }
         },
         snackbarHost = {
-            SnackbarHost(
-                hostState = snackHostState
-            )
+            SnackbarHost(snackHostState)
         }
     ) { paddingValues ->
-        HorizontalPager(
+        PullToRefreshBox(
             modifier = Modifier.padding(paddingValues),
-            state = pagerState
-        ) { page ->
-            val day = DayOfWeek.of(page % 7 + 1)
-            TimeTable(
-                title = "${ui.selectedSchedule} - ${day.getDisplayName(TextStyle.FULL, Locale.getDefault())}",
-                hourHeight = ui.hourHeight,
-                lessons = currentSchedule?.lessons[day] ?: emptyList(),
-                onLessonClick = {
-                    navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))
-                },
-                lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
-                date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong())
-            )
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                scope.launch {
+                    ui.selectedSchedule?.let { selected ->
+                        currentSchedule?.let {
+                            viewModel.updateSchedule(selected, it)
+                        }
+                    }
+                    isRefreshing = false
+                }
+            }
+        ) {
+            HorizontalPager(
+                state = pagerState
+            ) { page ->
+                val day = DayOfWeek.of(page % 7 + 1)
+                TimeTable(
+                    title = "${ui.selectedSchedule} - ${day.getDisplayName(TextStyle.FULL, Locale.getDefault())}",
+                    hourHeight = ui.hourHeight,
+                    lessons = currentSchedule?.lessons[day] ?: emptyList(),
+                    onLessonClick = {
+                        navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))
+                    },
+                    lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
+                    date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong())
+                )
+            }
         }
     }
 }

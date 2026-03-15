@@ -1,6 +1,5 @@
 package com.example.scheduleapp.data.datastore
 
-import android.R
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey

@@ -1,19 +1,17 @@
 package com.example.scheduleapp.elements.schedule
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.scheduleapp.data.api.DSBApi
 import com.example.scheduleapp.data.classes.Lesson
-import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
+import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
+import com.example.scheduleapp.data.repository.UserPreferences
 import com.example.scheduleapp.elements.timetable.HourHeight
 import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +20,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 
 data class ScheduleUiState(
@@ -31,12 +28,14 @@ data class ScheduleUiState(
     val schedules: ScheduleMap = ScheduleMap(),
     val selectedSchedule: String? = null,
     val showAddSchedule: Boolean = false,
+    val preferences: UserPreferences? = null,
 )
 
 class ScheduleViewModel(
     val navController: NavController,
     val settingsRepository: SettingsRepository,
-    val scheduleRepository: ScheduleRepository
+    val scheduleRepository: ScheduleRepository,
+    val preferenceRepository: PreferenceRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ScheduleUiState())
     val uiState = _uiState.asStateFlow()
@@ -69,6 +68,15 @@ class ScheduleViewModel(
                 }
             }
         }
+        viewModelScope.launch {
+            preferenceRepository.preferences.collect { preferences ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        preferences = preferences
+                    )
+                }
+            }
+        }
     }
 
     suspend fun addSchedule(scheduleName: String, schedule: Schedule): String? {
@@ -80,6 +88,10 @@ class ScheduleViewModel(
         return null
     }
 
+    suspend fun updateSchedule(scheduleName: String, schedule: Schedule): String? {
+        return scheduleRepository.updateSchedule(scheduleName, schedule)
+    }
+
     fun setCurrentSchedule(name: String) {
         _uiState.update {
             it.copy(
@@ -88,25 +100,33 @@ class ScheduleViewModel(
         }
     }
 
-    fun addNewLesson(dayOfWeek: DayOfWeek, lesson: Lesson) {
+    suspend fun addNewLesson(dayOfWeek: DayOfWeek, lesson: Lesson): String? {
+        return scheduleRepository.addLesson(
+            uiState.value.selectedSchedule ?: "",
+            dayOfWeek,
+            lesson
+        )
+    }
+
+    fun updateLesson(scheduleName: String, lesson: Lesson, oldDay: DayOfWeek, newDay: DayOfWeek) {
         viewModelScope.launch {
-            scheduleRepository.addLesson(uiState.value.selectedSchedule ?: "", dayOfWeek, lesson)
+            scheduleRepository.updateLesson(scheduleName, lesson, oldDay, newDay)
         }
     }
 
-    fun updateLesson(scheduleName: String, lesson: Lesson, dayOfWeek: DayOfWeek) {
+    fun removeLesson(scheduleName: String, lessonId: String, dayOfWeek: DayOfWeek) {
         viewModelScope.launch {
-            scheduleRepository.updateLesson(scheduleName, lesson, dayOfWeek)
-        }
-    }
-
-    fun removeLesson(scheduleName: String, lessonId: String) {
-        viewModelScope.launch {
-            scheduleRepository.removeLesson(scheduleName, lessonId)
+            scheduleRepository.removeLesson(scheduleName, lessonId, dayOfWeek)
         }
     }
 
     suspend fun getLesson(scheduleName: String, id: String): Lesson? {
         return scheduleRepository.getLesson(scheduleName, id)
+    }
+
+    fun setRecentChatId(chatId: Long?) {
+        viewModelScope.launch {
+            preferenceRepository.setRecentChatId(chatId)
+        }
     }
 }

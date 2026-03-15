@@ -1,6 +1,5 @@
 package com.example.scheduleapp.data.api
 
-import android.util.Log
 import com.example.scheduleapp.BuildConfig
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.data.classes.SaveLocation
@@ -12,10 +11,12 @@ import io.ktor.client.request.get
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.time.DayOfWeek
-import java.util.UUID
 
 class DSBApi(
     val chatId: Long,
@@ -34,8 +35,33 @@ class DSBApi(
                 "${baseUrl}/add_lesson",
                 formParameters = parameters {
                     lessonJson.forEach { (key, value) ->
-                        append(key, value.toString())
+                        val formValue = when (value) {
+                            is JsonPrimitive -> value.content
+                            else -> value.jsonArray.joinToString(";") { it.jsonPrimitive.content }
+                        }
+                        append(key, formValue)
                     }
+                    append("plan_name", scheduleName)
+                    append("day", dayOfWeek.ordinal.toString())
+                    append("chat_id", chatId.toString())
+                }
+            )
+            if (!response.status.isSuccess()) {
+                errorString = response.body()
+            }
+        } catch(e: Exception) {
+            errorString = connectionError
+        }
+        return errorString
+    }
+
+    suspend fun removeLesson(lessonId: String, dayOfWeek: DayOfWeek, scheduleName: String): String? {
+        var errorString: String? = null
+        try {
+            val response = client.submitForm(
+                "${baseUrl}/remove_lesson",
+                formParameters = parameters {
+                    append("id", lessonId)
                     append("plan_name", scheduleName)
                     append("day", dayOfWeek.ordinal.toString())
                     append("chat_id", chatId.toString())
@@ -69,11 +95,48 @@ class DSBApi(
         return errorString
     }
 
+    suspend fun removeSchedule(scheduleName: String): String? {
+        var errorString: String? = null
+        try {
+            val response = client.submitForm(
+                "${baseUrl}/remove_schedule",
+                formParameters = parameters {
+                    append("schedule_name", scheduleName)
+                    append("chat_id", chatId.toString())
+                }
+            )
+            if (!response.status.isSuccess()) {
+                errorString = response.body()
+            }
+        } catch (_: Exception) {
+            errorString = connectionError
+        }
+        return errorString
+    }
+
+    suspend fun editSchedule(oldScheduleName: String, newScheduleName: String): String? {
+        var errorString: String? = null
+        try {
+            val response = client.submitForm(
+                "${baseUrl}/edit_schedule",
+                formParameters = parameters {
+                    append("schedule_name", oldScheduleName)
+                    append("new_name", newScheduleName)
+                    append("chat_id", chatId.toString())
+                }
+            )
+            if (!response.status.isSuccess()) {
+                errorString = response.body()
+            }
+        } catch (_: Exception) {
+            errorString = connectionError
+        }
+        return errorString
+    }
+
     suspend fun getSchedule(scheduleName: String): Pair<Schedule?, String?> {
         var errorString: String? = null
         var schedule: Schedule? = null
-
-        Log.e("", "Getting schedule")
 
         try {
             val response = client.get("${baseUrl}/get_plan?group_id=${chatId}&plan_name=${scheduleName}")
@@ -83,9 +146,6 @@ class DSBApi(
                 val lessons: List<List<Lesson>> = Json.decodeFromString(response.body())
                 schedule = Schedule(
                     lessons = lessons.withIndex().associate { (index, lessons) ->
-                        lessons.forEach {
-                            it.id = UUID.randomUUID().toString()
-                        }
                         DayOfWeek.of(index+1) to lessons
                     },
                     chatId = chatId,
@@ -97,5 +157,23 @@ class DSBApi(
         }
 
         return schedule to errorString
+    }
+
+    suspend fun getSchedules(chatId: Long): Pair<List<String>?, String?> {
+        var errorString: String? = null
+        var schedules: List<String>? = null
+
+        try {
+            val response = client.get("${baseUrl}/plans?chat_id=${chatId}")
+            if (!response.status.isSuccess()) {
+                errorString = response.body()
+            } else {
+                schedules = Json.decodeFromString(response.body())
+            }
+        } catch (e: Exception) {
+            errorString = connectionError
+        }
+
+        return schedules to errorString
     }
 }

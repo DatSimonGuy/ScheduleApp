@@ -1,27 +1,22 @@
 package com.example.scheduleapp.elements.navigation
 
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
 import com.example.scheduleapp.elements.schedule.ScheduleScreen
-import com.example.scheduleapp.elements.settings.SettingsScreen
-import com.example.scheduleapp.elements.settings.SettingsViewModel
-import com.example.scheduleapp.elements.settings.SettingsViewModelFactory
-import com.example.scheduleapp.elements.schedule.ScheduleViewModel
 import com.example.scheduleapp.elements.schedule.ScheduleViewModelFactory
 import com.example.scheduleapp.elements.schedule.parts.LessonPage
+import com.example.scheduleapp.elements.settings.SettingsScreen
+import com.example.scheduleapp.elements.settings.SettingsViewModelFactory
 import com.example.scheduleapp.elements.settings.subpages.AboutSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.AppearanceSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.SchedulesSettingsPage
@@ -42,12 +37,25 @@ fun AppNavHost(
         ScheduleRepository(context)
     }
 
+    val preferenceRepository = remember {
+        PreferenceRepository(context)
+    }
+
     val settingsVMFactory = remember {
-        SettingsViewModelFactory(settingsRepository, scheduleRepository)
+        SettingsViewModelFactory(
+            settingsRepository,
+            scheduleRepository,
+            preferenceRepository
+        )
     }
 
     val scheduleVMFactory = remember {
-        ScheduleViewModelFactory(navController, settingsRepository, scheduleRepository)
+        ScheduleViewModelFactory(
+            navController,
+            settingsRepository,
+            scheduleRepository,
+            preferenceRepository
+        )
     }
 
     NavHost(
