@@ -64,14 +64,6 @@ fun ScheduleScreen(
     val scheduleFormState = rememberScheduleFormState()
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
 
-    LaunchedEffect(ui.selectedSchedule) {
-        ui.selectedSchedule?.let { selected ->
-            currentSchedule?.let {
-                viewModel.updateSchedule(selected, it)
-            }
-        }
-    }
-
     if (showScheduleForm) {
         scheduleFormState.fillFields(
             chatId = ui.preferences?.recentChatId

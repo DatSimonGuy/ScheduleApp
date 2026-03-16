@@ -80,13 +80,11 @@ fun SchedulesSettingsPage(
 
     if (showDeleteDialog) {
         val scheduleName = selectionMap.filter { it.value }.keys.firstOrNull() ?: ""
-        val isLocal = ui.schedules[scheduleName]?.saveLocation == SaveLocation.LOCAL
         DeleteScheduleDialog(
             onDismiss = {
                 showDeleteDialog = false
             },
             scheduleName = scheduleName,
-            isLocal = isLocal,
             onSuccess = { localOnly, repeat ->
                 if (repeat) {
                     selectionMap.forEach { (name, toDelete) ->
@@ -95,10 +93,6 @@ fun SchedulesSettingsPage(
                                 return@launch
                             }
                             ui.schedules[name]?.let {
-                                val local = it.saveLocation == SaveLocation.LOCAL
-                                if (local != isLocal) {
-                                    return@launch
-                                }
                                 viewModel.removeSchedule(name, it, localOnly)
                             }
                         }
@@ -169,9 +163,9 @@ fun SchedulesSettingsPage(
                             withDismissAction = true
                         )
                     }
-                }
-                if (ui.defaultSchedule == null) {
-                    viewModel.onDefaultScheduleChange(ui.schedules.schedules.keys.first())
+                    if (ui.defaultSchedule == null) {
+                        viewModel.onDefaultScheduleChange(ui.schedules.schedules.keys.first())
+                    }
                 }
                 viewModel.setScheduleFormPreferences(
                     chatId = chatId

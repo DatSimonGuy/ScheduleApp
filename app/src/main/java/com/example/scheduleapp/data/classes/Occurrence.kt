@@ -15,7 +15,7 @@ enum class Occurrence {
     EVERY_TWO,
     @SerialName("3weeks")
     EVERY_THREE,
-    @SerialName("selected_dates")
+    @SerialName("selected")
     SELECTED_DAYS;
 
     @StringRes

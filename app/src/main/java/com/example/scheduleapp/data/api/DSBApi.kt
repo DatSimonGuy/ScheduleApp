@@ -42,7 +42,7 @@ class DSBApi(
                         append(key, formValue)
                     }
                     append("plan_name", scheduleName)
-                    append("day", dayOfWeek.ordinal.toString())
+                    append("day", dayOfWeek.value.toString())
                     append("chat_id", chatId.toString())
                 }
             )
@@ -63,7 +63,7 @@ class DSBApi(
                 formParameters = parameters {
                     append("id", lessonId)
                     append("plan_name", scheduleName)
-                    append("day", dayOfWeek.ordinal.toString())
+                    append("day", dayOfWeek.value.toString())
                     append("chat_id", chatId.toString())
                 }
             )

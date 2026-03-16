@@ -2,6 +2,7 @@ package com.example.scheduleapp.elements.settings.parts
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
@@ -28,10 +32,10 @@ import androidx.compose.ui.window.Dialog
 fun DeleteScheduleDialog(
     onDismiss: () -> Unit,
     scheduleName: String,
-    isLocal: Boolean,
     onSuccess: (Boolean, Boolean) -> Unit
 ) {
     var repeatForAll by rememberSaveable { mutableStateOf(false) }
+    var deleteLocally by rememberSaveable { mutableStateOf(true) }
 
     Dialog(
         onDismissRequest = onDismiss
@@ -39,7 +43,7 @@ fun DeleteScheduleDialog(
         Card(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.3f)
+                .fillMaxHeight(0.4f)
                 .padding(8.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -47,15 +51,9 @@ fun DeleteScheduleDialog(
                 topBar = {
                     TopAppBar(
                         title = {
-                            if (isLocal) {
-                                Text(
-                                    "Do you really want to delete $scheduleName?",
-                                )
-                            } else {
-                                Text(
-                                    "Do you want to delete $scheduleName from bot?",
-                                )
-                            }
+                            Text(
+                                "Do you really want to delete $scheduleName?",
+                            )
                         }
                     )
                 },
@@ -64,55 +62,63 @@ fun DeleteScheduleDialog(
                         Modifier.fillMaxWidth().padding(8.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        if (isLocal) {
-                            OutlinedButton(
-                                modifier = Modifier.padding(end = 8.dp),
-                                onClick = {
-                                    onSuccess(true, repeatForAll)
-                                }
-                            ) {
-                                Text("Delete")
+                        OutlinedButton(
+                            modifier = Modifier.padding(end = 8.dp),
+                            onClick = {
+                                onSuccess(deleteLocally, repeatForAll)
                             }
-                        } else {
-                            OutlinedButton(
-                                modifier = Modifier.padding(end = 8.dp),
-                                onClick = {
-                                    onSuccess(true, repeatForAll)
-                                }
-                            ) {
-                                Text("Delete locally")
+                        ) {
+                            Text("Delete")
+                        }
+                        OutlinedButton(
+                            modifier = Modifier.padding(end = 8.dp),
+                            onClick = {
+                                onDismiss()
                             }
-                            OutlinedButton(
-                                modifier = Modifier.padding(end = 8.dp),
-                                onClick = {
-                                    onSuccess(false, repeatForAll)
-                                }
-                            ) {
-                                Text("Delete in bot")
-                            }
+                        ) {
+                            Text("Cancel")
                         }
                     }
                 }
             ) { paddingValues ->
-                Row(
-                    Modifier
-                        .padding(paddingValues)
-                        .clickable {
+                Column (
+                    Modifier.padding(paddingValues)
+
+                ) {
+                    Row (
+                        Modifier.clickable {
+                            deleteLocally = !deleteLocally
+                        }
+                    ) {
+                        Checkbox(
+                            checked = !deleteLocally,
+                            onCheckedChange = {
+                                deleteLocally = it
+                            },
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            "Also delete schedules from bot",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
+                    Row (
+                        Modifier.clickable {
                             repeatForAll = !repeatForAll
                         }
-                ) {
-                    Checkbox(
-                        checked = repeatForAll,
-                        onCheckedChange = {
-                            repeatForAll = it
-                        },
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(
-                        "Repeat this action for all " +
-                                (if (isLocal) "local" else "dsb") +
-                                " schedules"
-                    )
+                    ) {
+                        Checkbox(
+                            checked = repeatForAll,
+                            onCheckedChange = {
+                                repeatForAll = it
+                            },
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            "Repeat this action for all schedules",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
                 }
             }
         }

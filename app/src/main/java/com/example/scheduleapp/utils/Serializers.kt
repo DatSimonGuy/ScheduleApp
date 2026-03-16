@@ -1,5 +1,6 @@
 package com.example.scheduleapp.utils
 
+import androidx.annotation.experimental.Experimental
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.example.scheduleapp.data.classes.ScheduleMap
@@ -12,6 +13,11 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonTransformingSerializer
+import kotlinx.serialization.json.contentOrNull
 import java.io.InputStream
 import java.io.OutputStream
 import java.time.LocalDate
@@ -43,17 +49,15 @@ object LocalDateSerializer : KSerializer<LocalDate> {
     }
 }
 
-object LocalDateListSerializer : KSerializer<List<LocalDate>> {
-    private val listSerializer = ListSerializer(LocalDateSerializer)
-
-    override val descriptor: SerialDescriptor = listSerializer.descriptor
-
-    override fun serialize(encoder: Encoder, value: List<LocalDate>) {
-        listSerializer.serialize(encoder, value)
-    }
-
-    override fun deserialize(decoder: Decoder): List<LocalDate> {
-        return listSerializer.deserialize(decoder)
+object LocalDateListSerializer : JsonTransformingSerializer<List<LocalDate>>(
+    ListSerializer(LocalDateSerializer)
+) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return if (element is JsonPrimitive && element.contentOrNull == "") {
+            JsonArray(emptyList())
+        } else {
+            element
+        }
     }
 }
 
