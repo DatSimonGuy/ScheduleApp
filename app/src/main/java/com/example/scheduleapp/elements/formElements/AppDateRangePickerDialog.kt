@@ -21,7 +21,6 @@ fun AppDateRangePickerDialog(
     onDismissRequest: () -> Unit,
     dateRangePickerState: DateRangePickerState,
     label: String,
-    onConfirm: (LocalDate, LocalDate) -> Unit,
 ) {
     DatePickerDialog(
         onDismissRequest = onDismissRequest,
@@ -29,10 +28,6 @@ fun AppDateRangePickerDialog(
             Button(
                 onClick = {
                     onDismissRequest()
-                    onConfirm(
-                        dateRangePickerState.getSelectedStartDate() ?: LocalDate.now(),
-                        dateRangePickerState.getSelectedEndDate() ?: LocalDate.now()
-                    )
                 }
             ) {
                 Text("Ok")

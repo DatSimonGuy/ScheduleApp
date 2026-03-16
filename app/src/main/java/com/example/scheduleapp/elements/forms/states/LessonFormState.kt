@@ -1,5 +1,6 @@
 package com.example.scheduleapp.elements.forms.states
 
+import android.util.Log
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api

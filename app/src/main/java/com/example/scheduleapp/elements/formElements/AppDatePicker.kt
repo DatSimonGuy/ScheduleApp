@@ -25,12 +25,14 @@ import androidx.compose.material3.getSelectedDate
 import androidx.compose.material3.getSelectedEndDate
 import androidx.compose.material3.getSelectedStartDate
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.datastore.dataStore
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,11 +43,6 @@ fun AppDatePicker(
     datePickerState: DatePickerState,
     enabled: Boolean = true
 ) {
-    var dateString = datePickerState.getSelectedDate().toString()
-    if ("null" in dateString) {
-        dateString = LocalDate.now().toString()
-    }
-    var textState = rememberTextFieldState(dateString)
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
     if (showDatePicker) {
@@ -55,9 +52,7 @@ fun AppDatePicker(
             },
             datePickerState,
             label,
-            onConfirm = {
-                textState.setTextAndPlaceCursorAtEnd(it.toString())
-            }
+            onConfirm = { }
         )
     }
 
@@ -65,7 +60,8 @@ fun AppDatePicker(
         modifier.height(IntrinsicSize.Min)
     ) {
         OutlinedTextField(
-            textState,
+            value = datePickerState.getSelectedDate().toString(),
+            onValueChange = {  },
             Modifier.weight(4f).padding(end = 8.dp),
             label = {
                 Text(label)

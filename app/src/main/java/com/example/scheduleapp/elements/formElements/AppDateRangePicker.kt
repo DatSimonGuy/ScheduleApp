@@ -21,6 +21,7 @@ import androidx.compose.material3.getSelectedDate
 import androidx.compose.material3.getSelectedEndDate
 import androidx.compose.material3.getSelectedStartDate
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,11 +38,6 @@ fun AppDateRangePicker(
     dateRangePickerState: DateRangePickerState,
     enabled: Boolean = true
 ) {
-    var dateString = "${dateRangePickerState.getSelectedStartDate()} - ${dateRangePickerState.getSelectedEndDate()}"
-    if ("null" in dateString) {
-        dateString = "${LocalDate.now()} - ${LocalDate.now()}"
-    }
-    var textState = rememberTextFieldState(dateString)
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
     if (showDatePicker) {
@@ -51,9 +47,6 @@ fun AppDateRangePicker(
             },
             dateRangePickerState,
             label,
-            onConfirm = { start, end ->
-                textState.setTextAndPlaceCursorAtEnd("${start} - ${end}")
-            }
         )
     }
 
@@ -61,7 +54,10 @@ fun AppDateRangePicker(
         modifier.height(IntrinsicSize.Min)
     ) {
         OutlinedTextField(
-            textState,
+            "${dateRangePickerState.getSelectedStartDate()}" +
+                    " - " +
+                    "${dateRangePickerState.getSelectedEndDate()}",
+            onValueChange = { },
             Modifier.weight(4f).padding(end = 8.dp),
             label = {
                 Text(label)
