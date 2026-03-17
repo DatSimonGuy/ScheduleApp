@@ -11,15 +11,15 @@ enum class LessonType (val color: Color) {
     @SerialName("lab")
     LAB(Color(0xFFA020F0)),
     @SerialName("lecture")
-    LECTURE(Color.Blue),
+    LECTURE(Color(0xFF476FFF)),
     @SerialName("exercise")
-    EXERCISE(Color.Magenta),
+    EXERCISE(Color(0xFFEE54FF)),
     @SerialName("seminar")
-    SEMINAR(Color.Green),
+    SEMINAR(Color(0xFFFFF21D)),
     @SerialName("project")
     PROJECT(Color(0xFFFFA500)),
     @SerialName("exam")
-    EXAM(Color.Yellow);
+    EXAM(Color(0xFFFF4747));
 
     @StringRes
     fun getDisplayName(): Int {
