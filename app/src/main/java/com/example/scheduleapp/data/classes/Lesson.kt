@@ -1,5 +1,7 @@
 package com.example.scheduleapp.data.classes
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.scheduleapp.utils.LocalDateListSerializer
 import com.example.scheduleapp.utils.LocalDateSerializer
 import com.example.scheduleapp.utils.LocalTimeSerializer
@@ -11,6 +13,7 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalSerializationApi::class)
 @JsonIgnoreUnknownKeys
@@ -40,12 +43,17 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
     val activeDays: List<LocalDate>? = null
 ) {
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun isActive(
         date: LocalDate
     ): Boolean {
         return when(occurrence) {
             Occurrence.ONCE -> startDate?.isEqual(date)
             Occurrence.SELECTED_DAYS -> activeDays?.contains(date) == true
+            Occurrence.EVERY_TWO -> ChronoUnit.WEEKS.between(startDate, date) % 2 == 0L
+                    && if(startDate != null && endDate != null) date in startDate..endDate else false
+            Occurrence.EVERY_THREE -> ChronoUnit.WEEKS.between(startDate, date) % 3 == 0L
+                    && if(startDate != null && endDate != null) date in startDate..endDate else false
             else -> if(startDate != null && endDate != null) date in startDate..endDate else false
         } == true
     }
