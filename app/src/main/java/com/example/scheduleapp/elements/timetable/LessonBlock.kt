@@ -39,7 +39,7 @@ fun LessonBlock(
     displayStyle: LessonBlockDisplayStyle,
     date: LocalDate
 ) {
-    val topOffset = (hourHeight.value + 10.dp) * (lesson.startTime.hour-startHour) + 16.dp
+    val topOffset = (hourHeight.value + 10.dp) * (lesson.start-startHour) + 16.dp
     val height = (hourHeight.value + 10.dp) * lesson.duration - 8.dp
     val textColor = textColorForBackground(lesson.lessonType.color)
     var style by rememberSaveable { mutableStateOf(displayStyle) }

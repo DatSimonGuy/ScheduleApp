@@ -43,6 +43,7 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
     val activeDays: List<LocalDate>? = null
 ) {
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
+    val start: Float get() = startTime.hour + startTime.minute / 60.0f
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun isActive(
         date: LocalDate
