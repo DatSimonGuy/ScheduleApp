@@ -1,3 +1,4 @@
+import org.gradle.configurationcache.extensions.capitalized
 import java.util.Properties
 
 plugins {
@@ -16,10 +17,20 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        val keystoreFile = project.rootProject.file("local.properties")
-        val properties = Properties()
-        properties.load(keystoreFile.inputStream())
-        val apiServerUrl = properties.getProperty("API_SERVER_URL") ?: ""
+        val properties = Properties().apply {
+            val file = rootProject.file("local.properties")
+            if (file.exists()) {
+                load(file.inputStream())
+            }
+        }
+        val apiServerUrl = properties.getProperty("API_SERVER_URL") ?: "https://default.example.com"
+
+        buildTypes {
+            release {
+                buildConfigField("String", "API_SERVER_URL", "\"$apiServerUrl\"")
+            }
+        }
+
         buildConfigField(
             type = "String",
             name = "API_SERVER_URL",
@@ -28,8 +39,8 @@ android {
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 1000
+        versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -50,6 +61,21 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
+            val type = variant.buildType.name
+            var apkName = "ScheduleApp_${variant.versionName}"
+
+            if (type != "release") {
+                apkName += "-$type"
+            }
+
+            output.outputFileName = "$apkName.apk"
+        }
     }
 }
 
