@@ -11,11 +11,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/schedule_icon_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DSBApp">
+        android:theme="@style/Theme.ScheduleApp">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.DSBApp">
+            android:theme="@style/Theme.ScheduleApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

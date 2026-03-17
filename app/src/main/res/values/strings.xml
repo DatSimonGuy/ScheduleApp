@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DSBApp</string>
+    <string name="app_name">ScheduleApp</string>
     <string name="home">Home</string>
     <string name="schedule">Schedule</string>
     <string name="settings">Settings</string>
