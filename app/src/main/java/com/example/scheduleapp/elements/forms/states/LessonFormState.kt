@@ -103,8 +103,8 @@ fun rememberLessonFormState(lesson: Lesson?, initialDay: DayOfWeek): LessonFormS
 
     val start = rememberTimePickerState(lesson?.startTime?.hour ?: 0, lesson?.startTime?.minute ?: 0)
     val end = rememberTimePickerState(lesson?.endTime?.hour ?: 0, lesson?.endTime?.minute ?: 0)
-    val date = rememberDatePickerState()
-    val range = rememberDateRangePickerState()
+    val date = rememberDatePickerState(LocalDate.now())
+    val range = rememberDateRangePickerState(initialSelectedStartDate = LocalDate.now(), initialSelectedEndDate = LocalDate.now())
     lesson?.startDate?.let { startDate ->
         date.setSelectedDate(startDate)
         lesson.endDate?.let {
