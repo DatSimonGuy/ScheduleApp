@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
-import com.example.scheduleapp.elements.formElements.ToggleCard
+import com.example.scheduleapp.elements.formElements.choice.ToggleCard
 import com.example.scheduleapp.elements.forms.states.ScheduleFormState
 
 @OptIn(ExperimentalMaterial3Api::class)

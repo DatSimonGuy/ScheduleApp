@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.timetable.LessonBlockDisplays
+package com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
 
 @Composable
-fun NormalDisplay(
+fun CompactDisplay(
     lesson: Lesson,
     textColor: Color
 ) {
@@ -32,30 +32,16 @@ fun NormalDisplay(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            modifier = Modifier,
-            text = lesson.subject,
+            text = "(${stringResource(lesson.lessonType.getDisplayName()).first()}) ${lesson.subject}",
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.ExtraBold,
-            color = textColor
-        )
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = lesson.startTime.toString() + " - " + lesson.endTime.toString(),
-            textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             color = textColor
         )
         Text(
-            text = stringResource(lesson.lessonType.getDisplayName()),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            color = textColor
-        )
-        Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = lesson.room,
+            text =  "${lesson.room} | ${lesson.startTime} - ${lesson.endTime}",
             textAlign = TextAlign.Center,
             color = textColor
         )

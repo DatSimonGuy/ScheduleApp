@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import com.example.scheduleapp.data.datastore.SettingKeys
 import com.example.scheduleapp.data.datastore.settingsDataStore
-import com.example.scheduleapp.elements.timetable.HourHeight
-import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalTime

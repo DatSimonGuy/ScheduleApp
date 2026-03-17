@@ -11,6 +11,8 @@ import com.example.scheduleapp.data.datastore.scheduleDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalTime
 
 class ScheduleRepository(private val context: Context) {
     val scheduleMap: Flow<ScheduleMap> = context.scheduleDataStore.data
@@ -177,6 +179,20 @@ class ScheduleRepository(private val context: Context) {
             ?.asSequence()
             ?.flatMap { it.value }
             ?.find { it.id == id }
+    }
+
+    suspend fun getNextLesson(scheduleName: String) : Lesson? {
+        val schedule = scheduleMap.first()[scheduleName]
+        return schedule?.lessons[LocalDate.now().dayOfWeek]?.first {
+            it.startTime > LocalTime.now() && it.isActive(LocalDate.now())
+        }
+    }
+
+    suspend fun getCurrentLesson(scheduleName: String): Lesson? {
+        val schedule = scheduleMap.first()[scheduleName]
+        return schedule?.lessons[LocalDate.now().dayOfWeek]?.first {
+            LocalTime.now() in it.startTime..it.endTime && it.isActive(LocalDate.now())
+        }
     }
 
 }

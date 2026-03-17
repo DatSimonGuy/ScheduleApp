@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
-import com.example.scheduleapp.elements.formElements.SettingsSelector
+import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.forms.ImportForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
 import com.example.scheduleapp.elements.forms.states.rememberImportFormState

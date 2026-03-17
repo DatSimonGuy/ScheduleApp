@@ -13,13 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.scheduleapp.elements.formElements.AppTimePicker
-import com.example.scheduleapp.elements.formElements.SettingsSelector
-import com.example.scheduleapp.elements.formElements.SettingsTimePicker
-import com.example.scheduleapp.elements.formElements.ToggleCard
+import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
+import com.example.scheduleapp.elements.formElements.time.SettingsTimePicker
+import com.example.scheduleapp.elements.formElements.choice.ToggleCard
 import com.example.scheduleapp.elements.settings.SettingsViewModel
-import com.example.scheduleapp.elements.timetable.HourHeight
-import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

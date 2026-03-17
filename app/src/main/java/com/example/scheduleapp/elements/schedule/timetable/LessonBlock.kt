@@ -1,7 +1,5 @@
-package com.example.scheduleapp.elements.timetable
+package com.example.scheduleapp.elements.schedule.timetable
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,20 +9,17 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.scheduleapp.data.classes.Lesson
-import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.CompactDisplay
-import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.ExtendedDisplay
-import com.example.scheduleapp.elements.timetable.LessonBlockDisplays.NormalDisplay
+import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays.CompactDisplay
+import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays.ExtendedDisplay
+import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays.NormalDisplay
 import com.example.scheduleapp.utils.textColorForBackground
 import java.time.LocalDate
 

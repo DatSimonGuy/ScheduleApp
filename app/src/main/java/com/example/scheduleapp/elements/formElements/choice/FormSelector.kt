@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.formElements
+package com.example.scheduleapp.elements.formElements.choice
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import com.example.scheduleapp.utils.LocalDateListSerializer
 import com.example.scheduleapp.utils.LocalDateSerializer
 import com.example.scheduleapp.utils.LocalTimeSerializer
-import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,6 +12,7 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -44,6 +44,14 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
 ) {
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
     val start: Float get() = startTime.hour + startTime.minute / 60.0f
+    val percentageTimeLeft: Float get() = if(isActive(LocalDate.now()) && startTime <= LocalTime.now()) {
+        Duration.between(endTime, LocalTime.now()).toMinutes() / (duration * 60)
+    } else { 0.0f }
+    val timeUntil: String? get() = if(isActive(LocalDate.now()) && startTime > LocalTime.now()) {
+        val duration = Duration.between(LocalTime.now(), startTime).toMinutes()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        LocalTime.of(duration.toInt() / 60, duration.toInt() % 60).format(formatter)
+    } else null
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun isActive(
         date: LocalDate

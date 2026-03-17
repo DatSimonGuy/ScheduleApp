@@ -7,8 +7,8 @@ import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
-import com.example.scheduleapp.elements.timetable.HourHeight
-import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

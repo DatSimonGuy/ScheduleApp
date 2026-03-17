@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.timetable
+package com.example.scheduleapp.elements.schedule.timetable
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp

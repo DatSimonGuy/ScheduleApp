@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,6 +13,9 @@ import androidx.navigation.toRoute
 import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
+import com.example.scheduleapp.elements.home.HomeScreen
+import com.example.scheduleapp.elements.home.HomeViewModel
+import com.example.scheduleapp.elements.home.HomeViewModelFactory
 import com.example.scheduleapp.elements.schedule.ScheduleScreen
 import com.example.scheduleapp.elements.schedule.ScheduleViewModelFactory
 import com.example.scheduleapp.elements.schedule.parts.LessonPage
@@ -49,6 +53,14 @@ fun AppNavHost(
         )
     }
 
+    val homeVMFactory = remember {
+        HomeViewModelFactory(
+            settingsRepository,
+            scheduleRepository,
+            preferenceRepository
+        )
+    }
+
     val scheduleVMFactory = remember {
         ScheduleViewModelFactory(
             navController,
@@ -65,7 +77,8 @@ fun AppNavHost(
     ) {
 
         composable<Destination.Home> {
-
+            val viewModel = viewModel<HomeViewModel>(factory = homeVMFactory)
+            HomeScreen(navController, viewModel)
         }
 
         navigation<Destination.Schedule>(
