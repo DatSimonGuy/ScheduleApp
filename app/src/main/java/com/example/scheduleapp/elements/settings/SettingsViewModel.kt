@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 
 
 data class Settings(
@@ -21,7 +22,8 @@ data class Settings(
     val schedules: ScheduleMap = ScheduleMap(),
     var addScheduleInFab: Boolean = false,
     var defaultSchedule: String? = null,
-    var recentChatId: Long? = null
+    var recentChatId: Long? = null,
+    var startHour: LocalTime? = null
 )
 
 class SettingsViewModel(
@@ -40,7 +42,8 @@ class SettingsViewModel(
                         hourHeight = HourHeight.valueOf(settings.hourHeight),
                         lessonBlockDisplayStyle = LessonBlockDisplayStyle.valueOf(settings.lessonBlockDisplayStyle),
                         addScheduleInFab = settings.addScheduleInFab,
-                        defaultSchedule = settings.defaultSchedule
+                        defaultSchedule = settings.defaultSchedule,
+                        startHour = LocalTime.parse(settings.startTime ?: "00:00")
                     )
                 }
             }
@@ -86,6 +89,12 @@ class SettingsViewModel(
     fun onDefaultScheduleChange(value: String?) {
         viewModelScope.launch {
             repository.setDefaultSchedule(value)
+        }
+    }
+
+    fun onStartHourChange(value: LocalTime) {
+        viewModelScope.launch {
+            repository.setStartHour(value)
         }
     }
 

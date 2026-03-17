@@ -1,4 +1,3 @@
-import org.gradle.configurationcache.extensions.capitalized
 import java.util.Properties
 
 plugins {
@@ -9,7 +8,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(23)
+    jvmToolchain(17)
 }
 
 android {
@@ -39,8 +38,8 @@ android {
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1000
-        versionName = "0.1.0"
+        versionCode = 2000
+        versionName = "0.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,8 +66,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_23
-        targetCompatibility = JavaVersion.VERSION_23
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true

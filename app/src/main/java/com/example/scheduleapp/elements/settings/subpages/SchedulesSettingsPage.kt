@@ -108,6 +108,11 @@ fun SchedulesSettingsPage(
                     selectionMap.remove(scheduleName)
                     showDeleteDialog = selectionMap.count { it.value } != 0
                 }
+                if (ui.schedules.schedules.isEmpty()) {
+                    viewModel.onDefaultScheduleChange(
+                        null
+                    )
+                }
             }
         )
     }
@@ -144,6 +149,11 @@ fun SchedulesSettingsPage(
                 viewModel.setScheduleFormPreferences(
                     schedule.chatId
                 )
+                if (ui.defaultSchedule.isNullOrEmpty()) {
+                    viewModel.onDefaultScheduleChange(
+                        name
+                    )
+                }
                 scheduleFormState.fillFields("")
             },
             scheduleFormState,
@@ -163,7 +173,7 @@ fun SchedulesSettingsPage(
                             withDismissAction = true
                         )
                     }
-                    if (ui.defaultSchedule == null) {
+                    if (ui.defaultSchedule.isNullOrEmpty()) {
                         viewModel.onDefaultScheduleChange(ui.schedules.schedules.keys.first())
                     }
                 }
@@ -212,7 +222,7 @@ fun SchedulesSettingsPage(
                     onSelectionChange = {
                         viewModel.onDefaultScheduleChange(it)
                     },
-                    enabled = ui.defaultSchedule != null
+                    enabled = ui.schedules.schedules.isNotEmpty()
                 )
             }
         },

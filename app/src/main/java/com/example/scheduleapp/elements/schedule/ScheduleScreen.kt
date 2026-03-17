@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.scheduleapp.data.api.DSBApi
-import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.elements.formElements.ChoiceDialog
 import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
@@ -204,6 +201,7 @@ fun ScheduleScreen(
                 TimeTable(
                     title = "${ui.selectedSchedule} - ${day.getDisplayName(TextStyle.FULL, Locale.getDefault())}",
                     hourHeight = ui.hourHeight,
+                    startHour = ui.startTime?.hour ?: 0,
                     lessons = currentSchedule?.lessons[day] ?: emptyList(),
                     onLessonClick = {
                         navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))

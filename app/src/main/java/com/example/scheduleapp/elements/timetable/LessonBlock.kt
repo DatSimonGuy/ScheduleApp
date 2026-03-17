@@ -33,12 +33,13 @@ import java.time.LocalDate
 fun LessonBlock(
     modifier: Modifier = Modifier,
     hourHeight: HourHeight,
+    startHour: Int,
     lesson: Lesson,
     onClick: (String) -> Unit,
     displayStyle: LessonBlockDisplayStyle,
     date: LocalDate
 ) {
-    val topOffset = (hourHeight.value + 10.dp) * lesson.startTime.hour + 16.dp
+    val topOffset = (hourHeight.value + 10.dp) * (lesson.startTime.hour-startHour) + 16.dp
     val height = (hourHeight.value + 10.dp) * lesson.duration - 8.dp
     val textColor = textColorForBackground(lesson.lessonType.color)
     var style by rememberSaveable { mutableStateOf(displayStyle) }

@@ -45,38 +45,12 @@ fun AppTimePicker(
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
 
     if (showTimePicker) {
-        Dialog(
-            onDismissRequest = {
+        TimePickerWindow(
+            {
                 showTimePicker = false
-            }
-        ) {
-            Card(
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.64f)
-            ) {
-                Column(
-                    Modifier.background(MaterialTheme.colorScheme.surface).fillMaxSize().padding(16.dp)
-                ) {
-                    TimePicker(
-                        timePickerState,
-                        Modifier.fillMaxWidth().padding(8.dp)
-                    )
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        OutlinedButton(
-                            onClick = {
-                                showTimePicker = false
-                            },
-                        ) {
-                            Text("Ok")
-                        }
-                    }
-                }
-            }
-        }
+            },
+            timePickerState
+        )
     }
     val time = LocalTime.of(timePickerState.hour, timePickerState.minute)
     val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)

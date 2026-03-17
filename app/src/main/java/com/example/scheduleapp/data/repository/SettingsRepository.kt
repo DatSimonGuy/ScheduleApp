@@ -7,14 +7,16 @@ import com.example.scheduleapp.data.datastore.settingsDataStore
 import com.example.scheduleapp.elements.timetable.HourHeight
 import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 data class UserSettings(
     val hourHeight: String,
     val lessonBlockDisplayStyle: String,
     val addScheduleInFab: Boolean,
-    val defaultSchedule: String?
+    val defaultSchedule: String?,
+    val startTime: String?
 )
 
 class SettingsRepository(private val context: Context) {
@@ -24,9 +26,18 @@ class SettingsRepository(private val context: Context) {
                 hourHeight = preferences[SettingKeys.hourHeight] ?: HourHeight.MEDIUM.name,
                 lessonBlockDisplayStyle = preferences[SettingKeys.lessonBlockDisplayStyle] ?: LessonBlockDisplayStyle.NORMAL.name,
                 addScheduleInFab = preferences[SettingKeys.addScheduleInFab] ?: false,
-                defaultSchedule = preferences[SettingKeys.defaultSchedule]
+                defaultSchedule = preferences[SettingKeys.defaultSchedule],
+                startTime = preferences[SettingKeys.startTime]
             )
         }
+
+
+    suspend fun setStartHour(hour: LocalTime) {
+        context.settingsDataStore.edit {
+            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            it[SettingKeys.startTime] = hour.format(formatter)
+        }
+    }
 
     suspend fun setHourHeight(height: HourHeight) {
         context.settingsDataStore.edit {

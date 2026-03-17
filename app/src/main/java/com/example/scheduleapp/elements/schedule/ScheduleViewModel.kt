@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import java.time.LocalTime
 
 data class ScheduleUiState(
     val hourHeight: HourHeight = HourHeight.MEDIUM,
@@ -29,6 +30,7 @@ data class ScheduleUiState(
     val selectedSchedule: String? = null,
     val showAddSchedule: Boolean = false,
     val preferences: UserPreferences? = null,
+    val startTime: LocalTime? = null
 )
 
 class ScheduleViewModel(
@@ -54,7 +56,8 @@ class ScheduleViewModel(
                         hourHeight = HourHeight.valueOf(settings.hourHeight),
                         lessonBlockDisplayStyle = LessonBlockDisplayStyle.valueOf(settings.lessonBlockDisplayStyle),
                         showAddSchedule = settings.addScheduleInFab,
-                        selectedSchedule = settings.defaultSchedule
+                        selectedSchedule = settings.defaultSchedule,
+                        startTime = LocalTime.parse(settings.startTime ?: "00:00")
                     )
                 }
             }

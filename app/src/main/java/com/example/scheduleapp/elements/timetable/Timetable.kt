@@ -34,6 +34,7 @@ fun TimeTable(
     modifier: Modifier = Modifier,
     title: String = "",
     hourHeight: HourHeight,
+    startHour: Int,
     lessons: List<Lesson>,
     onLessonClick: (String) -> Unit,
     lessonBlockDisplayStyle: LessonBlockDisplayStyle,
@@ -62,7 +63,7 @@ fun TimeTable(
             Column(
                 Modifier.weight(1f)
             ) {
-                repeat(24) { i ->
+                 for(i in startHour..23) {
                     val time = LocalTime.of(i, 0)
                     Text(
                         time.toString(),
@@ -80,7 +81,7 @@ fun TimeTable(
                 Column(
                     Modifier.padding(top = 16.dp)
                 ) {
-                    repeat(24) {
+                    repeat(24-startHour) {
                         ElevatedCard(
                             Modifier
                                 .padding(bottom = 10.dp)
@@ -92,7 +93,14 @@ fun TimeTable(
                     }
                 }
                 lessons.forEach {
-                    LessonBlock(hourHeight = hourHeight, lesson = it, onClick = onLessonClick, displayStyle = lessonBlockDisplayStyle, date = date)
+                    LessonBlock(
+                        hourHeight = hourHeight,
+                        startHour = startHour,
+                        lesson = it,
+                        onClick = onLessonClick,
+                        displayStyle = lessonBlockDisplayStyle,
+                        date = date
+                    )
                 }
             }
         }

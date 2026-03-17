@@ -14,4 +14,5 @@ object SettingKeys {
     val lessonBlockDisplayStyle = stringPreferencesKey("lessonBlockDisplayStyle")
     val addScheduleInFab = booleanPreferencesKey("fabAddSchedule")
     val defaultSchedule = stringPreferencesKey("defaultSchedule")
+    val startTime = stringPreferencesKey("startTime")
 }
