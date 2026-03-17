@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +34,7 @@ fun TimePickerWindow(
         Card(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.64f)
+                .height(500.dp)
         ) {
             Column(
                 Modifier.background(MaterialTheme.colorScheme.surface).fillMaxSize().padding(16.dp)
