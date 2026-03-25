@@ -17,12 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toString
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.scheduleapp.elements.formElements.MultipleChoiceDialog
+import com.example.scheduleapp.elements.formElements.choice.MultipleChoiceDialog
 import com.example.scheduleapp.elements.forms.states.ImportFormState
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 import kotlinx.coroutines.launch

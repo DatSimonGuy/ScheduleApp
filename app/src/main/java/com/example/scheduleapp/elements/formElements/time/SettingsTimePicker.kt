@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.formElements
+package com.example.scheduleapp.elements.formElements.time
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

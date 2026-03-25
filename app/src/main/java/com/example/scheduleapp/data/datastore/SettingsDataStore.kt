@@ -2,6 +2,7 @@ package com.example.scheduleapp.data.datastore
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 
@@ -15,4 +16,5 @@ object SettingKeys {
     val addScheduleInFab = booleanPreferencesKey("fabAddSchedule")
     val defaultSchedule = stringPreferencesKey("defaultSchedule")
     val startTime = stringPreferencesKey("startTime")
+    val startPage = intPreferencesKey("startPage")
 }

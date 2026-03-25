@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.formElements
+package com.example.scheduleapp.elements.formElements.choice
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +9,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +30,12 @@ fun FormSelector(
     enabled: Boolean = true
 ) {
     var pickerExpanded by rememberSaveable { mutableStateOf(false) }
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+        disabledBorderColor = MaterialTheme.colorScheme.outline,
+        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
     ExposedDropdownMenuBox(
         modifier = modifier,
         expanded = pickerExpanded,
@@ -37,14 +44,15 @@ fun FormSelector(
         OutlinedTextField(
             value = selectedItem,
             onValueChange = {},
-            readOnly = true,
+            enabled = false,
             label = { Text(label) },
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(pickerExpanded)
-            }
+            },
+            colors = textFieldColors
         )
 
         ExposedDropdownMenu(

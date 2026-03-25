@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import com.example.scheduleapp.utils.LocalDateListSerializer
 import com.example.scheduleapp.utils.LocalDateSerializer
 import com.example.scheduleapp.utils.LocalTimeSerializer
-import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,6 +12,7 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -44,7 +44,26 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
 ) {
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
     val start: Float get() = startTime.hour + startTime.minute / 60.0f
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+
+    fun percentageTimeLeft(currentTime: LocalTime): Float {
+        if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return 0.0f
+        return Duration.between(LocalTime.now(), endTime).toMinutes() / (duration * 60)
+    }
+
+    fun timeUntil(currentTime: LocalTime): String? {
+        if(!isActive(LocalDate.now()) || startTime <= LocalTime.now()) return null
+        val duration = Duration.between(LocalTime.now().minusHours(1), startTime).toSeconds()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+        return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
+    }
+
+    fun timeLeft(currentTime: LocalTime): String? {
+        if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return null
+        val duration = Duration.between(LocalTime.now(), endTime).toSeconds()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+        return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
+    }
+
     fun isActive(
         date: LocalDate
     ): Boolean {

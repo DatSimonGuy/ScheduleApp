@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -34,9 +35,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
-import com.example.scheduleapp.elements.formElements.SettingsSelector
+import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.forms.ImportForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
 import com.example.scheduleapp.elements.forms.states.rememberImportFormState
@@ -48,7 +50,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SchedulesSettingsPage(
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    navController: NavController
 ) {
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
     val selectionMap = remember { mutableStateMapOf<String, Boolean>() }
@@ -190,6 +193,15 @@ fun SchedulesSettingsPage(
         topBar = {
             TopAppBar(
                 title = { Text("Schedules") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                    }
+                },
                 actions = {
                     IconButton(onClick = { newScheduleFormExpanded = true }) {
                         Icon(Icons.Default.Add, "")

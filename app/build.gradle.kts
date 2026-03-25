@@ -38,8 +38,8 @@ android {
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2003
-        versionName = "0.2.3"
+        versionCode = 3000
+        versionName = "0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -68,6 +68,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         compose = true
@@ -91,6 +92,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("io.ktor:ktor-client-core:3.4.0")
     implementation("io.ktor:ktor-client-cio:3.4.0")

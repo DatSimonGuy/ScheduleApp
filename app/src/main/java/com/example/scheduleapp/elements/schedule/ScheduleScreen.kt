@@ -30,13 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.scheduleapp.elements.formElements.ChoiceDialog
+import com.example.scheduleapp.elements.formElements.choice.ChoiceDialog
 import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
 import com.example.scheduleapp.elements.forms.states.rememberScheduleFormState
-import com.example.scheduleapp.elements.navigation.ScheduleDestination
 import com.example.scheduleapp.elements.schedule.parts.AddSchedulePrompt
-import com.example.scheduleapp.elements.timetable.TimeTable
+import com.example.scheduleapp.elements.schedule.timetable.TimeTable
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate

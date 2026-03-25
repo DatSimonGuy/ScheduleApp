@@ -1,26 +1,22 @@
-package com.example.scheduleapp.elements.formElements
+package com.example.scheduleapp.elements.formElements.dates
 
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DateRangePickerState
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.getSelectedDate
-import androidx.compose.material3.getSelectedEndDate
-import androidx.compose.material3.getSelectedStartDate
 import androidx.compose.runtime.Composable
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppDateRangePickerDialog(
+fun AppDatePickerDialog(
     onDismissRequest: () -> Unit,
-    dateRangePickerState: DateRangePickerState,
+    datePickerState: DatePickerState,
     label: String,
+    onConfirm: (LocalDate) -> Unit,
 ) {
     DatePickerDialog(
         onDismissRequest = onDismissRequest,
@@ -28,14 +24,15 @@ fun AppDateRangePickerDialog(
             Button(
                 onClick = {
                     onDismissRequest()
+                    onConfirm(datePickerState.getSelectedDate() ?: LocalDate.now())
                 }
             ) {
                 Text("Ok")
             }
         }
     ) {
-        DateRangePicker(
-            dateRangePickerState,
+        DatePicker(
+            datePickerState,
             title = {
                 Text(
                     label,

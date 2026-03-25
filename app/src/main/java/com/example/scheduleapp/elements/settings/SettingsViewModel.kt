@@ -1,5 +1,6 @@
 package com.example.scheduleapp.elements.settings
 
+import Destination
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleapp.data.classes.Schedule
@@ -7,8 +8,8 @@ import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
-import com.example.scheduleapp.elements.timetable.HourHeight
-import com.example.scheduleapp.elements.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,7 +24,8 @@ data class Settings(
     var addScheduleInFab: Boolean = false,
     var defaultSchedule: String? = null,
     var recentChatId: Long? = null,
-    var startHour: LocalTime? = null
+    var startHour: LocalTime? = null,
+    var selectedStartPage: Destination? = null
 )
 
 class SettingsViewModel(
@@ -43,7 +45,8 @@ class SettingsViewModel(
                         lessonBlockDisplayStyle = LessonBlockDisplayStyle.valueOf(settings.lessonBlockDisplayStyle),
                         addScheduleInFab = settings.addScheduleInFab,
                         defaultSchedule = settings.defaultSchedule,
-                        startHour = LocalTime.parse(settings.startTime ?: "00:00")
+                        startHour = LocalTime.parse(settings.startTime ?: "00:00"),
+                        selectedStartPage = Destination.main.firstOrNull { it.id == settings.startPage }
                     )
                 }
             }
@@ -65,6 +68,12 @@ class SettingsViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun onSelectedStartPageChange(value: Int?) {
+        viewModelScope.launch {
+            repository.setStartPage(value)
         }
     }
 

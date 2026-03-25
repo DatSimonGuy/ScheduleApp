@@ -13,19 +13,36 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
+import com.example.scheduleapp.data.datastore.SettingKeys
+import com.example.scheduleapp.data.datastore.settingsDataStore
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun Navbar(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     val navController = rememberNavController()
-    val startDestination: Destination = Destination.all[0]
-    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.displayName!!) }
+    val startDestination = Destination.Home
+    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.id) }
+
+    LaunchedEffect(Unit) {
+        val dest = Destination.main.firstOrNull { destination ->
+            context.settingsDataStore.data.first()[SettingKeys.startPage] == destination.id
+        }
+        dest?.let {
+            navController.navigate(it)
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -33,7 +50,7 @@ fun Navbar(modifier: Modifier = Modifier) {
             NavigationBar (
                 windowInsets = NavigationBarDefaults.windowInsets
             ) {
-                Destination.all.forEach { destination ->
+                Destination.main.forEach { destination ->
                     NavigationBarItem(
                         selected = selectedDestination == destination.displayName,
                         onClick = {
