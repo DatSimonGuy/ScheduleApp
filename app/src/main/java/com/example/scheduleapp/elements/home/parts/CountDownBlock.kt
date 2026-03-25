@@ -1,5 +1,6 @@
 package com.example.scheduleapp.elements.home.parts
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,16 +23,18 @@ fun CountDownBlock(
         modifier,
     ) {
         Column(
-            Modifier.padding(8.dp).fillMaxSize()
+            Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center
         ) {
             Text(text, Modifier.fillMaxWidth())
             if (progress != null) {
                 LinearProgressIndicator(
-                    progress = { progress() }
+                    { progress() },
+                    Modifier.fillMaxWidth().padding(top = 8.dp)
                 )
             }
             if (timer != null) {
-                Text(timer(), Modifier.fillMaxWidth())
+                Text(timer(), Modifier.fillMaxWidth().padding(top = 8.dp))
             }
         }
     }

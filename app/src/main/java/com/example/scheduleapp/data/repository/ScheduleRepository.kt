@@ -1,7 +1,9 @@
 package com.example.scheduleapp.data.repository
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.example.scheduleapp.data.api.DSBApi
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.data.classes.SaveLocation
@@ -181,16 +183,18 @@ class ScheduleRepository(private val context: Context) {
             ?.find { it.id == id }
     }
 
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     suspend fun getNextLesson(scheduleName: String) : Lesson? {
         val schedule = scheduleMap.first()[scheduleName]
-        return schedule?.lessons[LocalDate.now().dayOfWeek]?.first {
+        return schedule?.lessons[LocalDate.now().dayOfWeek]?.firstOrNull {
             it.startTime > LocalTime.now() && it.isActive(LocalDate.now())
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     suspend fun getCurrentLesson(scheduleName: String): Lesson? {
         val schedule = scheduleMap.first()[scheduleName]
-        return schedule?.lessons[LocalDate.now().dayOfWeek]?.first {
+        return schedule?.lessons[LocalDate.now().dayOfWeek]?.firstOrNull {
             LocalTime.now() in it.startTime..it.endTime && it.isActive(LocalDate.now())
         }
     }

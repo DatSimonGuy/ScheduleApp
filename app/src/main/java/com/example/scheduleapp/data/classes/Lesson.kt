@@ -44,14 +44,29 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
 ) {
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
     val start: Float get() = startTime.hour + startTime.minute / 60.0f
-    val percentageTimeLeft: Float get() = if(isActive(LocalDate.now()) && startTime <= LocalTime.now()) {
-        Duration.between(endTime, LocalTime.now()).toMinutes() / (duration * 60)
-    } else { 0.0f }
-    val timeUntil: String? get() = if(isActive(LocalDate.now()) && startTime > LocalTime.now()) {
-        val duration = Duration.between(LocalTime.now(), startTime).toMinutes()
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
-        LocalTime.of(duration.toInt() / 60, duration.toInt() % 60).format(formatter)
-    } else null
+
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun percentageTimeLeft(currentTime: LocalTime): Float {
+        if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return 0.0f
+        return Duration.between(LocalTime.now(), endTime).toMinutes() / (duration * 60)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun timeUntil(currentTime: LocalTime): String? {
+        if(!isActive(LocalDate.now()) || startTime <= LocalTime.now()) return null
+        val duration = Duration.between(LocalTime.now().minusHours(1), startTime).toSeconds()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+        return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun timeLeft(currentTime: LocalTime): String? {
+        if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return null
+        val duration = Duration.between(LocalTime.now(), endTime).toSeconds()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+        return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
+    }
+
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun isActive(
         date: LocalDate
