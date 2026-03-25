@@ -51,7 +51,6 @@ class HomeViewModel (
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     suspend fun updateScheduleInfo(): Unit {
         val selectedSchedule = settingsRepository.settingsFlow.firstOrNull()?.defaultSchedule
         val currentLesson = selectedSchedule?.let {

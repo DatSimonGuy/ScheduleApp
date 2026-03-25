@@ -183,7 +183,6 @@ class ScheduleRepository(private val context: Context) {
             ?.find { it.id == id }
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     suspend fun getNextLesson(scheduleName: String) : Lesson? {
         val schedule = scheduleMap.first()[scheduleName]
         return schedule?.lessons[LocalDate.now().dayOfWeek]?.firstOrNull {
@@ -191,7 +190,6 @@ class ScheduleRepository(private val context: Context) {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     suspend fun getCurrentLesson(scheduleName: String): Lesson? {
         val schedule = scheduleMap.first()[scheduleName]
         return schedule?.lessons[LocalDate.now().dayOfWeek]?.firstOrNull {

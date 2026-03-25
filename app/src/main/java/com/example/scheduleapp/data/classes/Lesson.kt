@@ -45,13 +45,11 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
     val start: Float get() = startTime.hour + startTime.minute / 60.0f
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun percentageTimeLeft(currentTime: LocalTime): Float {
         if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return 0.0f
         return Duration.between(LocalTime.now(), endTime).toMinutes() / (duration * 60)
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun timeUntil(currentTime: LocalTime): String? {
         if(!isActive(LocalDate.now()) || startTime <= LocalTime.now()) return null
         val duration = Duration.between(LocalTime.now().minusHours(1), startTime).toSeconds()
@@ -59,7 +57,6 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
         return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun timeLeft(currentTime: LocalTime): String? {
         if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return null
         val duration = Duration.between(LocalTime.now(), endTime).toSeconds()
@@ -67,7 +64,6 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
         return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun isActive(
         date: LocalDate
     ): Boolean {

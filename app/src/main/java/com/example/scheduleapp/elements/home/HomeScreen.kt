@@ -1,7 +1,5 @@
 package com.example.scheduleapp.elements.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +19,6 @@ import androidx.navigation.NavController
 import com.example.scheduleapp.elements.home.parts.CountDownBlock
 import kotlinx.coroutines.delay
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(

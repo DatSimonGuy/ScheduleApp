@@ -1,5 +1,7 @@
 package com.example.scheduleapp.elements.navigation
 
+import Destination
+import SettingsDestination
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -23,6 +25,7 @@ import com.example.scheduleapp.elements.settings.SettingsScreen
 import com.example.scheduleapp.elements.settings.SettingsViewModelFactory
 import com.example.scheduleapp.elements.settings.subpages.AboutSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.AppearanceSettingsPage
+import com.example.scheduleapp.elements.settings.subpages.GeneralSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.SchedulesSettingsPage
 
 @Composable
@@ -102,6 +105,11 @@ fun AppNavHost(
             composable<SettingsDestination.SettingsPage> { backStackEntry ->
                 val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
                 SettingsScreen(navController, viewModel)
+            }
+
+            composable<SettingsDestination.GeneralSettings> { backStackEntry ->
+                val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
+                GeneralSettingsPage(viewModel)
             }
 
             composable<SettingsDestination.SchedulesSettings> { backStackEntry ->

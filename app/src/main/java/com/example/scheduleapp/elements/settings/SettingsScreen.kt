@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.scheduleapp.elements.navigation.SettingsDestination
 import com.example.scheduleapp.elements.settings.parts.SettingsCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,6 +20,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel
 ) {
     val categories = mapOf(
+        "General" to SettingsDestination.GeneralSettings,
         "Schedules" to SettingsDestination.SchedulesSettings,
         "Appearance" to SettingsDestination.AppearanceSettings,
         "About" to SettingsDestination.AboutSettings
