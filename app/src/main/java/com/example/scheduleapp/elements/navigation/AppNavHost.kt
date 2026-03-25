@@ -95,7 +95,7 @@ fun AppNavHost(
             composable<ScheduleDestination.LessonScreen> { backStackEntry ->
                 val viewModel = backStackEntry.scheduleViewModel(navController, scheduleVMFactory)
                 val lessonRoute = backStackEntry.toRoute<ScheduleDestination.LessonScreen>()
-                LessonPage(lessonRoute.lessonId, viewModel, lessonRoute.dayOfWeek)
+                LessonPage(lessonRoute.lessonId, viewModel, navController, lessonRoute.dayOfWeek)
             }
         }
 
@@ -109,17 +109,17 @@ fun AppNavHost(
 
             composable<SettingsDestination.GeneralSettings> { backStackEntry ->
                 val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
-                GeneralSettingsPage(viewModel)
+                GeneralSettingsPage(viewModel, navController)
             }
 
             composable<SettingsDestination.SchedulesSettings> { backStackEntry ->
                 val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
-                SchedulesSettingsPage(viewModel)
+                SchedulesSettingsPage(viewModel, navController)
             }
 
             composable<SettingsDestination.AppearanceSettings> { backStackEntry ->
                 val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
-                AppearanceSettingsPage(viewModel)
+                AppearanceSettingsPage(viewModel, navController)
             }
 
             composable<SettingsDestination.AboutSettings> { backStackEntry ->

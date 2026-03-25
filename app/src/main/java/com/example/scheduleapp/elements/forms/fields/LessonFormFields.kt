@@ -7,12 +7,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.LessonType
@@ -36,6 +41,12 @@ fun LessonFormFields(
 ) {
     val fieldModifier = Modifier.fillMaxWidth(0.95f)
                                 .padding(bottom = 16.dp)
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+        disabledBorderColor = MaterialTheme.colorScheme.outline,
+        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
     Column(
         modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -43,7 +54,7 @@ fun LessonFormFields(
         OutlinedTextField(
             value = state.subject.value,
             modifier = fieldModifier,
-            readOnly = !editing,
+            enabled = editing,
             label = { Text("Subject") },
             onValueChange = {
                 state.subject.value = it
@@ -51,6 +62,7 @@ fun LessonFormFields(
             singleLine = true,
             isError = subjectError != null,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            colors = textFieldColors
         )
         subjectError?.let {
             Text(
@@ -62,23 +74,25 @@ fun LessonFormFields(
         OutlinedTextField(
             value = state.room.value,
             modifier = fieldModifier,
-            readOnly = !editing,
+            enabled = editing,
             label = { Text("Room") },
             onValueChange = {
                 state.room.value = it
             },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            colors = textFieldColors
         )
         OutlinedTextField(
             value = state.teacher.value,
             modifier = fieldModifier,
-            readOnly = !editing,
+            enabled = editing,
             label = { Text("Teacher") },
             onValueChange = {
                 state.teacher.value = it
             },
             singleLine = true,
+            colors = textFieldColors
         )
         FormSelector(
             fieldModifier,

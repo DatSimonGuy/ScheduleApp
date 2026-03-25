@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -36,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.forms.fields.LessonFormFields
 import com.example.scheduleapp.elements.forms.states.rememberLessonFormState
@@ -47,6 +50,7 @@ import java.time.DayOfWeek
 fun LessonPage(
     lessonId: String,
     viewModel: ScheduleViewModel,
+    navController: NavController,
     selectedDay: DayOfWeek = DayOfWeek.MONDAY
 ) {
     val ui = viewModel.uiState.collectAsStateWithLifecycle()
@@ -121,6 +125,15 @@ fun LessonPage(
             TopAppBar(
                 title = {
                     Text("Selected lesson:")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                    }
                 },
                 actions = {
                     IconButton(
