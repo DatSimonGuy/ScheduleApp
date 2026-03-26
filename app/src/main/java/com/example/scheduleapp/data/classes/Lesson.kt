@@ -1,7 +1,5 @@
 package com.example.scheduleapp.data.classes
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.scheduleapp.utils.LocalDateListSerializer
 import com.example.scheduleapp.utils.LocalDateSerializer
 import com.example.scheduleapp.utils.LocalTimeSerializer
@@ -46,22 +44,22 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
     val start: Float get() = startTime.hour + startTime.minute / 60.0f
 
     fun percentageTimeLeft(currentTime: LocalTime): Float {
-        if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return 0.0f
-        return Duration.between(LocalTime.now(), endTime).toMinutes() / (duration * 60)
+        if(!isActive(LocalDate.now()) || startTime > currentTime) return 0.0f
+        return Duration.between(currentTime, endTime).toMinutes() / (duration * 60)
     }
 
     fun timeUntil(currentTime: LocalTime): String? {
-        if(!isActive(LocalDate.now()) || startTime <= LocalTime.now()) return null
-        val duration = Duration.between(LocalTime.now().minusHours(1), startTime).toSeconds()
+        if(!isActive(LocalDate.now()) || startTime <= currentTime) return null
+        val duration = Duration.between(currentTime, startTime).toSeconds()
         val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-        return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
+        return LocalTime.of(duration.toInt() / 3600, (duration.toInt() / 60) % 60, duration.toInt() % 60).format(formatter)
     }
 
     fun timeLeft(currentTime: LocalTime): String? {
-        if(!isActive(LocalDate.now()) || startTime > LocalTime.now()) return null
-        val duration = Duration.between(LocalTime.now(), endTime).toSeconds()
+        if(!isActive(LocalDate.now()) || startTime > currentTime) return null
+        val duration = Duration.between(currentTime, endTime).toSeconds()
         val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-        return LocalTime.of(duration.toInt() / 3600, duration.toInt() / 60, duration.toInt() % 60).format(formatter)
+        return LocalTime.of(duration.toInt() / 3600, (duration.toInt() / 60) % 60, duration.toInt() % 60).format(formatter)
     }
 
     fun isActive(
