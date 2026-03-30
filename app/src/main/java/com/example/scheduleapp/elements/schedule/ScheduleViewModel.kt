@@ -103,6 +103,12 @@ class ScheduleViewModel(
         }
     }
 
+    fun setDefaultSchedule(name: String) {
+        viewModelScope.launch {
+            settingsRepository.setDefaultSchedule(name)
+        }
+    }
+
     suspend fun addNewLesson(dayOfWeek: DayOfWeek, lesson: Lesson): String? {
         return scheduleRepository.addLesson(
             uiState.value.selectedSchedule ?: "",

@@ -78,6 +78,7 @@ fun ScheduleScreen(
                     viewModel.setRecentChatId(
                         schedule.chatId
                     )
+                    viewModel.setDefaultSchedule(name)
                     scheduleFormState.fillFields("")
                 }
                 showScheduleForm = false
