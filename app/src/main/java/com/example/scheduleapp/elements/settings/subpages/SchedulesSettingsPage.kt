@@ -98,6 +98,11 @@ fun SchedulesSettingsPage(
                             ui.schedules[name]?.let {
                                 viewModel.removeSchedule(name, it, localOnly)
                             }
+                            if(name == ui.defaultSchedule) {
+                                viewModel.onDefaultScheduleChange(
+                                    ui.schedules.schedules.keys.firstOrNull()
+                                )
+                            }
                         }
                     }
                     selectionMap.clear()
@@ -107,14 +112,14 @@ fun SchedulesSettingsPage(
                         ui.schedules[scheduleName]?.let {
                             viewModel.removeSchedule(scheduleName, it, localOnly)
                         }
+                        if(scheduleName == ui.defaultSchedule) {
+                            viewModel.onDefaultScheduleChange(
+                                ui.schedules.schedules.keys.firstOrNull()
+                            )
+                        }
                     }
                     selectionMap.remove(scheduleName)
                     showDeleteDialog = selectionMap.count { it.value } != 0
-                }
-                if (ui.schedules.schedules.isEmpty()) {
-                    viewModel.onDefaultScheduleChange(
-                        null
-                    )
                 }
             }
         )
