@@ -12,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -86,6 +87,7 @@ fun AppearanceSettingsPage(
             SettingsTimePicker(
                 Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
                 label = "Start timetable from",
+                rememberTimePickerState(ui.startHour?.hour ?: 0, ui.startHour?.minute ?: 0)
             ) {
                 viewModel.onStartHourChange(it)
             }

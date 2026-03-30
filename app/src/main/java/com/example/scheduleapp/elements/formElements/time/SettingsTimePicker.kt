@@ -10,6 +10,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,11 +31,11 @@ import java.util.Locale
 fun SettingsTimePicker(
     modifier: Modifier = Modifier,
     label: String,
+    timePickerState: TimePickerState,
     isEnabled: Boolean = true,
     onValueChange: (LocalTime) -> Unit
 ) {
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
-    val timePickerState = rememberTimePickerState()
 
     val time = LocalTime.of(timePickerState.hour, timePickerState.minute)
     val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
