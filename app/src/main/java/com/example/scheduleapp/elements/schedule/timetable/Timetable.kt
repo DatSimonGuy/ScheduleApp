@@ -39,6 +39,7 @@ fun TimeTable(
     date: LocalDate
 ) {
     val scrollState = rememberScrollState()
+    val timeTableStartHour = startHour.coerceAtMost(lessons.firstOrNull()?.startTime?.hour ?: startHour)
     val dateFormatter = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
         .withLocale(Locale.getDefault())
@@ -61,7 +62,7 @@ fun TimeTable(
             Column(
                 Modifier.weight(1f)
             ) {
-                 for(i in startHour..23) {
+                 for(i in timeTableStartHour..23) {
                     val time = LocalTime.of(i, 0)
                     Text(
                         time.toString(),
@@ -79,7 +80,7 @@ fun TimeTable(
                 Column(
                     Modifier.padding(top = 16.dp)
                 ) {
-                    repeat(24-startHour) {
+                    repeat(24-timeTableStartHour) {
                         ElevatedCard(
                             Modifier
                                 .padding(bottom = 10.dp)
@@ -93,7 +94,7 @@ fun TimeTable(
                 lessons.forEach {
                     LessonBlock(
                         hourHeight = hourHeight,
-                        startHour = startHour,
+                        startHour = timeTableStartHour,
                         lesson = it,
                         onClick = onLessonClick,
                         displayStyle = lessonBlockDisplayStyle,
