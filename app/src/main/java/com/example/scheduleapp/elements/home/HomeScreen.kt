@@ -25,14 +25,11 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel
 ) {
-    LaunchedEffect(Unit) {
-        while (true) {
-            viewModel.updateScheduleInfo()
-            delay(1000)
-        }
+    val ui by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(ui.currentTime) {
+        viewModel.updateScheduleInfo()
     }
 
-    val ui by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = { TopAppBar(title = { Text("Home") }) }
     ) { paddingValues ->
