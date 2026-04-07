@@ -27,12 +27,11 @@ jobs:
             fi
           done
 
-      - name: Download APK
+      - name: Send APK to Telegram
         run: |
-          for url in ${{ join(fromJson(steps.get_assets.outputs.result), ' ') }}; do
-            if [[ "$url" == *.apk ]]; then
-              filename=$(basename "$url")
-              curl -L -o "$filename" "$url"
-              echo "APK_FILE=$filename" >> $GITHUB_ENV
-            fi
-          done
+          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+            -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -F document=@${{ env.APK_FILE }} \
+            -F caption="New release: ${{ github.event.release.tag_name }}
+            
+            ${{ github.event.release.body }}"
