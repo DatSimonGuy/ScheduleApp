@@ -30,16 +30,17 @@ android {
             }
         }
 
+        applicationId = "com.example.scheduleapp"
+        minSdk = 26
+        targetSdk = 36
+        versionCode = 4000
+        versionName = "0.4.0"
+
         buildConfigField(
             type = "String",
             name = "API_SERVER_URL",
             value = apiServerUrl
         )
-        applicationId = "com.example.scheduleapp"
-        minSdk = 26
-        targetSdk = 36
-        versionCode = 3001
-        versionName = "0.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
