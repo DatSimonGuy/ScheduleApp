@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.scheduleapp.BuildConfig
+import com.example.scheduleapp.elements.formElements.choice.SettingsInfoCard
 import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 
@@ -47,13 +48,11 @@ fun AboutSettingsPage(
             modifier = Modifier.fillMaxWidth().padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SettingsSelector(
+            SettingsInfoCard(
                 Modifier.fillMaxWidth(0.95f).align(Alignment.CenterHorizontally),
-                label = "Version",
-                items = emptyList(),
-                onSelectionChange = {},
-                selectedItem = BuildConfig.VERSION_NAME,
-                enabled = false
+                "Version",
+                BuildConfig.VERSION_NAME,
+                {}
             )
         }
     }
