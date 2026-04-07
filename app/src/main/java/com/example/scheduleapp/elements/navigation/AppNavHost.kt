@@ -24,6 +24,7 @@ import com.example.scheduleapp.elements.schedule.parts.LessonPage
 import com.example.scheduleapp.elements.settings.SettingsScreen
 import com.example.scheduleapp.elements.settings.SettingsViewModelFactory
 import com.example.scheduleapp.elements.settings.subpages.AboutSettingsPage
+import com.example.scheduleapp.elements.settings.subpages.AccessibilitySettingsPage
 import com.example.scheduleapp.elements.settings.subpages.AppearanceSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.GeneralSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.SchedulesSettingsPage
@@ -120,6 +121,11 @@ fun AppNavHost(
             composable<SettingsDestination.AppearanceSettings> { backStackEntry ->
                 val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
                 AppearanceSettingsPage(viewModel, navController)
+            }
+
+            composable<SettingsDestination.AccessibilitySettings> { backStackEntry ->
+                val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
+                AccessibilitySettingsPage(viewModel, navController)
             }
 
             composable<SettingsDestination.AboutSettings> { backStackEntry ->

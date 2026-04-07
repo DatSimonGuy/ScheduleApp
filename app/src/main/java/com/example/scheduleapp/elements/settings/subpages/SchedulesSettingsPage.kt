@@ -1,8 +1,11 @@
 package com.example.scheduleapp.elements.settings.subpages
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,11 +15,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -208,19 +213,21 @@ fun SchedulesSettingsPage(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { newScheduleFormExpanded = true }) {
-                        Icon(Icons.Default.Add, "")
-                    }
-                    IconButton(onClick = { importFormExpanded = true }) {
-                        Icon(Icons.Default.ImportExport, "")
-                    }
-                    if (selectionMap.containsValue(true)) {
-                        IconButton(
-                            onClick = {
-                                showDeleteDialog = true
+                    if (!ui.textButtons) {
+                        IconButton(onClick = { newScheduleFormExpanded = true }) {
+                            Icon(Icons.Default.Add, "")
+                        }
+                        IconButton(onClick = { importFormExpanded = true }) {
+                            Icon(Icons.Default.ImportExport, "")
+                        }
+                        if (selectionMap.containsValue(true)) {
+                            IconButton(
+                                onClick = {
+                                    showDeleteDialog = true
+                                }
+                            ) {
+                                Icon(Icons.Default.Delete, "")
                             }
-                        ) {
-                            Icon(Icons.Default.Delete, "")
                         }
                     }
                 }
@@ -247,33 +254,62 @@ fun SchedulesSettingsPage(
             SnackbarHost(snackHostState)
         }
     ) { paddingValues ->
-        LazyColumn (
-            Modifier.padding(paddingValues).fillMaxHeight()
+        Column (
+            Modifier.padding(paddingValues).fillMaxSize()
         ) {
-            ui.schedules.schedules.forEach { (key, schedule) ->
-                item {
-                    ListItem(
-                        modifier = Modifier.clickable {
-                            selectionMap[key] = !(selectionMap[key] ?: false)
-                        },
-                        headlineContent = { Text(key) },
-                        trailingContent = {
-                            Checkbox(
-                                selectionMap[key] == true,
-                                onCheckedChange = { selectionMap[key] = it }
-                            )
-                        },
-                        leadingContent = {
-                            IconButton(
-                                onClick = {
-                                    editedSchedule = Pair(key, schedule)
-                                    newScheduleFormExpanded = true
-                                }
-                            ) {
-                                Icon(Icons.Default.Edit, "")
-                            }
+            if (ui.textButtons) {
+                Row (
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ){
+                    OutlinedButton(
+                        onClick = { newScheduleFormExpanded = true },
+                        Modifier.padding(end = 8.dp)
+                    ) {
+                        Text("Add")
+                    }
+                    OutlinedButton(
+                        onClick = { importFormExpanded = true },
+                        Modifier.padding(end = 8.dp)
+                    ) {
+                        Text("Import")
+                    }
+                    if (selectionMap.containsValue(true)) {
+                        OutlinedButton(
+                            onClick = { showDeleteDialog = true },
+                            Modifier.padding(end = 8.dp)
+                        ) {
+                            Text("Delete")
                         }
-                    )
+                    }
+                }
+            }
+            LazyColumn {
+                ui.schedules.schedules.forEach { (key, schedule) ->
+                    item {
+                        ListItem(
+                            modifier = Modifier.clickable {
+                                selectionMap[key] = !(selectionMap[key] ?: false)
+                            },
+                            headlineContent = { Text(key) },
+                            trailingContent = {
+                                Checkbox(
+                                    selectionMap[key] == true,
+                                    onCheckedChange = { selectionMap[key] = it }
+                                )
+                            },
+                            leadingContent = {
+                                IconButton(
+                                    onClick = {
+                                        editedSchedule = Pair(key, schedule)
+                                        newScheduleFormExpanded = true
+                                    }
+                                ) {
+                                    Icon(Icons.Default.Edit, "")
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

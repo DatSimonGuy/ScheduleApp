@@ -30,7 +30,9 @@ data class ScheduleUiState(
     val selectedSchedule: String? = null,
     val showAddSchedule: Boolean = false,
     val preferences: UserPreferences? = null,
-    val startTime: LocalTime? = null
+    val startTime: LocalTime? = null,
+    val textButtons: Boolean = false,
+    val bigButton: Boolean = false
 )
 
 class ScheduleViewModel(
@@ -57,7 +59,9 @@ class ScheduleViewModel(
                         lessonBlockDisplayStyle = LessonBlockDisplayStyle.valueOf(settings.lessonBlockDisplayStyle),
                         showAddSchedule = settings.addScheduleInFab,
                         selectedSchedule = settings.defaultSchedule,
-                        startTime = LocalTime.parse(settings.startTime ?: "00:00")
+                        startTime = LocalTime.parse(settings.startTime ?: "00:00"),
+                        textButtons = settings.textButtons,
+                        bigButton = settings.bigButton
                     )
                 }
             }

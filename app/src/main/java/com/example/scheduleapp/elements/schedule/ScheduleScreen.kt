@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.elements.formElements.choice.ChoiceDialog
@@ -137,6 +139,13 @@ fun ScheduleScreen(
                         checked = fabExpanded,
                         onCheckedChange = {
                             fabExpanded = !fabExpanded
+                        },
+                        containerSize = {
+                            if (ui.bigButton) {
+                                ToggleFloatingActionButtonDefaults.containerSize()(it) * 1.5f
+                            } else {
+                                ToggleFloatingActionButtonDefaults.containerSize()(it)
+                            }
                         }
                     ) {
                         if (!fabExpanded) {

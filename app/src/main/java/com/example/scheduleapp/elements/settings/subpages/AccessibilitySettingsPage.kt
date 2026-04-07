@@ -12,26 +12,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.scheduleapp.BuildConfig
-import com.example.scheduleapp.elements.formElements.choice.SettingsInfoCard
-import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
+import com.example.scheduleapp.elements.formElements.choice.ToggleCard
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutSettingsPage(
+fun AccessibilitySettingsPage(
     viewModel: SettingsViewModel,
     navController: NavController
 ) {
+    val ui by viewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About") },
+                title = { Text("Appearance") },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -48,11 +49,24 @@ fun AboutSettingsPage(
             modifier = Modifier.fillMaxWidth().padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SettingsInfoCard(
+            ToggleCard(
+                Modifier
+                    .fillMaxWidth(0.95f)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 8.dp),
+                "Use text instead of icon buttons",
+                checked = ui.textButtons,
+                onCheckedChange = {
+                    viewModel.onTextButtonsChange(it)
+                }
+            )
+            ToggleCard(
                 Modifier.fillMaxWidth(0.95f).align(Alignment.CenterHorizontally),
-                "Version",
-                BuildConfig.VERSION_NAME,
-                {}
+                "BIG button",
+                checked = ui.bigButton,
+                onCheckedChange = {
+                    viewModel.onBigButtonChange(it)
+                }
             )
         }
     }

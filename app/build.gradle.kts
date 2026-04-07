@@ -33,8 +33,8 @@ android {
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4000
-        versionName = "0.4.0"
+        versionCode = 5000
+        versionName = "0.5.0"
 
         buildConfigField(
             type = "String",

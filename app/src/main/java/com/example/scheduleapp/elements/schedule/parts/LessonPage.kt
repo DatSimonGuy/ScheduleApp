@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -53,7 +54,7 @@ fun LessonPage(
     navController: NavController,
     selectedDay: DayOfWeek = DayOfWeek.MONDAY
 ) {
-    val ui = viewModel.uiState.collectAsStateWithLifecycle()
+    val ui by viewModel.uiState.collectAsStateWithLifecycle()
     var lesson: Lesson? = null
     val formState = rememberLessonFormState(null, selectedDay)
     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
@@ -62,7 +63,7 @@ fun LessonPage(
     var timeError by rememberSaveable { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
-        lesson = viewModel.getLesson(ui.value.selectedSchedule ?: "", lessonId)
+        lesson = viewModel.getLesson(ui.selectedSchedule ?: "", lessonId)
         lesson?.let {
             formState.fillFields(it)
         }
@@ -105,7 +106,7 @@ fun LessonPage(
                         Button(
                             onClick = {
                                 viewModel.removeLesson(
-                                    ui.value.selectedSchedule ?: "", lessonId,
+                                    ui.selectedSchedule ?: "", lessonId,
                                     selectedDay
                                 )
                                 viewModel.navController.popBackStack()
@@ -136,14 +137,72 @@ fun LessonPage(
                     }
                 },
                 actions = {
-                    IconButton(
+                    if (!ui.textButtons) {
+                        IconButton(
+                            onClick = {
+                                showConfirmDialog = true
+                            }
+                        ) {
+                            Icon(Icons.Default.Delete, "")
+                        }
+                        IconButton(
+                            onClick = {
+                                editing = !editing
+                                if (!editing) {
+                                    lesson?.let {
+                                        formState.fillFields(it)
+                                    }
+                                }
+                            }
+                        ) {
+                            if(!editing) {
+                                Icon(Icons.Default.Edit, "")
+                            } else {
+                                Icon(Icons.Default.Close, "")
+                            }
+                        }
+                        if (editing) {
+                            IconButton(
+                                onClick = {
+                                    val (lesson, errs) = formState.validateAndMap(lessonId)
+                                    if (lesson == null) {
+                                        subjectError = errs.first
+                                        timeError = errs.second
+                                        return@IconButton
+                                    }
+                                    viewModel.updateLesson(
+                                        ui.selectedSchedule ?: "", lesson,
+                                        selectedDay,
+                                        DayOfWeek.valueOf(formState.dayOfWeek.value)
+                                    )
+                                    editing = false
+                                }
+                            ) {
+                                Icon(Icons.Default.Check, "")
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            Modifier.padding(paddingValues).fillMaxSize()
+        ) {
+            if (ui.textButtons) {
+                Row (
+                    Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    OutlinedButton(
                         onClick = {
                             showConfirmDialog = true
-                        }
+                        },
+                        Modifier.padding(end = 8.dp)
                     ) {
-                        Icon(Icons.Default.Delete, "")
+                        Text("Delete")
                     }
-                    IconButton(
+                    OutlinedButton(
                         onClick = {
                             editing = !editing
                             if (!editing) {
@@ -151,40 +210,45 @@ fun LessonPage(
                                     formState.fillFields(it)
                                 }
                             }
-                        }
+                        },
+                        Modifier.padding(end = 8.dp)
                     ) {
                         if(!editing) {
-                            Icon(Icons.Default.Edit, "")
+                            Text("Edit")
                         } else {
-                            Icon(Icons.Default.Close, "")
+                            Text("Cancel")
                         }
                     }
                     if (editing) {
-                        IconButton(
+                        OutlinedButton (
                             onClick = {
                                 val (lesson, errs) = formState.validateAndMap(lessonId)
                                 if (lesson == null) {
                                     subjectError = errs.first
                                     timeError = errs.second
-                                    return@IconButton
+                                    return@OutlinedButton
                                 }
                                 viewModel.updateLesson(
-                                    ui.value.selectedSchedule ?: "", lesson,
+                                    ui.selectedSchedule ?: "", lesson,
                                     selectedDay,
                                     DayOfWeek.valueOf(formState.dayOfWeek.value)
                                 )
                                 editing = false
-                            }
+                            },
+                            Modifier.padding(end = 8.dp)
                         ) {
-                            Icon(Icons.Default.Check, "")
+                            Text("Confirm")
                         }
                     }
                 }
+            }
+            LessonFormFields(
+                Modifier.verticalScroll(rememberScrollState()),
+                formState,
+                subjectError,
+                timeError,
+                editing
             )
         }
-    ) { paddingValues ->
-        LessonFormFields(Modifier
-            .padding(paddingValues)
-            .verticalScroll(rememberScrollState()), formState, subjectError, timeError, editing)
     }
 }

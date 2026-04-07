@@ -3,6 +3,13 @@ package com.example.scheduleapp.elements.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Accessibility
+import androidx.compose.material.icons.filled.Brush
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,10 +27,11 @@ fun SettingsScreen(
     viewModel: SettingsViewModel
 ) {
     val categories = mapOf(
-        "General" to SettingsDestination.GeneralSettings,
-        "Schedules" to SettingsDestination.SchedulesSettings,
-        "Appearance" to SettingsDestination.AppearanceSettings,
-        "About" to SettingsDestination.AboutSettings
+        Icons.Default.Settings to "General" to SettingsDestination.GeneralSettings,
+        Icons.Default.CalendarToday to "Schedules" to SettingsDestination.SchedulesSettings,
+        Icons.Default.Brush to "Appearance" to SettingsDestination.AppearanceSettings,
+        Icons.Default.Accessibility to "Accessibility" to SettingsDestination.AccessibilitySettings,
+        Icons.Default.Info to "About" to SettingsDestination.AboutSettings
     )
     Scaffold(
         topBar = { TopAppBar(title = { Text("Settings") }) }
@@ -33,7 +41,11 @@ fun SettingsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             categories.forEach {
-                SettingsCategory(it.key, {navController.navigate(it.value)})
+                SettingsCategory(
+                    it.key.second,
+                    {navController.navigate(it.value)},
+                    it.key.first
+                )
             }
         }
     }
