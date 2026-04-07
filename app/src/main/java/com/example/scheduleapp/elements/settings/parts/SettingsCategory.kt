@@ -16,12 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsCategory(
     categoryName: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    icon: ImageVector
 ) {
     ElevatedCard(
         Modifier
@@ -35,6 +37,7 @@ fun SettingsCategory(
         Row(
             Modifier.fillMaxWidth().padding(16.dp)
         ) {
+            Icon(icon, "", Modifier.padding(end = 8.dp))
             Text(categoryName)
             Spacer(Modifier.weight(1f))
             Icon(Icons.AutoMirrored.Filled.NavigateNext, "")
