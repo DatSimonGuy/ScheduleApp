@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.example.scheduleapp.utils.textColorForBackground
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +68,7 @@ fun SettingsSelector(
             Spacer(Modifier.weight(1f))
             Text(
                 selectedItem,
-                color = if (enabled) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surface
+                color = if (enabled) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface
             )
         }
     }

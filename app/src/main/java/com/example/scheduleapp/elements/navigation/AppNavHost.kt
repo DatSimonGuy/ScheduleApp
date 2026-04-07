@@ -124,7 +124,7 @@ fun AppNavHost(
 
             composable<SettingsDestination.AboutSettings> { backStackEntry ->
                 val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
-                AboutSettingsPage(viewModel)
+                AboutSettingsPage(viewModel, navController)
             }
         }
     }
