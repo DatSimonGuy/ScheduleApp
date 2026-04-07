@@ -1,5 +1,7 @@
 package com.example.scheduleapp.elements.navigation
 
+import Destination
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BorderVertical
@@ -23,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.scheduleapp.data.datastore.SettingKeys
 import com.example.scheduleapp.data.datastore.settingsDataStore
@@ -33,7 +37,8 @@ fun Navbar(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val navController = rememberNavController()
     val startDestination = Destination.Home
-    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.id) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentNavDestination = navBackStackEntry?.destination
 
     LaunchedEffect(Unit) {
         val dest = Destination.main.firstOrNull { destination ->
@@ -44,6 +49,11 @@ fun Navbar(modifier: Modifier = Modifier) {
         }
     }
 
+    fun isSelected(destination: Destination): Boolean {
+        val className = destination::class.simpleName ?: ""
+        return currentNavDestination?.route?.contains(className, ignoreCase = true) == true
+    }
+
     Scaffold(
         modifier = modifier,
         bottomBar = {
@@ -52,7 +62,7 @@ fun Navbar(modifier: Modifier = Modifier) {
             ) {
                 Destination.main.forEach { destination ->
                     NavigationBarItem(
-                        selected = selectedDestination == destination.displayName,
+                        selected = isSelected(destination),
                         onClick = {
                             navController.navigate(destination) {
                                 popUpTo(navController.graph.startDestinationId) {
@@ -61,7 +71,6 @@ fun Navbar(modifier: Modifier = Modifier) {
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                            selectedDestination = destination.displayName!!
                         },
                         icon = {
                             Icon(
