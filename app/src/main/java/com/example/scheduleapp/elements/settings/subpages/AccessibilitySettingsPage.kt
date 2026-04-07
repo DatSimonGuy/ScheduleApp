@@ -11,7 +11,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -19,11 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.formElements.choice.ToggleCard
-import com.example.scheduleapp.elements.formElements.time.SettingsTimePicker
-import com.example.scheduleapp.elements.schedule.timetable.HourHeight
-import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,11 +50,22 @@ fun AccessibilitySettingsPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ToggleCard(
-                Modifier.fillMaxWidth(0.95f).align(Alignment.CenterHorizontally),
+                Modifier
+                    .fillMaxWidth(0.95f)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 8.dp),
                 "Use text instead of icon buttons",
                 checked = ui.textButtons,
                 onCheckedChange = {
                     viewModel.onTextButtonsChange(it)
+                }
+            )
+            ToggleCard(
+                Modifier.fillMaxWidth(0.95f).align(Alignment.CenterHorizontally),
+                "BIG button",
+                checked = ui.bigButton,
+                onCheckedChange = {
+                    viewModel.onBigButtonChange(it)
                 }
             )
         }

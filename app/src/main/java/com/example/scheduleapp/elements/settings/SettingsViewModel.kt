@@ -26,7 +26,8 @@ data class Settings(
     var recentChatId: Long? = null,
     var startHour: LocalTime? = null,
     var selectedStartPage: Destination? = null,
-    var textButtons: Boolean = false
+    var textButtons: Boolean = false,
+    var bigButton: Boolean = false
 )
 
 class SettingsViewModel(
@@ -48,7 +49,8 @@ class SettingsViewModel(
                         defaultSchedule = settings.defaultSchedule,
                         startHour = LocalTime.parse(settings.startTime ?: "00:00"),
                         selectedStartPage = Destination.main.firstOrNull { it.id == settings.startPage },
-                        textButtons = settings.textButtons
+                        textButtons = settings.textButtons,
+                        bigButton = settings.bigButton
                     )
                 }
             }
@@ -70,6 +72,12 @@ class SettingsViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun onBigButtonChange(value: Boolean) {
+        viewModelScope.launch {
+            repository.setBigButton(value);
         }
     }
 
