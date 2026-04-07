@@ -1,3 +1,6 @@
+import android.annotation.SuppressLint
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import com.example.scheduleapp.R
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -56,3 +59,19 @@ sealed class ScheduleDestination : Destination() {
         val lessonId: String
     ) : ScheduleDestination() { override val id = 11 }
 }
+
+fun NavDestination?.isScheduleDestination(): Boolean =
+    this?.let {
+        it.hasRoute<ScheduleDestination.ScheduleScreen>() ||
+        it.hasRoute<ScheduleDestination.ScheduleScreen>()
+    } == true
+
+fun NavDestination?.isSettingsDestination(): Boolean =
+    this?.let {
+        it.hasRoute<SettingsDestination.SettingsPage>() ||
+        it.hasRoute<SettingsDestination.GeneralSettings>() ||
+        it.hasRoute<SettingsDestination.SchedulesSettings>() ||
+        it.hasRoute<SettingsDestination.AppearanceSettings>() ||
+        it.hasRoute<SettingsDestination.AccessibilitySettings>() ||
+        it.hasRoute<SettingsDestination.AboutSettings>()
+    } == true

@@ -1,5 +1,9 @@
 package com.example.scheduleapp.elements.navigation
 
+import Destination
+import ScheduleDestination
+import SettingsDestination
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BorderVertical
@@ -23,9 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.scheduleapp.data.datastore.SettingKeys
 import com.example.scheduleapp.data.datastore.settingsDataStore
+import isScheduleDestination
+import isSettingsDestination
 import kotlinx.coroutines.flow.first
 
 @Composable
@@ -33,7 +41,8 @@ fun Navbar(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val navController = rememberNavController()
     val startDestination = Destination.Home
-    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.id) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentNavDestination = navBackStackEntry?.destination
 
     LaunchedEffect(Unit) {
         val dest = Destination.main.firstOrNull { destination ->
@@ -51,8 +60,16 @@ fun Navbar(modifier: Modifier = Modifier) {
                 windowInsets = NavigationBarDefaults.windowInsets
             ) {
                 Destination.main.forEach { destination ->
+                    val isSelected = navBackStackEntry?.destination?.let { currentNavDest ->
+                        when (destination) {
+                            Destination.Home -> currentNavDest.hasRoute<Destination.Home>()
+                            Destination.Schedule -> currentNavDest.isScheduleDestination()
+                            Destination.Settings -> currentNavDest.isSettingsDestination()
+                            else -> false
+                        }
+                    } ?: false
                     NavigationBarItem(
-                        selected = selectedDestination == destination.displayName,
+                        selected = isSelected,
                         onClick = {
                             navController.navigate(destination) {
                                 popUpTo(navController.graph.startDestinationId) {
@@ -61,7 +78,6 @@ fun Navbar(modifier: Modifier = Modifier) {
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                            selectedDestination = destination.displayName!!
                         },
                         icon = {
                             Icon(
