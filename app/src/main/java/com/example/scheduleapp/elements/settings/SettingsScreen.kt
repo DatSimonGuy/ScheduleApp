@@ -23,6 +23,7 @@ fun SettingsScreen(
         "General" to SettingsDestination.GeneralSettings,
         "Schedules" to SettingsDestination.SchedulesSettings,
         "Appearance" to SettingsDestination.AppearanceSettings,
+        "Accessibility" to SettingsDestination.AccessibilitySettings,
         "About" to SettingsDestination.AboutSettings
     )
     Scaffold(

@@ -17,7 +17,8 @@ data class UserSettings(
     val addScheduleInFab: Boolean,
     val defaultSchedule: String?,
     val startTime: String?,
-    val startPage: Int?
+    val startPage: Int?,
+    val textButtons: Boolean
 )
 
 class SettingsRepository(private val context: Context) {
@@ -29,9 +30,16 @@ class SettingsRepository(private val context: Context) {
                 addScheduleInFab = preferences[SettingKeys.addScheduleInFab] ?: false,
                 defaultSchedule = preferences[SettingKeys.defaultSchedule],
                 startTime = preferences[SettingKeys.startTime],
-                startPage = preferences[SettingKeys.startPage]
+                startPage = preferences[SettingKeys.startPage],
+                textButtons = preferences[SettingKeys.textButtons] ?: false
             )
         }
+
+    suspend fun setTextButtons(value: Boolean) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.textButtons] = value
+        }
+    }
 
     suspend fun setStartPage(page: Int?) {
         context.settingsDataStore.edit {

@@ -25,7 +25,8 @@ data class Settings(
     var defaultSchedule: String? = null,
     var recentChatId: Long? = null,
     var startHour: LocalTime? = null,
-    var selectedStartPage: Destination? = null
+    var selectedStartPage: Destination? = null,
+    var textButtons: Boolean = false
 )
 
 class SettingsViewModel(
@@ -46,7 +47,8 @@ class SettingsViewModel(
                         addScheduleInFab = settings.addScheduleInFab,
                         defaultSchedule = settings.defaultSchedule,
                         startHour = LocalTime.parse(settings.startTime ?: "00:00"),
-                        selectedStartPage = Destination.main.firstOrNull { it.id == settings.startPage }
+                        selectedStartPage = Destination.main.firstOrNull { it.id == settings.startPage },
+                        textButtons = settings.textButtons
                     )
                 }
             }
@@ -68,6 +70,12 @@ class SettingsViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun onTextButtonsChange(value: Boolean) {
+        viewModelScope.launch {
+            repository.setTextButtons(value);
         }
     }
 

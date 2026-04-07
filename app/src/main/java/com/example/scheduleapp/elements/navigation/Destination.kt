@@ -40,7 +40,9 @@ sealed class SettingsDestination : Destination() {
     @Serializable
     object AppearanceSettings: SettingsDestination() { override val id = 23 }
     @Serializable
-    object AboutSettings: SettingsDestination() { override val id = 24 }
+    object AccessibilitySettings: SettingsDestination() { override val id = 24}
+    @Serializable
+    object AboutSettings: SettingsDestination() { override val id = 25 }
 }
 
 @Serializable
