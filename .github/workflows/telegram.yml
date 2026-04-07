@@ -21,15 +21,18 @@ jobs:
         run: |
           for url in ${{ join(fromJson(steps.get_assets.outputs.result), ' ') }}; do
             if [[ "$url" == *.apk ]]; then
-              curl -L -o app.apk "$url"
+              filename=$(basename "$url")
+              curl -L -o "$filename" "$url"
+              echo "APK_FILE=$filename" >> $GITHUB_ENV
             fi
           done
 
-      - name: Send APK to Telegram
+      - name: Download APK
         run: |
-          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-            -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -F document=@app.apk \
-            -F caption="New release: ${{ github.event.release.tag_name }}
-            
-            ${{ github.event.release.body }}"
+          for url in ${{ join(fromJson(steps.get_assets.outputs.result), ' ') }}; do
+            if [[ "$url" == *.apk ]]; then
+              filename=$(basename "$url")
+              curl -L -o "$filename" "$url"
+              echo "APK_FILE=$filename" >> $GITHUB_ENV
+            fi
+          done
