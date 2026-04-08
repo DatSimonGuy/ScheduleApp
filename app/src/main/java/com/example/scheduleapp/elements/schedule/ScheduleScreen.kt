@@ -22,6 +22,7 @@ import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,18 @@ fun ScheduleScreen(
     val scope = rememberCoroutineScope()
     val scheduleFormState = rememberScheduleFormState()
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
+
+    LaunchedEffect(ui.selectedSchedule) {
+        isRefreshing = true
+        scope.launch {
+            ui.selectedSchedule?.let { selected ->
+                currentSchedule?.let {
+                    viewModel.updateSchedule(selected, it)
+                }
+            }
+            isRefreshing = false
+        }
+    }
 
     if (showScheduleForm) {
         scheduleFormState.fillFields(
