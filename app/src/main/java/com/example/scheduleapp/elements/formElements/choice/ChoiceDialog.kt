@@ -37,7 +37,7 @@ fun ChoiceDialog(
         Card(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f)
+                .fillMaxHeight(0.9f)
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
