@@ -1,11 +1,11 @@
 package com.example.scheduleapp.elements.settings.subpages
 
+import Destination
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 
@@ -36,7 +37,7 @@ fun GeneralSettingsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("General") },
+                title = { Text(stringResource(R.string.general)) },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -57,9 +58,9 @@ fun GeneralSettingsPage(
                 Modifier
                     .fillMaxWidth(0.95f)
                     .padding(bottom = 8.dp),
-                "Main app page",
+                stringResource(R.string.mainAppPage),
                 destinationLabels,
-                { selectedLabel ->
+                { selectedLabel, _ ->
                     val index = destinationLabels.indexOf(selectedLabel)
                     if (index != -1) {
                         viewModel.onSelectedStartPageChange(destinations[index].id)

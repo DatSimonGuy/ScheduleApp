@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.res.stringResource
+import com.example.scheduleapp.R
 import com.example.scheduleapp.data.api.DSBApi
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.data.classes.SaveLocation
@@ -19,12 +21,12 @@ import java.time.LocalTime
 class ScheduleRepository(private val context: Context) {
     val scheduleMap: Flow<ScheduleMap> = context.scheduleDataStore.data
 
-    suspend fun saveSchedule(name: String, schedule: Schedule): String? {
+    suspend fun saveSchedule(name: String, schedule: Schedule, context: Context): String? {
         if (schedule.saveLocation == SaveLocation.DSB && schedule.chatId != null) {
             val api = DSBApi(schedule.chatId, "")
             val (presentSchedule, _) = api.getSchedule(name)
             if (presentSchedule != null) {
-                return "This schedule already exists"
+                return context.getString(R.string.scheduleExistsError)
             }
             val error = api.createSchedule(name)
             error?.let { return it }
@@ -53,14 +55,14 @@ class ScheduleRepository(private val context: Context) {
         return null
     }
 
-    suspend fun importSchedules(chatId: Long, list: List<String>): String? {
+    suspend fun importSchedules(chatId: Long, list: List<String>, context: Context): String? {
         val api = DSBApi(chatId, "")
 
         list.forEach {
             val (schedule, error) = api.getSchedule(it)
             error?.let { return error }
             if (schedule == null) {
-                return "Error fetching schedule"
+                return context.getString(R.string.errorFetchingSchedules)
             }
             context.scheduleDataStore.updateData { currentDb ->
                 currentDb.copy(
@@ -104,10 +106,10 @@ class ScheduleRepository(private val context: Context) {
         return null
     }
 
-    suspend fun addLesson(scheduleName: String, dayOfWeek: DayOfWeek, lesson: Lesson): String? {
+    suspend fun addLesson(scheduleName: String, dayOfWeek: DayOfWeek, lesson: Lesson, context: Context): String? {
         val currentDb = context.scheduleDataStore.data.first()
         val currentSchedule =
-            currentDb.schedules[scheduleName] ?: return "This schedule does not exist"
+            currentDb.schedules[scheduleName] ?: return context.getString(R.string.scheduleNotExistsError)
         currentSchedule.let { schedule ->
             if (schedule.saveLocation == SaveLocation.DSB) {
                 val api = DSBApi(schedule.chatId ?: 0, "")
@@ -131,15 +133,15 @@ class ScheduleRepository(private val context: Context) {
         return null
     }
 
-    suspend fun updateLesson(scheduleName: String, lesson: Lesson, oldDay: DayOfWeek, newDay: DayOfWeek) {
-        removeLesson(scheduleName, lesson.id, oldDay)
-        addLesson(scheduleName, newDay, lesson)
+    suspend fun updateLesson(scheduleName: String, lesson: Lesson, oldDay: DayOfWeek, newDay: DayOfWeek, context: Context) {
+        removeLesson(scheduleName, lesson.id, oldDay, context)
+        addLesson(scheduleName, newDay, lesson, context)
     }
 
-    suspend fun removeLesson(scheduleName: String, lessonId: String, dayOfWeek: DayOfWeek): String? {
+    suspend fun removeLesson(scheduleName: String, lessonId: String, dayOfWeek: DayOfWeek, context: Context): String? {
         val currentDb = context.scheduleDataStore.data.first()
         val currentSchedule =
-            currentDb.schedules[scheduleName] ?: return "This schedule does not exist"
+            currentDb.schedules[scheduleName] ?: return context.getString(R.string.scheduleNotExistsError)
         val schedules =
             currentDb.schedules
         currentSchedule.let { schedule ->

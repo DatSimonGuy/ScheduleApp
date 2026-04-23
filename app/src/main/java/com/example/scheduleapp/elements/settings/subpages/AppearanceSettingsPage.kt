@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.formElements.time.SettingsTimePicker
 import com.example.scheduleapp.elements.formElements.choice.ToggleCard
@@ -38,7 +39,7 @@ fun AppearanceSettingsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Appearance") },
+                title = { Text(stringResource(R.string.appearance)) },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -57,7 +58,7 @@ fun AppearanceSettingsPage(
         ) {
             ToggleCard(
                 modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
-                label = "Add schedule button in fab",
+                label = stringResource(R.string.fabScheduleButton),
                 checked = ui.addScheduleInFab,
                 onCheckedChange = {
                     viewModel.onAddScheduleInFabChange(it)
@@ -65,28 +66,30 @@ fun AppearanceSettingsPage(
             )
             SettingsSelector(
                 modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
-                label = "Hour cell height",
-                onSelectionChange = {
-                    viewModel.onHourHeightChange(HourHeight.valueOf(it))
-                    if (it == HourHeight.SHORT.name && ui.lessonBlockDisplayStyle == LessonBlockDisplayStyle.EXTENDED) {
+                label = stringResource(R.string.hourCellHeight),
+                onSelectionChange = { _, i ->
+                    viewModel.onHourHeightChange(HourHeight.entries[i])
+                    if (ui.hourHeight == HourHeight.SHORT && ui.lessonBlockDisplayStyle == LessonBlockDisplayStyle.EXTENDED) {
                         viewModel.onLessonBlockDisplayStyleChange(LessonBlockDisplayStyle.NORMAL)
                     }
                 },
-                items = HourHeight.entries.map { it.name },
-                selectedItem = ui.hourHeight.name
+                items = HourHeight.entries.map { stringResource(it.displayName) },
+                selectedItem = stringResource(ui.hourHeight.displayName)
             )
             SettingsSelector(
                 modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
-                label = "Lesson block display style",
-                onSelectionChange = {
-                    viewModel.onLessonBlockDisplayStyleChange(LessonBlockDisplayStyle.valueOf(it))
+                label = stringResource(R.string.lessonBlockStyle),
+                onSelectionChange = { _, i ->
+                    viewModel.onLessonBlockDisplayStyleChange(LessonBlockDisplayStyle.entries[i])
                 },
-                items = LessonBlockDisplayStyle.entries.filter { it.ordinal - 1 <= ui.hourHeight.ordinal }.map { it.name },
-                selectedItem = ui.lessonBlockDisplayStyle.name
+                items = LessonBlockDisplayStyle.entries.filter {
+                    it.ordinal - 1 <= ui.hourHeight.ordinal
+                }.map { stringResource(it.displayName) },
+                selectedItem = stringResource(ui.lessonBlockDisplayStyle.displayName)
             )
             SettingsTimePicker(
                 Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
-                label = "Start timetable from",
+                label = stringResource(R.string.startTimetableFrom),
                 rememberTimePickerState(ui.startHour?.hour ?: 0, ui.startHour?.minute ?: 0)
             ) {
                 viewModel.onStartHourChange(it)

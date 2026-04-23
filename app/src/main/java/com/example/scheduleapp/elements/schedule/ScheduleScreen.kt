@@ -30,9 +30,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.formElements.choice.ChoiceDialog
 import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
@@ -60,6 +62,7 @@ fun ScheduleScreen(
     val currentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
     val snackHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val scheduleFormState = rememberScheduleFormState()
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
 
@@ -83,7 +86,7 @@ fun ScheduleScreen(
             onDismissRequest = { showScheduleForm = false },
             onSuccess = { name, schedule ->
                 scope.launch {
-                    val error = viewModel.addSchedule(name, schedule)
+                    val error = viewModel.addSchedule(name, schedule, context)
                     error?.let {
                         snackHostState.showSnackbar(
                             it,
@@ -107,11 +110,11 @@ fun ScheduleScreen(
             onDismiss = {
                 showScheduleSelector = false
             },
-            onSelectionChange = {
-                viewModel.setCurrentSchedule(it)
+            onSelectionChange = { value, _ ->
+                viewModel.setCurrentSchedule(value)
                 showScheduleSelector = false
             },
-            label = "Select schedule",
+            label = stringResource(R .string.selectSchedule),
             items = ui.schedules.schedules.map { it.key },
             selectedItem = ui.selectedSchedule ?: ""
         )
@@ -124,7 +127,7 @@ fun ScheduleScreen(
             },
             onSuccess = { lesson, selectedDay ->
                 scope.launch {
-                    val error = viewModel.addNewLesson(selectedDay, lesson)
+                    val error = viewModel.addNewLesson(selectedDay, lesson, context)
                     error?.let {
                         snackHostState.showSnackbar(
                             error,
@@ -175,7 +178,7 @@ fun ScheduleScreen(
                             showScheduleForm = true
                             fabExpanded = false
                         },
-                        text = { Text("Add a new schedule") },
+                        text = { Text(stringResource(R.string.addNewSchedule)) },
                         icon = { Icon(Icons.Default.Add, "") }
                     )
                 }
@@ -184,7 +187,7 @@ fun ScheduleScreen(
                         showScheduleSelector = true
                         fabExpanded = false
                     },
-                    text = { Text("Select schedule") },
+                    text = { Text(stringResource(R.string.selectSchedule)) },
                     icon = { Icon(Icons.Default.CalendarToday, "") }
                 )
                 FloatingActionButtonMenuItem(
@@ -192,7 +195,7 @@ fun ScheduleScreen(
                         showAddLessonFrom = true
                         fabExpanded = false
                     },
-                    text = { Text("Add a new lesson") },
+                    text = { Text(stringResource(R.string.addNewLesson)) },
                     icon = { Icon(Icons.Default.AddCircleOutline, "") }
                 )
             }

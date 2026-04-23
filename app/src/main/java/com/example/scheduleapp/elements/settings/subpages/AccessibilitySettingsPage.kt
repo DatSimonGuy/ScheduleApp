@@ -15,9 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.formElements.choice.ToggleCard
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 
@@ -32,7 +34,7 @@ fun AccessibilitySettingsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Appearance") },
+                title = { Text(stringResource(R.string.accessibility)) },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -54,7 +56,7 @@ fun AccessibilitySettingsPage(
                     .fillMaxWidth(0.95f)
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 8.dp),
-                "Use text instead of icon buttons",
+                stringResource(R.string.textButtons),
                 checked = ui.textButtons,
                 onCheckedChange = {
                     viewModel.onTextButtonsChange(it)
@@ -62,7 +64,7 @@ fun AccessibilitySettingsPage(
             )
             ToggleCard(
                 Modifier.fillMaxWidth(0.95f).align(Alignment.CenterHorizontally),
-                "BIG button",
+                stringResource(R.string.bigButton),
                 checked = ui.bigButton,
                 onCheckedChange = {
                     viewModel.onBigButtonChange(it)

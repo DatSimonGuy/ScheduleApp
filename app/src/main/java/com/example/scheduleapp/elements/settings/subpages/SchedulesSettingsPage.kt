@@ -38,9 +38,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.scheduleapp.R
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
@@ -68,6 +71,7 @@ fun SchedulesSettingsPage(
     var editedSchedule: Pair<String, Schedule>? by rememberSaveable { mutableStateOf(null) }
     val scheduleFormState = rememberScheduleFormState()
     val importFormState = rememberImportFormState()
+    val context = LocalContext.current
 
     LaunchedEffect(importFormExpanded) {
         importFormState.fillFields(ui.recentChatId)
@@ -149,7 +153,7 @@ fun SchedulesSettingsPage(
                         }
                         return@launch
                     }
-                    val error = viewModel.addNewSchedule(name, schedule)
+                    val error = viewModel.addNewSchedule(name, schedule, context)
                     error?.let {
                         snackHostState.showSnackbar(
                             error,
@@ -179,7 +183,7 @@ fun SchedulesSettingsPage(
             onDismissRequest = { importFormExpanded = false },
             onSuccess = { list, chatId ->
                 scope.launch {
-                    val error = viewModel.importSchedules(chatId, list)
+                    val error = viewModel.importSchedules(chatId, list, context)
                     error?.let {
                         snackHostState.showSnackbar(
                             error,
@@ -202,7 +206,7 @@ fun SchedulesSettingsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Schedules") },
+                title = { Text(stringResource(R.string.schedules)) },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -240,11 +244,11 @@ fun SchedulesSettingsPage(
             ) {
                 SettingsSelector(
                     Modifier.fillMaxWidth(0.95f),
-                    label = "Default schedule",
+                    label = stringResource(R.string.defaultSchedule),
                     items = ui.schedules.schedules.map { it.key },
                     selectedItem = ui.defaultSchedule ?: "None",
-                    onSelectionChange = {
-                        viewModel.onDefaultScheduleChange(it)
+                    onSelectionChange = { value, _ ->
+                        viewModel.onDefaultScheduleChange(value)
                     },
                     enabled = ui.schedules.schedules.isNotEmpty()
                 )
@@ -266,20 +270,20 @@ fun SchedulesSettingsPage(
                         onClick = { newScheduleFormExpanded = true },
                         Modifier.padding(end = 8.dp)
                     ) {
-                        Text("Add")
+                        Text(stringResource(R.string.add))
                     }
                     OutlinedButton(
                         onClick = { importFormExpanded = true },
                         Modifier.padding(end = 8.dp)
                     ) {
-                        Text("Import")
+                        Text(stringResource(R.string.importText))
                     }
                     if (selectionMap.containsValue(true)) {
                         OutlinedButton(
                             onClick = { showDeleteDialog = true },
                             Modifier.padding(end = 8.dp)
                         ) {
-                            Text("Delete")
+                            Text(stringResource(R.string.delete))
                         }
                     }
                 }

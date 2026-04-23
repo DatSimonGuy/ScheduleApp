@@ -6,26 +6,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Occurrence {
+enum class Occurrence (
+    @StringRes val displayName: Int
+) {
     @SerialName("always")
-    WEEKLY,
+    WEEKLY(R.string.weekly),
     @SerialName("once")
-    ONCE,
+    ONCE(R.string.once),
     @SerialName("2weeks")
-    EVERY_TWO,
+    EVERY_TWO(R.string.everyTwo),
     @SerialName("3weeks")
-    EVERY_THREE,
+    EVERY_THREE(R.string.everyThree),
     @SerialName("selected")
-    SELECTED_DAYS;
-
-    @StringRes
-    fun getDisplayName(): Int {
-        return when(this) {
-            WEEKLY -> R.string.weekly
-            ONCE -> R.string.once
-            EVERY_TWO -> R.string.everyTwo
-            EVERY_THREE -> R.string.everyThree
-            SELECTED_DAYS -> R.string.selectedDays
-        }
-    }
+    SELECTED_DAYS(R.string.selectedDays);
 }

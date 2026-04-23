@@ -24,8 +24,10 @@ import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.scheduleapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +64,7 @@ fun MultipleChoiceDialog(
                             horizontalArrangement = Arrangement.End
                         ) {
                             Text(
-                                "Select all",
+                                stringResource(R.string.selectAll),
                                 Modifier.align(Alignment.CenterVertically)
                             )
                             Checkbox(

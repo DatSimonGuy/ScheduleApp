@@ -1,5 +1,7 @@
 package com.example.scheduleapp.elements.schedule
 
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -86,8 +88,8 @@ class ScheduleViewModel(
         }
     }
 
-    suspend fun addSchedule(scheduleName: String, schedule: Schedule): String? {
-        val error = scheduleRepository.saveSchedule(scheduleName, schedule)
+    suspend fun addSchedule(scheduleName: String, schedule: Schedule, context: Context): String? {
+        val error = scheduleRepository.saveSchedule(scheduleName, schedule, context)
         error?.let {
             return it
         }
@@ -113,23 +115,24 @@ class ScheduleViewModel(
         }
     }
 
-    suspend fun addNewLesson(dayOfWeek: DayOfWeek, lesson: Lesson): String? {
+    suspend fun addNewLesson(dayOfWeek: DayOfWeek, lesson: Lesson, context: Context): String? {
         return scheduleRepository.addLesson(
             uiState.value.selectedSchedule ?: "",
             dayOfWeek,
-            lesson
+            lesson,
+            context
         )
     }
 
-    fun updateLesson(scheduleName: String, lesson: Lesson, oldDay: DayOfWeek, newDay: DayOfWeek) {
+    fun updateLesson(scheduleName: String, lesson: Lesson, oldDay: DayOfWeek, newDay: DayOfWeek, context: Context) {
         viewModelScope.launch {
-            scheduleRepository.updateLesson(scheduleName, lesson, oldDay, newDay)
+            scheduleRepository.updateLesson(scheduleName, lesson, oldDay, newDay, context)
         }
     }
 
-    fun removeLesson(scheduleName: String, lessonId: String, dayOfWeek: DayOfWeek) {
+    fun removeLesson(scheduleName: String, lessonId: String, dayOfWeek: DayOfWeek, context: Context) {
         viewModelScope.launch {
-            scheduleRepository.removeLesson(scheduleName, lessonId, dayOfWeek)
+            scheduleRepository.removeLesson(scheduleName, lessonId, dayOfWeek, context)
         }
     }
 
