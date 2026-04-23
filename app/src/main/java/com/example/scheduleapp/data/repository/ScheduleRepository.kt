@@ -1,10 +1,6 @@
 package com.example.scheduleapp.data.repository
 
 import android.content.Context
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.compose.ui.res.stringResource
 import com.example.scheduleapp.R
 import com.example.scheduleapp.data.api.DSBApi
 import com.example.scheduleapp.data.classes.Lesson
@@ -199,4 +195,15 @@ class ScheduleRepository(private val context: Context) {
         }
     }
 
+    suspend fun getLessonsByTime(
+        scheduleName: String,
+        weekDay: DayOfWeek,
+        startTime: LocalTime,
+        endTime: LocalTime
+    ): List<Lesson> {
+        val schedule = scheduleMap.first()[scheduleName]
+        return schedule?.lessons[weekDay]?.filter {
+            it.endTime in startTime..endTime || it.startTime in startTime..endTime
+        } ?: emptyList()
+    }
 }
