@@ -145,4 +145,39 @@ class ScheduleViewModel(
             preferenceRepository.setRecentChatId(chatId)
         }
     }
+
+    suspend fun getLessonsByTime(
+        scheduleName: String,
+        dayOfWeek: DayOfWeek,
+        startTime: LocalTime,
+        endTime: LocalTime
+    ): List<Lesson> {
+        return scheduleRepository.getLessonsByTime(
+            scheduleName,
+            dayOfWeek,
+            startTime,
+            endTime
+        )
+    }
+
+    fun groupOverlappingLessons(lessons: List<Lesson>): List<List<Lesson>> {
+        if (lessons.isEmpty()) return emptyList()
+
+        val sorted = lessons.sortedBy { it.startTime }
+        val groups = mutableListOf<MutableList<Lesson>>()
+
+        for (lesson in sorted) {
+            val group = groups.find { g ->
+                g.any {
+                    (lesson.startTime < it.endTime && lesson.endTime > it.startTime)
+                }
+            }
+            if (group != null) {
+                group.add(lesson)
+            } else {
+                groups.add(mutableListOf(lesson))
+            }
+        }
+        return groups
+    }
 }

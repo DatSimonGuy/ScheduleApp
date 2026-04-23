@@ -15,12 +15,15 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.elements.schedule.ScheduleViewModel
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -36,13 +39,16 @@ fun TimeTable(
     lessons: List<Lesson>,
     onLessonClick: (String) -> Unit,
     lessonBlockDisplayStyle: LessonBlockDisplayStyle,
-    date: LocalDate
+    date: LocalDate,
+    scheduleName: String,
+    viewModel: ScheduleViewModel
 ) {
     val scrollState = rememberScrollState()
     val timeTableStartHour = startHour.coerceAtMost(lessons.firstOrNull()?.startTime?.hour ?: startHour)
     val dateFormatter = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
         .withLocale(Locale.getDefault())
+    val scope = rememberCoroutineScope()
     Column (
         modifier.fillMaxSize()
     ) {
@@ -91,12 +97,16 @@ fun TimeTable(
                         ) { }
                     }
                 }
-                lessons.forEach {
+                val groupedLessons = remember(lessons) {
+                    viewModel.groupOverlappingLessons(lessons)
+                }
+
+                groupedLessons.forEach { group ->
                     LessonBlock(
                         hourHeight = hourHeight,
                         startHour = timeTableStartHour,
-                        lesson = it,
-                        onClick = onLessonClick,
+                        lessons = group,
+                        onLessonClick = onLessonClick,
                         displayStyle = lessonBlockDisplayStyle,
                         date = date
                     )

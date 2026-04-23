@@ -232,7 +232,9 @@ fun ScheduleScreen(
                         navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))
                     },
                     lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
-                    date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong())
+                    date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong()),
+                    scheduleName =  ui.selectedSchedule ?: "",
+                    viewModel = viewModel
                 )
             }
         }
