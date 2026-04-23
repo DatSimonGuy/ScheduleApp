@@ -32,7 +32,7 @@ fun CompactDisplay(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = "(${stringResource(lesson.lessonType.getDisplayName()).first()}) ${lesson.subject}",
+            text = "(${stringResource(lesson.lessonType.displayName).first()}) ${lesson.subject}",
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,

@@ -63,7 +63,7 @@ sealed class ScheduleDestination : Destination() {
 fun NavDestination?.isScheduleDestination(): Boolean =
     this?.let {
         it.hasRoute<ScheduleDestination.ScheduleScreen>() ||
-        it.hasRoute<ScheduleDestination.ScheduleScreen>()
+        it.hasRoute<ScheduleDestination.LessonScreen>()
     } == true
 
 fun NavDestination?.isSettingsDestination(): Boolean =

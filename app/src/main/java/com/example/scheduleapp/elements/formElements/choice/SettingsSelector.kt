@@ -28,7 +28,7 @@ fun SettingsSelector(
     modifier: Modifier = Modifier,
     label: String,
     items: List<String>,
-    onSelectionChange: (String) -> Unit,
+    onSelectionChange: (String, Int) -> Unit,
     selectedItem: String,
     enabled: Boolean = true
 ) {
@@ -39,8 +39,8 @@ fun SettingsSelector(
             onDismiss = {
                 isSelectorVisible = false
             },
-            onSelectionChange = {
-                onSelectionChange(it)
+            onSelectionChange = { value, i ->
+                onSelectionChange(value, i)
                 isSelectorVisible = false
             },
             label = label,

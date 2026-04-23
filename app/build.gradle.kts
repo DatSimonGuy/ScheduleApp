@@ -33,8 +33,8 @@ android {
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5004
-        versionName = "0.5.4"
+        versionCode = 6000
+        versionName = "0.6.0"
 
         buildConfigField(
             type = "String",
@@ -74,6 +74,9 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    kotlinOptions {
+        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
     applicationVariants.all {
         val variant = this

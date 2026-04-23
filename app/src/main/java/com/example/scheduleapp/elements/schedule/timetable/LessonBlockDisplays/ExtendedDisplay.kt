@@ -61,7 +61,7 @@ fun ExtendedDisplay(
             color = textColor
         )
         Text(
-            text = "${stringResource(lesson.lessonType.getDisplayName())} - ${stringResource(lesson.occurrence.getDisplayName())}",
+            text = "${stringResource(lesson.lessonType.displayName)} - ${stringResource(lesson.occurrence.displayName)}",
             textAlign = TextAlign.Center,
             maxLines = 1,
             color = textColor

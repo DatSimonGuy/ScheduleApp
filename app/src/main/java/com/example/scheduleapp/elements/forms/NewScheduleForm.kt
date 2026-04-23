@@ -18,8 +18,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.scheduleapp.R
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.elements.formElements.choice.ToggleCard
@@ -35,6 +37,7 @@ fun NewScheduleForm(
 ) {
     var chatIdError by rememberSaveable { mutableStateOf<String?>(null) }
     var chatId by rememberSaveable { mutableStateOf(formState.chatId.value?.toString() ?: "") }
+    val chatIdErrorText = stringResource(R.string.chatIdEmptyError)
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest
@@ -47,14 +50,14 @@ fun NewScheduleForm(
             singleLine = true,
             value = formState.name.value,
             onValueChange = { formState.name.value = it },
-            label = { Text("Schedule name") }
+            label = { Text(stringResource(R.string.scheduleName)) }
         )
         ToggleCard(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 8.dp),
-            label = "Save schedule in DSB",
+            label = stringResource(R.string.saveInDSB),
             checked = !formState.isPrivate.value,
             enabled = extraFieldsEnabled,
             onCheckedChange = { value ->
@@ -77,7 +80,7 @@ fun NewScheduleForm(
                     }
                     chatId = it
                 },
-                label = { Text("Chat id") },
+                label = { Text(stringResource(R.string.chatId)) },
                 enabled = extraFieldsEnabled,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = chatIdError != null
@@ -101,12 +104,12 @@ fun NewScheduleForm(
                 modifier = Modifier.padding(end = 8.dp),
                 onClick = onDismissRequest
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
             Button(
                 onClick = {
                     if(formState.chatId.value == null && !formState.isPrivate.value) {
-                        chatIdError = "Chat id cannot be empty"
+                        chatIdError = chatIdErrorText
                         return@Button
                     } else {
                         chatIdError = null
@@ -120,7 +123,7 @@ fun NewScheduleForm(
                     )
                 }
             ) {
-                Text("Ok")
+                Text(stringResource(R.string.ok))
             }
         }
     }

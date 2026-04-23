@@ -15,9 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.scheduleapp.BuildConfig
+import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.formElements.choice.SettingsInfoCard
 import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.settings.SettingsViewModel
@@ -31,7 +33,7 @@ fun AboutSettingsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About") },
+                title = { Text(stringResource(R.string.about)) },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -50,7 +52,7 @@ fun AboutSettingsPage(
         ) {
             SettingsInfoCard(
                 Modifier.fillMaxWidth(0.95f).align(Alignment.CenterHorizontally),
-                "Version",
+                stringResource(R.string.appVersion),
                 BuildConfig.VERSION_NAME,
                 {}
             )

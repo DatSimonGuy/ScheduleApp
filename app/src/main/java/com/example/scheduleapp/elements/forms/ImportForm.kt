@@ -19,8 +19,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.formElements.choice.MultipleChoiceDialog
 import com.example.scheduleapp.elements.forms.states.ImportFormState
 import com.example.scheduleapp.elements.settings.SettingsViewModel
@@ -41,6 +43,7 @@ fun ImportForm(
     var scheduleNames by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val scope = rememberCoroutineScope()
     var chatId by rememberSaveable { mutableStateOf(formState.chatId.value?.toString() ?: "") }
+    var chatIdErrorText = stringResource(R.string.chatIdEmptyError)
 
     if (showSchedulesSelector) {
         MultipleChoiceDialog(
@@ -49,7 +52,7 @@ fun ImportForm(
                 onDismissRequest()
             },
             onConfirm = { onSuccess(it, formState.chatId.value ?: 0) },
-            label = "Select schedules to import",
+            label = stringResource(R.string.selectSchedulesToImport),
             items = scheduleNames
         )
     }
@@ -59,7 +62,7 @@ fun ImportForm(
             onDismissRequest = onDismissRequest
         ) {
             Text(
-                "Import schedules from bot",
+                stringResource(R.string.importSchedulesFromBot),
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
                     .align(Alignment.CenterHorizontally)
@@ -80,7 +83,7 @@ fun ImportForm(
                     }
                     chatId = it
                 },
-                label = { Text("Chat id") },
+                label = { Text(stringResource(R.string.chatId)) },
                 enabled = extraFieldsEnabled,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = chatIdError != null
@@ -103,12 +106,12 @@ fun ImportForm(
                     modifier = Modifier.padding(end = 8.dp),
                     onClick = onDismissRequest
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
                 Button(
                     onClick = {
                         if (formState.chatId.value == null) {
-                            chatIdError = "Chat id must be a valid number"
+                            chatIdError = chatIdErrorText
                             return@Button
                         } else {
                             chatIdError = null
@@ -124,7 +127,7 @@ fun ImportForm(
                         }
                     }
                 ) {
-                    Text("Ok")
+                    Text(stringResource(R.string.ok))
                 }
             }
         }

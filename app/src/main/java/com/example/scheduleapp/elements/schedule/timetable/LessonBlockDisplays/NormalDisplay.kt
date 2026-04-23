@@ -48,7 +48,7 @@ fun NormalDisplay(
             color = textColor
         )
         Text(
-            text = stringResource(lesson.lessonType.getDisplayName()),
+            text = stringResource(lesson.lessonType.displayName),
             textAlign = TextAlign.Center,
             maxLines = 1,
             color = textColor

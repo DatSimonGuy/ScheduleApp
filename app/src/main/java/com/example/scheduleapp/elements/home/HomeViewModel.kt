@@ -61,9 +61,9 @@ class HomeViewModel (
         }
         _uiState.update {
             it.copy(
-                selectedSchedule,
-                currentLesson,
-                nextLesson
+                selectedSchedule = selectedSchedule,
+                currentLesson = currentLesson,
+                nextLesson = nextLesson
             )
         }
     }

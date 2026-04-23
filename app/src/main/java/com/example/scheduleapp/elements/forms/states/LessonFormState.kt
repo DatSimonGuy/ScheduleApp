@@ -33,9 +33,9 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val subject: MutableState<String>,
     val room: MutableState<String>,
     val teacher: MutableState<String>,
-    val type: MutableState<String>,
-    val occurrence: MutableState<String>,
-    val dayOfWeek: MutableState<String>,
+    val type: MutableState<LessonType>,
+    val occurrence: MutableState<Occurrence>,
+    val dayOfWeek: MutableState<DayOfWeek>,
     val startTime: TimePickerState,
     val endTime: TimePickerState,
     val startDate: DatePickerState,
@@ -60,9 +60,9 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
             endTime = endTime,
             room = room.value,
             teacher = teacher.value,
-            lessonType = LessonType.valueOf(type.value),
-            occurrence = Occurrence.valueOf(occurrence.value),
-            startDate = if (occurrence.value == Occurrence.ONCE.name)
+            lessonType = type.value,
+            occurrence = occurrence.value,
+            startDate = if (occurrence.value == Occurrence.ONCE)
                 startDate.getSelectedDate()
             else dateRange.getSelectedStartDate() ?: LocalDate.now(),
             endDate = dateRange.getSelectedEndDate() ?: LocalDate.now(),
@@ -76,8 +76,8 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
         subject.value = lesson.subject
         room.value = lesson.room
         teacher.value = lesson.teacher
-        type.value = lesson.lessonType.name
-        occurrence.value = lesson.occurrence.name
+        type.value = lesson.lessonType
+        occurrence.value = lesson.occurrence
         startTime.hour = lesson.startTime.hour
         startTime.minute = lesson.startTime.minute
         endTime.hour = lesson.endTime.hour
@@ -97,9 +97,9 @@ fun rememberLessonFormState(lesson: Lesson?, initialDay: DayOfWeek): LessonFormS
     val subject = rememberSaveable { mutableStateOf(lesson?.subject ?: "") }
     val room = rememberSaveable { mutableStateOf(lesson?.room ?: "") }
     val teacher = rememberSaveable { mutableStateOf(lesson?.teacher ?: "") }
-    val type = rememberSaveable { mutableStateOf(lesson?.lessonType?.name ?: LessonType.LECTURE.name) }
-    val occurrence = rememberSaveable { mutableStateOf(lesson?.occurrence?.name ?: Occurrence.WEEKLY.name) }
-    val day = rememberSaveable { mutableStateOf(initialDay.name) }
+    val type = rememberSaveable { mutableStateOf(lesson?.lessonType ?: LessonType.LECTURE) }
+    val occurrence = rememberSaveable { mutableStateOf(lesson?.occurrence ?: Occurrence.WEEKLY) }
+    val day = rememberSaveable { mutableStateOf(initialDay) }
 
     val start = rememberTimePickerState(lesson?.startTime?.hour ?: 0, lesson?.startTime?.minute ?: 0)
     val end = rememberTimePickerState(lesson?.endTime?.hour ?: 0, lesson?.endTime?.minute ?: 0)

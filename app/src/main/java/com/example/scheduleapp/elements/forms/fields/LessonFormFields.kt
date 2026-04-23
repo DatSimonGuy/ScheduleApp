@@ -7,28 +7,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.DefaultAlpha
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.example.scheduleapp.R
 import com.example.scheduleapp.data.classes.LessonType
 import com.example.scheduleapp.data.classes.Occurrence
+import com.example.scheduleapp.elements.formElements.choice.FormSelector
 import com.example.scheduleapp.elements.formElements.dates.AppDatePicker
 import com.example.scheduleapp.elements.formElements.dates.AppDateRangePicker
-import com.example.scheduleapp.elements.formElements.time.AppTimePicker
-import com.example.scheduleapp.elements.formElements.choice.FormSelector
 import com.example.scheduleapp.elements.formElements.dates.MultipleDatesPicker
+import com.example.scheduleapp.elements.formElements.time.AppTimePicker
 import com.example.scheduleapp.elements.forms.states.LessonFormState
 import java.time.DayOfWeek
+import java.time.format.TextStyle
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +55,7 @@ fun LessonFormFields(
             value = state.subject.value,
             modifier = fieldModifier,
             enabled = editing,
-            label = { Text("Subject") },
+            label = { Text(stringResource(R.string.subject)) },
             onValueChange = {
                 state.subject.value = it
             },
@@ -75,7 +75,7 @@ fun LessonFormFields(
             value = state.room.value,
             modifier = fieldModifier,
             enabled = editing,
-            label = { Text("Room") },
+            label = { Text(stringResource(R.string.room)) },
             onValueChange = {
                 state.room.value = it
             },
@@ -87,7 +87,7 @@ fun LessonFormFields(
             value = state.teacher.value,
             modifier = fieldModifier,
             enabled = editing,
-            label = { Text("Teacher") },
+            label = { Text(stringResource(R.string.teacher)) },
             onValueChange = {
                 state.teacher.value = it
             },
@@ -96,12 +96,12 @@ fun LessonFormFields(
         )
         FormSelector(
             fieldModifier,
-            "Day of week",
-            {
-                state.dayOfWeek.value = it
+            stringResource(R.string.dayOfWeek),
+            { _, i ->
+                state.dayOfWeek.value = DayOfWeek.entries[i];
             },
-            DayOfWeek.entries.map { it.name },
-            state.dayOfWeek.value,
+            DayOfWeek.entries.map { it.getDisplayName(TextStyle.FULL, Locale.getDefault()).capitalize() },
+            state.dayOfWeek.value.getDisplayName(TextStyle.FULL, Locale.getDefault()).capitalize(),
             editing
         )
         Row(
@@ -121,42 +121,41 @@ fun LessonFormFields(
         }
         FormSelector(
             fieldModifier,
-            "Lesson type",
-            {
-                state.type.value = it
+            stringResource(R.string.lessonType),
+            { _, i ->
+                state.type.value = LessonType.entries[i];
             },
-            LessonType.entries.map { it.name },
-            state.type.value,
+            LessonType.entries.map { stringResource(it.displayName) },
+            stringResource(state.type.value.displayName),
             editing
         )
         FormSelector(
             fieldModifier,
-            "Occurrence",
-            {
-                state.occurrence.value = it
+            stringResource(R.string.occurrence),
+            { _, i ->
+                state.occurrence.value = Occurrence.entries[i];
             },
-            Occurrence.entries.map { it.name },
-            state.occurrence.value,
+            Occurrence.entries.map { stringResource(it.displayName) },
+            stringResource(state.occurrence.value.displayName),
             editing
         )
-        val currentOccurrence = Occurrence.valueOf(state.occurrence.value)
-        if (currentOccurrence != Occurrence.ONCE && currentOccurrence != Occurrence.SELECTED_DAYS) {
+        if (state.occurrence.value != Occurrence.ONCE && state.occurrence.value != Occurrence.SELECTED_DAYS) {
             AppDateRangePicker(
                 fieldModifier,
-                "Lesson start/end dates",
+                stringResource(R.string.lessonStartEndDates),
                 state.dateRange,
                 editing
             )
         }
-        if (currentOccurrence == Occurrence.ONCE) {
+        else if (state.occurrence.value == Occurrence.ONCE) {
             AppDatePicker(
                 fieldModifier,
-                "Occurrence date",
+                stringResource(R.string.occurrenceDate),
                 state.startDate,
                 editing
             )
         }
-        if (currentOccurrence == Occurrence.SELECTED_DAYS) {
+        else if (state.occurrence.value == Occurrence.SELECTED_DAYS) {
             MultipleDatesPicker(
                 fieldModifier,
                 state.selectedDates,

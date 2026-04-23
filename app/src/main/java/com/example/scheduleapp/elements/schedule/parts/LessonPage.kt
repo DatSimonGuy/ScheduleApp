@@ -37,9 +37,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.scheduleapp.R
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.forms.fields.LessonFormFields
 import com.example.scheduleapp.elements.forms.states.rememberLessonFormState
@@ -56,6 +59,7 @@ fun LessonPage(
 ) {
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
     var lesson: Lesson? = null
+    val context = LocalContext.current
     val formState = rememberLessonFormState(null, selectedDay)
     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
     var editing by rememberSaveable { mutableStateOf(false) }
@@ -88,7 +92,7 @@ fun LessonPage(
                         .padding(16.dp),
                 ){
                     Text(
-                        "Are you sure?",
+                        stringResource(R.string.youSure),
                     )
                     Spacer(Modifier.weight(1f))
                     Row(
@@ -101,18 +105,19 @@ fun LessonPage(
                                 showConfirmDialog = false
                             }
                         ) {
-                            Text("Cancel")
+                            Text(stringResource(R.string.cancel))
                         }
                         Button(
                             onClick = {
                                 viewModel.removeLesson(
                                     ui.selectedSchedule ?: "", lessonId,
-                                    selectedDay
+                                    selectedDay,
+                                    context
                                 )
                                 viewModel.navController.popBackStack()
                             }
                         ) {
-                            Text("Ok")
+                            Text(stringResource(R.string.ok))
                         }
                     }
                 }
@@ -125,7 +130,7 @@ fun LessonPage(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Selected lesson:")
+                    Text(stringResource(R.string.selectedLesson) + ":")
                 },
                 navigationIcon = {
                     IconButton(
@@ -173,7 +178,8 @@ fun LessonPage(
                                     viewModel.updateLesson(
                                         ui.selectedSchedule ?: "", lesson,
                                         selectedDay,
-                                        DayOfWeek.valueOf(formState.dayOfWeek.value)
+                                        formState.dayOfWeek.value,
+                                        context
                                     )
                                     editing = false
                                 }
@@ -200,7 +206,7 @@ fun LessonPage(
                         },
                         Modifier.padding(end = 8.dp)
                     ) {
-                        Text("Delete")
+                        Text(stringResource(R.string.delete))
                     }
                     OutlinedButton(
                         onClick = {
@@ -214,9 +220,9 @@ fun LessonPage(
                         Modifier.padding(end = 8.dp)
                     ) {
                         if(!editing) {
-                            Text("Edit")
+                            Text(stringResource(R.string.edit))
                         } else {
-                            Text("Cancel")
+                            Text(stringResource(R.string.cancel))
                         }
                     }
                     if (editing) {
@@ -231,13 +237,14 @@ fun LessonPage(
                                 viewModel.updateLesson(
                                     ui.selectedSchedule ?: "", lesson,
                                     selectedDay,
-                                    DayOfWeek.valueOf(formState.dayOfWeek.value)
+                                    formState.dayOfWeek.value,
+                                    context
                                 )
                                 editing = false
                             },
                             Modifier.padding(end = 8.dp)
                         ) {
-                            Text("Confirm")
+                            Text(stringResource(R.string.confirm))
                         }
                     }
                 }

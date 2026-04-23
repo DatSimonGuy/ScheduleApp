@@ -1,18 +1,12 @@
 package com.example.scheduleapp.elements.schedule.timetable
 
-enum class LessonBlockDisplayStyle {
-    COMPACT,
-    NORMAL,
-    EXTENDED;
+import androidx.annotation.StringRes
+import com.example.scheduleapp.R
 
-    companion object {
-        fun from(value: Int): LessonBlockDisplayStyle {
-            return when(value) {
-                0 -> COMPACT
-                1 -> NORMAL
-                2 -> EXTENDED
-                else -> NORMAL
-            }
-        }
-    }
+enum class LessonBlockDisplayStyle(
+    @StringRes val displayName: Int
+) {
+    COMPACT(R.string.compact),
+    NORMAL(R.string.normal),
+    EXTENDED(R.string.extended);
 }

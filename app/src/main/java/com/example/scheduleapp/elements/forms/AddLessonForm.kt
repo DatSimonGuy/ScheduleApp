@@ -19,7 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.scheduleapp.R
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.forms.fields.LessonFormFields
 import com.example.scheduleapp.elements.forms.states.rememberLessonFormState
@@ -57,7 +59,7 @@ fun AddLessonForm(
                     modifier = Modifier.padding(end = 8.dp),
                     onClick = onDismissRequest
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
                 Button(
                     onClick = {
@@ -69,12 +71,12 @@ fun AddLessonForm(
                         }
                         onSuccess(
                             lesson,
-                            DayOfWeek.valueOf(formState.dayOfWeek.value)
+                            formState.dayOfWeek.value
                         )
                         onDismissRequest()
                     }
                 ) {
-                    Text("Ok")
+                    Text(stringResource(R.string.ok))
                 }
             }
         }

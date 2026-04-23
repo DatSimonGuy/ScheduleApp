@@ -1,6 +1,7 @@
 package com.example.scheduleapp.elements.settings
 
 import Destination
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleapp.data.classes.Schedule
@@ -123,16 +124,16 @@ class SettingsViewModel(
         }
     }
 
-    suspend fun addNewSchedule(name: String, schedule: Schedule = Schedule()): String? {
-        val error = scheduleRepository.saveSchedule(name, schedule)
+    suspend fun addNewSchedule(name: String, schedule: Schedule = Schedule(), context: Context): String? {
+        val error = scheduleRepository.saveSchedule(name, schedule, context)
         error?.let {
             return it
         }
         return null
     }
 
-    suspend fun importSchedules(chatId: Long, list: List<String>): String? {
-        val error = scheduleRepository.importSchedules(chatId, list)
+    suspend fun importSchedules(chatId: Long, list: List<String>, context: Context): String? {
+        val error = scheduleRepository.importSchedules(chatId, list, context)
         error?.let {
             return it
         }

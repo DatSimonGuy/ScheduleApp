@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 fun FormSelector(
     modifier: Modifier = Modifier,
     label: String,
-    onValueChanged: (String) -> Unit,
+    onValueChanged: (String, Int) -> Unit,
     items: List<String>,
     selectedItem: String,
     enabled: Boolean = true
@@ -60,11 +60,11 @@ fun FormSelector(
             expanded = pickerExpanded,
             onDismissRequest = { pickerExpanded = false }
         ) {
-            items.forEach { item ->
+            items.forEachIndexed { i, item ->
                 DropdownMenuItem(
                     text = { Text(item) },
                     onClick = {
-                        onValueChanged(item)
+                        onValueChanged(item, i)
                         pickerExpanded = false
                     }
                 )

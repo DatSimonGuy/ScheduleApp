@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -17,7 +16,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.settings.parts.SettingsCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,14 +28,14 @@ fun SettingsScreen(
     viewModel: SettingsViewModel
 ) {
     val categories = mapOf(
-        Icons.Default.Settings to "General" to SettingsDestination.GeneralSettings,
-        Icons.Default.CalendarToday to "Schedules" to SettingsDestination.SchedulesSettings,
-        Icons.Default.Brush to "Appearance" to SettingsDestination.AppearanceSettings,
-        Icons.Default.Accessibility to "Accessibility" to SettingsDestination.AccessibilitySettings,
-        Icons.Default.Info to "About" to SettingsDestination.AboutSettings
+        Icons.Default.Settings to stringResource(R.string.general) to SettingsDestination.GeneralSettings,
+        Icons.Default.CalendarToday to stringResource(R.string.schedules) to SettingsDestination.SchedulesSettings,
+        Icons.Default.Brush to stringResource(R.string.appearance) to SettingsDestination.AppearanceSettings,
+        Icons.Default.Accessibility to stringResource(R.string.accessibility) to SettingsDestination.AccessibilitySettings,
+        Icons.Default.Info to stringResource(R.string.about) to SettingsDestination.AboutSettings
     )
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Settings") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.settings)) }) }
     ) { paddingValues ->
         Column(
             Modifier.fillMaxSize().padding(paddingValues),

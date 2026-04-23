@@ -22,10 +22,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.scheduleapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +52,7 @@ fun DeleteScheduleDialog(
                     TopAppBar(
                         title = {
                             Text(
-                                "Do you really want to delete $scheduleName?",
+                                "${stringResource(R.string.doYouWantToDelete)} $scheduleName?",
                             )
                         }
                     )
@@ -68,7 +68,7 @@ fun DeleteScheduleDialog(
                                 onSuccess(deleteLocally, repeatForAll)
                             }
                         ) {
-                            Text("Delete")
+                            Text(stringResource(R.string.delete))
                         }
                         OutlinedButton(
                             modifier = Modifier.padding(end = 8.dp),
@@ -76,7 +76,7 @@ fun DeleteScheduleDialog(
                                 onDismiss()
                             }
                         ) {
-                            Text("Cancel")
+                            Text(stringResource(R.string.cancel))
                         }
                     }
                 }
@@ -98,7 +98,7 @@ fun DeleteScheduleDialog(
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
-                            "Also delete schedules from bot",
+                            stringResource(R.string.deleteFromBot),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
@@ -115,7 +115,7 @@ fun DeleteScheduleDialog(
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
-                            "Repeat this action for all schedules",
+                            stringResource(R.string.repeatDeleteAction),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
