@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.R
+import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.elements.formElements.choice.ChoiceDialog
 import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
@@ -59,6 +60,7 @@ fun ScheduleScreen(
     var showScheduleSelector by rememberSaveable { mutableStateOf(false) }
     var showAddLessonFrom by rememberSaveable { mutableStateOf(false) }
     var isRefreshing by rememberSaveable { mutableStateOf(false) }
+    var refreshedOnce by rememberSaveable{ mutableStateOf(false) }
     val currentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
     val snackHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -67,9 +69,13 @@ fun ScheduleScreen(
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
 
     LaunchedEffect(ui.selectedSchedule) {
+        if ((ui.refreshType == RefreshType.ON_APP_RELOAD && refreshedOnce) || ui.refreshType == RefreshType.MANUAL) {
+            return@LaunchedEffect
+        }
         isRefreshing = true
         scope.launch {
             ui.selectedSchedule?.let { selected ->
+                refreshedOnce = true
                 currentSchedule?.let {
                     viewModel.updateSchedule(selected, it)
                 }

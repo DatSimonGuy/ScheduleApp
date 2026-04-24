@@ -2,6 +2,7 @@ package com.example.scheduleapp.data.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.datastore.SettingKeys
 import com.example.scheduleapp.data.datastore.settingsDataStore
 import com.example.scheduleapp.elements.schedule.timetable.HourHeight
@@ -19,7 +20,8 @@ data class UserSettings(
     val startTime: String?,
     val startPage: Int?,
     val textButtons: Boolean,
-    val bigButton: Boolean
+    val bigButton: Boolean,
+    val refreshType: String
 )
 
 class SettingsRepository(private val context: Context) {
@@ -33,9 +35,16 @@ class SettingsRepository(private val context: Context) {
                 startTime = preferences[SettingKeys.startTime],
                 startPage = preferences[SettingKeys.startPage],
                 textButtons = preferences[SettingKeys.textButtons] ?: false,
-                bigButton = preferences[SettingKeys.bigButton] ?: false
+                bigButton = preferences[SettingKeys.bigButton] ?: false,
+                refreshType = preferences[SettingKeys.refreshType] ?: RefreshType.AUTOMATIC.name
             )
         }
+
+    suspend fun setRefreshType(refreshType: RefreshType) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.refreshType] = refreshType.name
+        }
+    }
 
     suspend fun setBigButton(value: Boolean) {
         context.settingsDataStore.edit {

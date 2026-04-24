@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.PreferenceRepository
@@ -34,7 +35,8 @@ data class ScheduleUiState(
     val preferences: UserPreferences? = null,
     val startTime: LocalTime? = null,
     val textButtons: Boolean = false,
-    val bigButton: Boolean = false
+    val bigButton: Boolean = false,
+    val refreshType: RefreshType = RefreshType.AUTOMATIC
 )
 
 class ScheduleViewModel(
@@ -63,7 +65,8 @@ class ScheduleViewModel(
                         selectedSchedule = settings.defaultSchedule,
                         startTime = LocalTime.parse(settings.startTime ?: "00:00"),
                         textButtons = settings.textButtons,
-                        bigButton = settings.bigButton
+                        bigButton = settings.bigButton,
+                        refreshType = RefreshType.valueOf(settings.refreshType)
                     )
                 }
             }
@@ -144,20 +147,6 @@ class ScheduleViewModel(
         viewModelScope.launch {
             preferenceRepository.setRecentChatId(chatId)
         }
-    }
-
-    suspend fun getLessonsByTime(
-        scheduleName: String,
-        dayOfWeek: DayOfWeek,
-        startTime: LocalTime,
-        endTime: LocalTime
-    ): List<Lesson> {
-        return scheduleRepository.getLessonsByTime(
-            scheduleName,
-            dayOfWeek,
-            startTime,
-            endTime
-        )
     }
 
     fun groupOverlappingLessons(lessons: List<Lesson>): List<List<Lesson>> {

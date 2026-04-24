@@ -74,4 +74,8 @@
     <string name="compact">Compact</string>
     <string name="normal">Normal</string>
     <string name="extended">Extended</string>
+    <string name="refreshCondition">Refresh schedules</string>
+    <string name="automatic">Automatic</string>
+    <string name="onReload">On app reload</string>
+    <string name="manual">Manual</string>
 </resources>

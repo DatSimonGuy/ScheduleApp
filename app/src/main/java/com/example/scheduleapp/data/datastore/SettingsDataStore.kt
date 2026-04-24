@@ -19,4 +19,5 @@ object SettingKeys {
     val startPage = intPreferencesKey("startPage")
     val textButtons = booleanPreferencesKey("textButtons")
     val bigButton = booleanPreferencesKey("bigButton")
+    val refreshType = stringPreferencesKey("refreshType")
 }

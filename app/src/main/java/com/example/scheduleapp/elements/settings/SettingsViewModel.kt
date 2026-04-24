@@ -4,6 +4,7 @@ import Destination
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
 import com.example.scheduleapp.data.repository.PreferenceRepository
@@ -28,7 +29,8 @@ data class Settings(
     var startHour: LocalTime? = null,
     var selectedStartPage: Destination? = null,
     var textButtons: Boolean = false,
-    var bigButton: Boolean = false
+    var bigButton: Boolean = false,
+    var refreshType: RefreshType = RefreshType.AUTOMATIC
 )
 
 class SettingsViewModel(
@@ -51,7 +53,8 @@ class SettingsViewModel(
                         startHour = LocalTime.parse(settings.startTime ?: "00:00"),
                         selectedStartPage = Destination.main.firstOrNull { it.id == settings.startPage },
                         textButtons = settings.textButtons,
-                        bigButton = settings.bigButton
+                        bigButton = settings.bigButton,
+                        refreshType = RefreshType.valueOf(settings.refreshType)
                     )
                 }
             }
@@ -73,6 +76,12 @@ class SettingsViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun onRefreshTypeChange(value: RefreshType) {
+        viewModelScope.launch {
+            repository.setRefreshType(value)
         }
     }
 

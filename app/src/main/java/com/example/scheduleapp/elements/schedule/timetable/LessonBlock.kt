@@ -56,8 +56,7 @@ fun LessonBlock(
         Modifier
             .fillMaxWidth()
             .offset(y = topOffset)
-            .height(blockHeight)
-            .padding(horizontal = 4.dp),
+            .height(blockHeight),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         ElevatedCard(

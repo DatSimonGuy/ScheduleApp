@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.R
+import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 
@@ -33,6 +34,7 @@ fun GeneralSettingsPage(
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
     val destinations = Destination.main
     val destinationLabels = destinations.map { stringResource(it.displayName!!) }
+    val refreshTypeLabels = RefreshType.entries.map { stringResource(it.displayName) }
     val selectedIndex = destinations.indexOf(ui.selectedStartPage ?: Destination.Home)
     Scaffold(
         topBar = {
@@ -67,6 +69,17 @@ fun GeneralSettingsPage(
                     }
                 },
                 destinationLabels[selectedIndex]
+            )
+            SettingsSelector(
+                Modifier
+                    .fillMaxWidth(0.95f)
+                    .padding(bottom = 8.dp),
+                stringResource(R.string.refreshCondition),
+                refreshTypeLabels,
+                { _, i ->
+                    viewModel.onRefreshTypeChange(RefreshType.entries[i])
+                },
+                stringResource(ui.refreshType.displayName)
             )
         }
     }
