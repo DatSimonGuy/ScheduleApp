@@ -26,6 +26,7 @@ import com.example.scheduleapp.elements.settings.SettingsViewModelFactory
 import com.example.scheduleapp.elements.settings.subpages.AboutSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.AccessibilitySettingsPage
 import com.example.scheduleapp.elements.settings.subpages.AppearanceSettingsPage
+import com.example.scheduleapp.elements.settings.subpages.ColorSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.GeneralSettingsPage
 import com.example.scheduleapp.elements.settings.subpages.SchedulesSettingsPage
 
@@ -53,7 +54,7 @@ fun AppNavHost(
         SettingsViewModelFactory(
             settingsRepository,
             scheduleRepository,
-            preferenceRepository
+            preferenceRepository,
         )
     }
 
@@ -70,7 +71,7 @@ fun AppNavHost(
             navController,
             settingsRepository,
             scheduleRepository,
-            preferenceRepository
+            preferenceRepository,
         )
     }
 
@@ -131,6 +132,11 @@ fun AppNavHost(
             composable<SettingsDestination.AboutSettings> { backStackEntry ->
                 val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
                 AboutSettingsPage(viewModel, navController)
+            }
+
+            composable<SettingsDestination.ColorSettings> { backStackEntry ->
+                val viewModel = backStackEntry.settingsViewModel(navController, settingsVMFactory)
+                ColorSettingsPage(viewModel, navController)
             }
         }
     }

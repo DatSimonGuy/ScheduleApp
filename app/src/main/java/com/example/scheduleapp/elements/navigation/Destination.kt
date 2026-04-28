@@ -46,6 +46,8 @@ sealed class SettingsDestination : Destination() {
     object AccessibilitySettings: SettingsDestination() { override val id = 24}
     @Serializable
     object AboutSettings: SettingsDestination() { override val id = 25 }
+    @Serializable
+    object ColorSettings: SettingsDestination() { override val id = 230 }
 }
 
 @Serializable
@@ -73,5 +75,6 @@ fun NavDestination?.isSettingsDestination(): Boolean =
         it.hasRoute<SettingsDestination.SchedulesSettings>() ||
         it.hasRoute<SettingsDestination.AppearanceSettings>() ||
         it.hasRoute<SettingsDestination.AccessibilitySettings>() ||
-        it.hasRoute<SettingsDestination.AboutSettings>()
+        it.hasRoute<SettingsDestination.AboutSettings>() ||
+        it.hasRoute<SettingsDestination.ColorSettings>()
     } == true

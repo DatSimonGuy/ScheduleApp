@@ -78,4 +78,11 @@
     <string name="automatic">Automatic</string>
     <string name="onReload">On app reload</string>
     <string name="manual">Manual</string>
+    <string name="colors">Colors</string>
+    <string name="defaultColorTheme">Default</string>
+    <string name="material3ColorTheme">System colors</string>
+    <string name="amoled">AMOLED</string>
+    <string name="custom">Custom</string>
+    <string name="selectTheme">Select theme</string>
+    <string name="primaryTheme">Primary</string>
 </resources>

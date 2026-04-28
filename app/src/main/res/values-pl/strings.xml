@@ -34,7 +34,7 @@
     <string name="add">Dodaj</string>
     <string name="importText">Zaimportuj</string>
     <string name="delete">Usuń</string>
-    <string name="fabScheduleButton">Guzik \"dodaj plan\" w fab</string>
+    <string name="fabScheduleButton">Guzik \"dodaj plan\" w menu</string>
     <string name="hourCellHeight">Wysokość bloku godziny</string>
     <string name="lessonBlockStyle">Styl bloków lekcji</string>
     <string name="startTimetableFrom">Zacznij plan od godziny</string>
@@ -75,7 +75,14 @@
     <string name="normal">Normalny</string>
     <string name="extended">Rozszerzony</string>
     <string name="refreshCondition">Refresh schedules</string>
-    <string name="automatic">Automatic</string>
-    <string name="onReload">On app reload</string>
-    <string name="manual">Manual</string>
+    <string name="automatic">Automatyczny</string>
+    <string name="onReload">Przy włączeniu</string>
+    <string name="manual">Manualny</string>
+    <string name="colors">Kolory</string>
+    <string name="defaultColorTheme">Domyślny</string>
+    <string name="material3ColorTheme">Systemowy</string>
+    <string name="amoled">AMOLED</string>
+    <string name="custom">Niestandardowy</string>
+    <string name="selectTheme">Select theme</string>
+    <string name="primaryTheme">Primary</string>
 </resources>

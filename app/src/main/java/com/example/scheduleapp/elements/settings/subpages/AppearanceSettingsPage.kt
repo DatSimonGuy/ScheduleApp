@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,7 @@ import com.example.scheduleapp.elements.formElements.choice.ToggleCard
 import com.example.scheduleapp.elements.settings.SettingsViewModel
 import com.example.scheduleapp.elements.schedule.timetable.HourHeight
 import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.settings.parts.SettingsCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,6 +96,13 @@ fun AppearanceSettingsPage(
             ) {
                 viewModel.onStartHourChange(it)
             }
+            SettingsCategory(
+                stringResource(R.string.colors),
+                onClick = {
+                    navController.navigate(SettingsDestination.ColorSettings)
+                },
+                icon = Icons.Default.ColorLens
+            )
         }
     }
 

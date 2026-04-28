@@ -239,7 +239,6 @@ fun ScheduleScreen(
                     },
                     lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
                     date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong()),
-                    scheduleName =  ui.selectedSchedule ?: "",
                     viewModel = viewModel
                 )
             }

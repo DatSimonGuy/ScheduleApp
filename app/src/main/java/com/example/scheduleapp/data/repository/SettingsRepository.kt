@@ -2,6 +2,7 @@ package com.example.scheduleapp.data.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import com.example.scheduleapp.data.classes.ColorTheme
 import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.datastore.SettingKeys
 import com.example.scheduleapp.data.datastore.settingsDataStore
@@ -21,7 +22,8 @@ data class UserSettings(
     val startPage: Int?,
     val textButtons: Boolean,
     val bigButton: Boolean,
-    val refreshType: String
+    val refreshType: String,
+    val currentTheme: String
 )
 
 class SettingsRepository(private val context: Context) {
@@ -36,9 +38,16 @@ class SettingsRepository(private val context: Context) {
                 startPage = preferences[SettingKeys.startPage],
                 textButtons = preferences[SettingKeys.textButtons] ?: false,
                 bigButton = preferences[SettingKeys.bigButton] ?: false,
-                refreshType = preferences[SettingKeys.refreshType] ?: RefreshType.AUTOMATIC.name
+                refreshType = preferences[SettingKeys.refreshType] ?: RefreshType.AUTOMATIC.name,
+                currentTheme = preferences[SettingKeys.currentTheme] ?: ColorTheme.DEFAULT.name
             )
         }
+
+    suspend fun setCurrentTheme(theme: ColorTheme) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.currentTheme] = theme.name
+        }
+    }
 
     suspend fun setRefreshType(refreshType: RefreshType) {
         context.settingsDataStore.edit {

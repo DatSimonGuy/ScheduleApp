@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 
 val Context.settingsDataStore by preferencesDataStore(
@@ -20,4 +21,5 @@ object SettingKeys {
     val textButtons = booleanPreferencesKey("textButtons")
     val bigButton = booleanPreferencesKey("bigButton")
     val refreshType = stringPreferencesKey("refreshType")
+    val currentTheme = stringPreferencesKey("currentTheme")
 }

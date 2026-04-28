@@ -27,6 +27,7 @@ fun SettingsCategory(
 ) {
     ElevatedCard(
         Modifier
+            .padding(horizontal = 8.dp)
             .padding(bottom = 8.dp)
             .background(MaterialTheme.colorScheme.surface)
             .clip(RoundedCornerShape(16.dp))

@@ -2,8 +2,11 @@ package com.example.scheduleapp.elements.settings
 
 import Destination
 import android.content.Context
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.scheduleapp.data.classes.ColorTheme
+import com.example.scheduleapp.data.classes.LessonType
 import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
@@ -30,13 +33,15 @@ data class Settings(
     var selectedStartPage: Destination? = null,
     var textButtons: Boolean = false,
     var bigButton: Boolean = false,
-    var refreshType: RefreshType = RefreshType.AUTOMATIC
+    var refreshType: RefreshType = RefreshType.AUTOMATIC,
+    val customTheme: Map<LessonType, Color> = emptyMap(),
+    val currentTheme: ColorTheme = ColorTheme.DEFAULT
 )
 
 class SettingsViewModel(
     private val repository: SettingsRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val preferenceRepository: PreferenceRepository
+    private val preferenceRepository: PreferenceRepository,
 ) : ViewModel() {
     val _uiState = MutableStateFlow(Settings())
     val uiState = _uiState.asStateFlow()
@@ -54,7 +59,8 @@ class SettingsViewModel(
                         selectedStartPage = Destination.main.firstOrNull { it.id == settings.startPage },
                         textButtons = settings.textButtons,
                         bigButton = settings.bigButton,
-                        refreshType = RefreshType.valueOf(settings.refreshType)
+                        refreshType = RefreshType.valueOf(settings.refreshType),
+                        currentTheme = ColorTheme.valueOf(settings.currentTheme)
                     )
                 }
             }
@@ -76,6 +82,12 @@ class SettingsViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun onCurrentThemeChange(value: ColorTheme) {
+        viewModelScope.launch {
+            repository.setCurrentTheme(value)
         }
     }
 

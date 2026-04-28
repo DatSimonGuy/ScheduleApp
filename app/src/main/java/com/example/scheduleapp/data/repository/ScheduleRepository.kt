@@ -194,16 +194,4 @@ class ScheduleRepository(private val context: Context) {
             LocalTime.now() in it.startTime..it.endTime && it.isActive(LocalDate.now())
         }
     }
-
-    suspend fun getLessonsByTime(
-        scheduleName: String,
-        weekDay: DayOfWeek,
-        startTime: LocalTime,
-        endTime: LocalTime
-    ): List<Lesson> {
-        val schedule = scheduleMap.first()[scheduleName]
-        return schedule?.lessons[weekDay]?.filter {
-            it.endTime in startTime..endTime || it.startTime in startTime..endTime
-        } ?: emptyList()
-    }
 }

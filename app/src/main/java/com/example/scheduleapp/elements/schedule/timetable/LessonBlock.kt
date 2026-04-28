@@ -28,8 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.scheduleapp.data.classes.ColorTheme
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.data.classes.getColors
 import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays.CompactDisplay
 import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays.ExtendedDisplay
 import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays.NormalDisplay
@@ -43,14 +46,18 @@ fun LessonBlock(
     lessons: List<Lesson>,
     onLessonClick: (String) -> Unit,
     displayStyle: LessonBlockDisplayStyle,
-    date: LocalDate
+    date: LocalDate,
+    currentTheme: ColorTheme
 ) {
     var currentIndex by remember { mutableStateOf(0) }
+    val context = LocalContext.current
     val currentLesson = lessons[currentIndex]
-    val textColor = textColorForBackground(currentLesson.lessonType.color)
     val topOffset = (hourHeight.value + 10.dp) * (currentLesson.start - startHour) + 16.dp
     val blockHeight = (hourHeight.value + 10.dp) * currentLesson.duration - 8.dp
     var style by rememberSaveable { mutableStateOf(displayStyle) }
+    val colors = getColors(currentTheme, context)
+    val lessonColor = colors[currentLesson.lessonType] ?: currentLesson.lessonType.color
+    val textColor = textColorForBackground(lessonColor)
 
     Row(
         Modifier
@@ -65,9 +72,11 @@ fun LessonBlock(
                 .fillMaxHeight()
                 .alpha(if (currentLesson.isActive(date)) 1.0f else 0.5f)
                 .clickable { onLessonClick(currentLesson.id) },
-            colors = CardDefaults.cardColors(containerColor = currentLesson.lessonType.color)
+            colors = CardDefaults.cardColors(
+                containerColor = lessonColor
+            )
         ) {
-            when(style) {
+            when (style) {
                 LessonBlockDisplayStyle.NORMAL -> NormalDisplay(currentLesson, textColor)
                 LessonBlockDisplayStyle.COMPACT -> CompactDisplay(currentLesson, textColor)
                 LessonBlockDisplayStyle.EXTENDED -> ExtendedDisplay(currentLesson, textColor)

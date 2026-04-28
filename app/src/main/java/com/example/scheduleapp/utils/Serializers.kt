@@ -1,8 +1,10 @@
 package com.example.scheduleapp.utils
 
-import androidx.annotation.experimental.Experimental
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toColorLong
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
+import com.example.scheduleapp.data.classes.LessonType
 import com.example.scheduleapp.data.classes.ScheduleMap
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
@@ -76,6 +78,25 @@ object ScheduleMapSerializer : Serializer<ScheduleMap> {
 
     override suspend fun writeTo(t: ScheduleMap, output: OutputStream) {
         val json = Json.encodeToString(ScheduleMap.serializer(), t)
+        output.write(json.toByteArray())
+    }
+}
+
+object ThemeSerializer : Serializer<Map<LessonType, Long>> {
+
+    override val defaultValue: Map<LessonType, Long> = LessonType.entries.associateWith { it.color.toColorLong() }
+
+    override suspend fun readFrom(input: InputStream): Map<LessonType, Long> {
+        try {
+            val json = input.readBytes().decodeToString()
+            return if (json.isEmpty()) defaultValue else Json.decodeFromString(json)
+        } catch (e: SerializationException) {
+            throw CorruptionException("Cannot read ThemeMap", e)
+        }
+    }
+
+    override suspend fun writeTo(t: Map<LessonType, Long>, output: OutputStream) {
+        val json = Json.encodeToString(t)
         output.write(json.toByteArray())
     }
 }

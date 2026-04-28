@@ -1,7 +1,5 @@
 package com.example.scheduleapp.elements.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleapp.data.classes.Lesson
@@ -27,7 +25,7 @@ data class HomeUiState(
 class HomeViewModel (
     private val settingsRepository: SettingsRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val preferenceRepository: PreferenceRepository
+    private val preferenceRepository: PreferenceRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()

@@ -1,11 +1,14 @@
 package com.example.scheduleapp.elements.schedule
 
 import android.content.Context
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.example.scheduleapp.data.classes.ColorTheme
 import com.example.scheduleapp.data.classes.Lesson
+import com.example.scheduleapp.data.classes.LessonType
 import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
@@ -36,14 +39,16 @@ data class ScheduleUiState(
     val startTime: LocalTime? = null,
     val textButtons: Boolean = false,
     val bigButton: Boolean = false,
-    val refreshType: RefreshType = RefreshType.AUTOMATIC
+    val refreshType: RefreshType = RefreshType.AUTOMATIC,
+    val customTheme: Map<LessonType, Color> = emptyMap(),
+    val currentTheme: ColorTheme = ColorTheme.DEFAULT
 )
 
 class ScheduleViewModel(
     val navController: NavController,
     val settingsRepository: SettingsRepository,
     val scheduleRepository: ScheduleRepository,
-    val preferenceRepository: PreferenceRepository
+    val preferenceRepository: PreferenceRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ScheduleUiState())
     val uiState = _uiState.asStateFlow()
@@ -66,7 +71,8 @@ class ScheduleViewModel(
                         startTime = LocalTime.parse(settings.startTime ?: "00:00"),
                         textButtons = settings.textButtons,
                         bigButton = settings.bigButton,
-                        refreshType = RefreshType.valueOf(settings.refreshType)
+                        refreshType = RefreshType.valueOf(settings.refreshType),
+                        currentTheme = ColorTheme.valueOf(settings.currentTheme)
                     )
                 }
             }

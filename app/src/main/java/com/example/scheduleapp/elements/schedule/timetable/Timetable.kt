@@ -15,6 +15,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.schedule.ScheduleViewModel
 import java.time.LocalDate
@@ -40,15 +42,14 @@ fun TimeTable(
     onLessonClick: (String) -> Unit,
     lessonBlockDisplayStyle: LessonBlockDisplayStyle,
     date: LocalDate,
-    scheduleName: String,
     viewModel: ScheduleViewModel
 ) {
+    val ui by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val timeTableStartHour = startHour.coerceAtMost(lessons.firstOrNull()?.startTime?.hour ?: startHour)
     val dateFormatter = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
         .withLocale(Locale.getDefault())
-    val scope = rememberCoroutineScope()
     Column (
         modifier.fillMaxSize()
     ) {
@@ -108,7 +109,8 @@ fun TimeTable(
                         lessons = group,
                         onLessonClick = onLessonClick,
                         displayStyle = lessonBlockDisplayStyle,
-                        date = date
+                        date = date,
+                        ui.currentTheme
                     )
                 }
             }

@@ -11,9 +11,14 @@ class ScheduleViewModelFactory(
     private val navController: NavController,
     private val settingsRepository: SettingsRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val preferenceRepository: PreferenceRepository
+    private val preferenceRepository: PreferenceRepository,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ScheduleViewModel(navController, settingsRepository, scheduleRepository, preferenceRepository) as T
+        return ScheduleViewModel(
+            navController,
+            settingsRepository,
+            scheduleRepository,
+            preferenceRepository,
+        ) as T
     }
 }

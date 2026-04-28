@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -42,7 +43,6 @@ fun Navbar(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val startDestination = Destination.Home
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentNavDestination = navBackStackEntry?.destination
 
     LaunchedEffect(Unit) {
         val dest = Destination.main.firstOrNull { destination ->

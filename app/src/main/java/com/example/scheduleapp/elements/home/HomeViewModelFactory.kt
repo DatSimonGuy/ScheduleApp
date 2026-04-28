@@ -9,7 +9,7 @@ import com.example.scheduleapp.data.repository.SettingsRepository
 class HomeViewModelFactory(
     private val settingsRepository: SettingsRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val preferenceRepository: PreferenceRepository
+    private val preferenceRepository: PreferenceRepository,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return HomeViewModel(settingsRepository, scheduleRepository, preferenceRepository) as T
