@@ -85,4 +85,7 @@
     <string name="custom">Custom</string>
     <string name="selectTheme">Select theme</string>
     <string name="primaryTheme">Primary</string>
+    <string name="notes">Notes</string>
+    <string name="lessonInfo">Lesson info</string>
+    <string name="saveNotes">Save notes</string>
 </resources>

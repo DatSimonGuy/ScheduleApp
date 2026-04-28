@@ -38,7 +38,9 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
     val endDate: LocalDate?,
     @SerialName("active_dates")
     @Serializable(with = LocalDateListSerializer::class)
-    val activeDays: List<LocalDate>? = null
+    val activeDays: List<LocalDate>? = null,
+    @SerialName("notes")
+    val notes: String? = null
 ) {
     val duration: Float get() = Duration.between(startTime, endTime).toMinutes().toFloat() / 60
     val start: Float get() = startTime.hour + startTime.minute / 60.0f

@@ -38,14 +38,31 @@ class ScheduleRepository(private val context: Context) {
     suspend fun updateSchedule(scheduleName: String, schedule: Schedule): String? {
         if (schedule.saveLocation == SaveLocation.DSB && schedule.chatId != null) {
             val api = DSBApi(schedule.chatId, "")
-            val (updated, error) = api.getSchedule(scheduleName)
+            val (remoteSchedule, error) = api.getSchedule(scheduleName)
+
             error?.let { return it }
-            updated?.let {
-                context.scheduleDataStore.updateData { currentDb ->
-                    currentDb.copy(
-                        schedules = currentDb.schedules + (scheduleName to it)
-                    )
+
+            if (remoteSchedule == null) {
+                return "No schedule loaded"
+            }
+
+            context.scheduleDataStore.updateData { currentDb ->
+                val localSchedule = currentDb.schedules[scheduleName]
+
+                val mergedLessons = remoteSchedule.lessons.mapValues { (day, remoteLessons) ->
+                    remoteLessons.map { remoteLesson ->
+                        val localLesson = localSchedule?.lessons?.get(day)?.find { it.id == remoteLesson.id }
+                        if (localLesson != null) {
+                            remoteLesson.copy(notes = localLesson.notes)
+                        } else {
+                            remoteLesson
+                        }
+                    }
                 }
+                val updatedSchedule = remoteSchedule.copy(lessons = mergedLessons)
+                currentDb.copy(
+                    schedules = currentDb.schedules + (scheduleName to updatedSchedule)
+                )
             }
         }
         return null

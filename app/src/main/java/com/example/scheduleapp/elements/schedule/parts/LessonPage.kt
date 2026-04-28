@@ -9,11 +9,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -25,18 +26,24 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -47,6 +54,7 @@ import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.forms.fields.LessonFormFields
 import com.example.scheduleapp.elements.forms.states.rememberLessonFormState
 import com.example.scheduleapp.elements.schedule.ScheduleViewModel
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,18 +68,25 @@ fun LessonPage(
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
     var lesson: Lesson? = null
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val formState = rememberLessonFormState(null, selectedDay)
     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
     var editing by rememberSaveable { mutableStateOf(false) }
     var subjectError by rememberSaveable { mutableStateOf<String?>(null) }
     var timeError by rememberSaveable { mutableStateOf<String?>(null) }
+    val pagerOptions = listOf(
+        stringResource(R.string.lessonInfo),
+        stringResource(R.string.notes)
+    )
+    var notesText = rememberSaveable { mutableStateOf("") }
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { pagerOptions.count() })
 
     LaunchedEffect(Unit) {
         lesson = viewModel.getLesson(ui.selectedSchedule ?: "", lessonId)
         lesson?.let {
             formState.fillFields(it)
+            notesText.value = it.notes ?: ""
         }
-        Log.e("", lesson?.id.toString())
     }
 
     if (showConfirmDialog) {
@@ -130,7 +145,7 @@ fun LessonPage(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.selectedLesson) + ":")
+                    Text(stringResource(R.string.selectedLesson))
                 },
                 navigationIcon = {
                     IconButton(
@@ -176,7 +191,8 @@ fun LessonPage(
                                         return@IconButton
                                     }
                                     viewModel.updateLesson(
-                                        ui.selectedSchedule ?: "", lesson,
+                                        ui.selectedSchedule ?: "",
+                                        lesson,
                                         selectedDay,
                                         formState.dayOfWeek.value,
                                         context
@@ -249,13 +265,90 @@ fun LessonPage(
                     }
                 }
             }
-            LessonFormFields(
-                Modifier.verticalScroll(rememberScrollState()),
-                formState,
-                subjectError,
-                timeError,
-                editing
-            )
+            SingleChoiceSegmentedButtonRow(
+                Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            ) {
+                pagerOptions.forEachIndexed { i, value ->
+                    SegmentedButton(
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = i,
+                            count = pagerOptions.count()
+                        ),
+                        selected = pagerState.currentPage == i,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(i)
+                            }
+                        },
+                        label = { Text(value) }
+                    )
+                }
+            }
+            HorizontalPager(
+                pagerState,
+                beyondViewportPageCount = 1
+            ) {
+                when(it) {
+                    0 -> LessonFormFields(
+                        Modifier.verticalScroll(rememberScrollState()),
+                        formState,
+                        subjectError,
+                        timeError,
+                        editing
+                    )
+                    1 -> {
+                        NotesPage(
+                            notesText,
+                            onSave = { newNotes ->
+                                lesson?.let { lesson ->
+                                    viewModel.updateLesson(
+                                        ui.selectedSchedule ?: "",
+                                        lesson.copy(notes = newNotes),
+                                        selectedDay,
+                                        selectedDay,
+                                        context
+                                    )
+                                }
+                            }
+                        )
+                    }
+                    else -> {  }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NotesPage(
+    notes: MutableState<String>,
+    onSave: (String) -> Unit
+) {
+    var notesSaved by rememberSaveable { mutableStateOf(true) }
+
+    Column(
+        Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.End
+    ) {
+        OutlinedTextField(
+            value = notes.value,
+            onValueChange = {
+                notes.value = it
+                notesSaved = false
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(bottom = 8.dp)
+        )
+        Button(
+            onClick = {
+                onSave(notes.value)
+                notesSaved = true
+            },
+            enabled = !notesSaved
+        ) {
+            Text(stringResource(R.string.saveNotes))
         }
     }
 }

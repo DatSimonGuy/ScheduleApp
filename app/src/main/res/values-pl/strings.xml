@@ -85,4 +85,7 @@
     <string name="custom">Niestandardowy</string>
     <string name="selectTheme">Wybierz motyw</string>
     <string name="primaryTheme">Główny odcień</string>
+    <string name="notes">Notatki</string>
+    <string name="lessonInfo">info lekcji</string>
+    <string name="saveNotes">Zapisz notatki</string>
 </resources>
