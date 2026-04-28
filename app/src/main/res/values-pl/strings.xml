@@ -83,6 +83,6 @@
     <string name="material3ColorTheme">Systemowy</string>
     <string name="amoled">AMOLED</string>
     <string name="custom">Niestandardowy</string>
-    <string name="selectTheme">Select theme</string>
-    <string name="primaryTheme">Primary</string>
+    <string name="selectTheme">Wybierz motyw</string>
+    <string name="primaryTheme">Główny odcień</string>
 </resources>
