@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.R
@@ -41,7 +42,9 @@ fun AddLessonForm(
     ) {
         var subjectError by remember { mutableStateOf<String?>(null) }
         var timeError by remember { mutableStateOf<String?>(null) }
+        var emailError by remember { mutableStateOf<String?>(null) }
         val formState = rememberLessonFormState(null, startingDay)
+        val context = LocalContext.current
 
         Column(
             Modifier
@@ -49,7 +52,7 @@ fun AddLessonForm(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 16.dp)
         ) {
-            LessonFormFields(Modifier, formState, subjectError, timeError)
+            LessonFormFields(Modifier, formState, subjectError, timeError, emailError)
             Row(
                 Modifier
                     .align(Alignment.End)
@@ -63,10 +66,11 @@ fun AddLessonForm(
                 }
                 Button(
                     onClick = {
-                        val (lesson, errs) = formState.validateAndMap(null)
+                        val (lesson, errs) = formState.validateAndMap(null, context)
                         if (lesson == null) {
                             subjectError = errs.first
                             timeError = errs.second
+                            emailError = errs.third
                             return@Button
                         }
                         onSuccess(

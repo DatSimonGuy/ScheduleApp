@@ -18,8 +18,8 @@ object SettingKeys {
     val defaultSchedule = stringPreferencesKey("defaultSchedule")
     val startTime = stringPreferencesKey("startTime")
     val startPage = intPreferencesKey("startPage")
-    val textButtons = booleanPreferencesKey("textButtons")
     val bigButton = booleanPreferencesKey("bigButton")
     val refreshType = stringPreferencesKey("refreshType")
     val currentTheme = stringPreferencesKey("currentTheme")
+    val scheduleSortMode = stringPreferencesKey("scheduleSortMode")
 }

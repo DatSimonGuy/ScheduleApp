@@ -1,9 +1,12 @@
 package com.example.scheduleapp.elements.schedule
 
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.scheduleapp.data.classes.ColorTheme
@@ -12,6 +15,7 @@ import com.example.scheduleapp.data.classes.LessonType
 import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
+import com.example.scheduleapp.data.classes.ScheduleSortMode
 import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
@@ -22,11 +26,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalTime
 
 data class ScheduleUiState(
@@ -37,11 +45,12 @@ data class ScheduleUiState(
     val showAddSchedule: Boolean = false,
     val preferences: UserPreferences? = null,
     val startTime: LocalTime? = null,
-    val textButtons: Boolean = false,
     val bigButton: Boolean = false,
     val refreshType: RefreshType = RefreshType.AUTOMATIC,
     val customTheme: Map<LessonType, Color> = emptyMap(),
-    val currentTheme: ColorTheme = ColorTheme.DEFAULT
+    val currentTheme: ColorTheme = ColorTheme.DEFAULT,
+    val sortMode: ScheduleSortMode = ScheduleSortMode.ALPHABETICAL,
+    val scheduleOrder: List<String> = emptyList()
 )
 
 class ScheduleViewModel(
@@ -69,10 +78,10 @@ class ScheduleViewModel(
                         showAddSchedule = settings.addScheduleInFab,
                         selectedSchedule = settings.defaultSchedule,
                         startTime = LocalTime.parse(settings.startTime ?: "00:00"),
-                        textButtons = settings.textButtons,
                         bigButton = settings.bigButton,
                         refreshType = RefreshType.valueOf(settings.refreshType),
-                        currentTheme = ColorTheme.valueOf(settings.currentTheme)
+                        currentTheme = ColorTheme.valueOf(settings.currentTheme),
+                        sortMode = ScheduleSortMode.valueOf(settings.sortMode)
                     )
                 }
             }
@@ -90,7 +99,10 @@ class ScheduleViewModel(
             preferenceRepository.preferences.collect { preferences ->
                 _uiState.update { currentState ->
                     currentState.copy(
-                        preferences = preferences
+                        preferences = preferences,
+                        scheduleOrder = preferences.scheduleOrder?.let {
+                            Json.decodeFromString(it)
+                        } ?: emptyList()
                     )
                 }
             }
@@ -111,11 +123,37 @@ class ScheduleViewModel(
     }
 
     fun setCurrentSchedule(name: String) {
-        _uiState.update {
-            it.copy(
+        _uiState.update { currentState ->
+            val currentOrder = currentState.scheduleOrder.ifEmpty {
+                currentState.schedules.schedules.keys.toList()
+            }
+            val fullList = (currentOrder + currentState.schedules.schedules.keys).distinct()
+            val newOrder = fullList.toMutableList().apply {
+                remove(name)
+                addFirst(name)
+            }
+            viewModelScope.launch {
+                preferenceRepository.setScheduleOrder(Json.encodeToString(newOrder))
+            }
+            currentState.copy(
+                scheduleOrder = newOrder,
                 selectedSchedule = name
             )
         }
+    }
+
+    @Composable
+    fun sortedSchedules(): List<Pair<String, Schedule>> {
+        val ui by uiState.collectAsStateWithLifecycle()
+        val displayList = remember(ui.schedules.schedules, ui.sortMode) {
+            val list = ui.schedules.schedules.toList()
+            when (ui.sortMode) {
+                ScheduleSortMode.ALPHABETICAL -> list.sortedBy { it.first }
+                ScheduleSortMode.ALPHABETICAL_DESC -> list.sortedByDescending { it.first }
+                ScheduleSortMode.RECENTLY_USED -> ui.scheduleOrder.map { it to ui.schedules[it]!! }
+            }
+        }
+        return displayList
     }
 
     fun setDefaultSchedule(name: String) {
@@ -155,7 +193,7 @@ class ScheduleViewModel(
         }
     }
 
-    fun groupOverlappingLessons(lessons: List<Lesson>): List<List<Lesson>> {
+    fun groupOverlappingLessons(lessons: List<Lesson>, date: LocalDate): List<List<Lesson>> {
         if (lessons.isEmpty()) return emptyList()
 
         val sorted = lessons.sortedBy { it.startTime }
@@ -169,6 +207,7 @@ class ScheduleViewModel(
             }
             if (group != null) {
                 group.add(lesson)
+                group.sortBy { !it.isActive(date) }
             } else {
                 groups.add(mutableListOf(lesson))
             }

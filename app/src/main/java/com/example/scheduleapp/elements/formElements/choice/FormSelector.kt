@@ -11,12 +11,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,12 +32,6 @@ fun FormSelector(
     enabled: Boolean = true
 ) {
     var pickerExpanded by rememberSaveable { mutableStateOf(false) }
-    val textFieldColors = OutlinedTextFieldDefaults.colors(
-        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-        disabledBorderColor = MaterialTheme.colorScheme.outline,
-        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
     ExposedDropdownMenuBox(
         modifier = modifier,
         expanded = pickerExpanded,
@@ -52,7 +48,7 @@ fun FormSelector(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(pickerExpanded)
             },
-            colors = textFieldColors
+            colors = selectorFieldColors(enabled)
         )
 
         ExposedDropdownMenu(
@@ -71,4 +67,15 @@ fun FormSelector(
             }
         }
     }
+}
+
+@Composable
+fun selectorFieldColors(enabled: Boolean): TextFieldColors {
+    val borderColor = if(enabled) MaterialTheme.colorScheme.outline else Color.Unspecified
+    return OutlinedTextFieldDefaults.colors(
+        disabledBorderColor = borderColor,
+        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }

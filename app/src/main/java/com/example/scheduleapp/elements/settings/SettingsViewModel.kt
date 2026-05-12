@@ -2,14 +2,19 @@ package com.example.scheduleapp.elements.settings
 
 import Destination
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleapp.data.classes.ColorTheme
 import com.example.scheduleapp.data.classes.LessonType
 import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.classes.Schedule
 import com.example.scheduleapp.data.classes.ScheduleMap
+import com.example.scheduleapp.data.classes.ScheduleSortMode
 import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
@@ -19,6 +24,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.time.LocalTime
 
 
@@ -31,11 +38,12 @@ data class Settings(
     var recentChatId: Long? = null,
     var startHour: LocalTime? = null,
     var selectedStartPage: Destination? = null,
-    var textButtons: Boolean = false,
     var bigButton: Boolean = false,
     var refreshType: RefreshType = RefreshType.AUTOMATIC,
     val customTheme: Map<LessonType, Color> = emptyMap(),
-    val currentTheme: ColorTheme = ColorTheme.DEFAULT
+    val currentTheme: ColorTheme = ColorTheme.DEFAULT,
+    val scheduleSortMode: ScheduleSortMode = ScheduleSortMode.ALPHABETICAL,
+    val scheduleOrder: List<String> = emptyList()
 )
 
 class SettingsViewModel(
@@ -57,10 +65,10 @@ class SettingsViewModel(
                         defaultSchedule = settings.defaultSchedule,
                         startHour = LocalTime.parse(settings.startTime ?: "00:00"),
                         selectedStartPage = Destination.main.firstOrNull { it.id == settings.startPage },
-                        textButtons = settings.textButtons,
                         bigButton = settings.bigButton,
                         refreshType = RefreshType.valueOf(settings.refreshType),
-                        currentTheme = ColorTheme.valueOf(settings.currentTheme)
+                        currentTheme = ColorTheme.valueOf(settings.currentTheme),
+                        scheduleSortMode = ScheduleSortMode.valueOf(settings.sortMode),
                     )
                 }
             }
@@ -78,10 +86,34 @@ class SettingsViewModel(
             preferenceRepository.preferences.collect { preferences ->
                 _uiState.update { currentState ->
                     currentState.copy(
-                        recentChatId = preferences.recentChatId
+                        recentChatId = preferences.recentChatId,
+                        scheduleOrder = preferences.scheduleOrder?.let {
+                            Json.decodeFromString(it)
+                        } ?: emptyList()
                     )
                 }
             }
+        }
+    }
+
+    fun updateScheduleOrder() {
+        _uiState.update { currentState ->
+            val currentOrder = currentState.scheduleOrder.ifEmpty {
+                currentState.schedules.schedules.keys.toList()
+            }
+            val fullList = (currentOrder + currentState.schedules.schedules.keys).distinct()
+            viewModelScope.launch {
+                preferenceRepository.setScheduleOrder(Json.encodeToString(fullList))
+            }
+            currentState.copy(
+                scheduleOrder = fullList,
+            )
+        }
+    }
+
+    fun onScheduleSortModeChange(value: ScheduleSortMode) {
+        viewModelScope.launch {
+            repository.setScheduleSortMode(value)
         }
     }
 
@@ -100,12 +132,6 @@ class SettingsViewModel(
     fun onBigButtonChange(value: Boolean) {
         viewModelScope.launch {
             repository.setBigButton(value);
-        }
-    }
-
-    fun onTextButtonsChange(value: Boolean) {
-        viewModelScope.launch {
-            repository.setTextButtons(value);
         }
     }
 
@@ -147,6 +173,7 @@ class SettingsViewModel(
 
     suspend fun addNewSchedule(name: String, schedule: Schedule = Schedule(), context: Context): String? {
         val error = scheduleRepository.saveSchedule(name, schedule, context)
+        updateScheduleOrder()
         error?.let {
             return it
         }
@@ -155,6 +182,7 @@ class SettingsViewModel(
 
     suspend fun importSchedules(chatId: Long, list: List<String>, context: Context): String? {
         val error = scheduleRepository.importSchedules(chatId, list, context)
+        updateScheduleOrder()
         error?.let {
             return it
         }
@@ -163,6 +191,20 @@ class SettingsViewModel(
 
     suspend fun getSchedules(chatId: Long): Pair<List<String>?, String?> {
         return scheduleRepository.getAvailableSchedules(chatId)
+    }
+
+    @Composable
+    fun sortedSchedules(): List<Pair<String, Schedule>> {
+        val ui by uiState.collectAsStateWithLifecycle()
+        val displayList = remember(ui.schedules.schedules, ui.scheduleSortMode) {
+            val list = ui.schedules.schedules.toList()
+            when (ui.scheduleSortMode) {
+                ScheduleSortMode.ALPHABETICAL -> list.sortedBy { it.first }
+                ScheduleSortMode.ALPHABETICAL_DESC -> list.sortedByDescending { it.first }
+                ScheduleSortMode.RECENTLY_USED -> ui.scheduleOrder.map { it to _uiState.value.schedules[it]!! }
+            }
+        }
+        return displayList
     }
 
     suspend fun removeSchedule(name: String, schedule: Schedule, localOnly: Boolean): String? {

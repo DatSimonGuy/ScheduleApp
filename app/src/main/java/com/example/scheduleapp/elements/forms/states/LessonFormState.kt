@@ -1,5 +1,6 @@
 package com.example.scheduleapp.elements.forms.states
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DateRangePickerState
@@ -33,6 +34,7 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val subject: MutableState<String>,
     val room: MutableState<String>,
     val teacher: MutableState<String>,
+    val teacherMail: MutableState<String>,
     val type: MutableState<LessonType>,
     val occurrence: MutableState<Occurrence>,
     val dayOfWeek: MutableState<DayOfWeek>,
@@ -40,17 +42,26 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val endTime: TimePickerState,
     val startDate: DatePickerState,
     val dateRange: DateRangePickerState,
-    val selectedDates: SnapshotStateList<LocalDate>
+    val selectedDates: SnapshotStateList<LocalDate>,
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
-    fun validateAndMap(lessonId: String?): Pair<Lesson?, Pair<String?, String?>> {
+    fun validateAndMap(
+        lessonId: String?,
+        context: Context
+    ): Pair<Lesson?, Triple<String?, String?, String?>> {
         val startTime = LocalTime.of(startTime.hour, startTime.minute)
         val endTime = LocalTime.of(endTime.hour, endTime.minute)
 
-        val (subjectErr, timeErr) = addLessonFormValidate(subject.value, startTime, endTime)
+        val (subjectErr, timeErr, emailErr) = addLessonFormValidate(
+            subject.value,
+            startTime,
+            endTime,
+            teacherMail.value,
+            context
+        )
 
-        if (subjectErr != null || timeErr != null) {
-            return null to (subjectErr to timeErr)
+        if (subjectErr != null || timeErr != null || emailErr != null) {
+            return null to Triple(subjectErr, timeErr, emailErr)
         }
 
         val lesson = Lesson(
@@ -60,15 +71,16 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
             endTime = endTime,
             room = room.value,
             teacher = teacher.value,
+            teacherMail = teacherMail.value,
             lessonType = type.value,
             occurrence = occurrence.value,
-            startDate = if (occurrence.value == Occurrence.ONCE)
+            startDate = if (occurrence.value == Occurrence.ONCE) {
                 startDate.getSelectedDate()
-            else dateRange.getSelectedStartDate() ?: LocalDate.now(),
+            } else dateRange.getSelectedStartDate() ?: LocalDate.now(),
             endDate = dateRange.getSelectedEndDate() ?: LocalDate.now(),
             activeDays = selectedDates.toList(),
         )
-        return lesson to (null to null)
+        return lesson to Triple(null, null, null)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +88,7 @@ class LessonFormState @OptIn(ExperimentalMaterial3Api::class) constructor(
         subject.value = lesson.subject
         room.value = lesson.room
         teacher.value = lesson.teacher
+        teacherMail.value = lesson.teacherMail
         type.value = lesson.lessonType
         occurrence.value = lesson.occurrence
         startTime.hour = lesson.startTime.hour
@@ -97,6 +110,7 @@ fun rememberLessonFormState(lesson: Lesson?, initialDay: DayOfWeek): LessonFormS
     val subject = rememberSaveable { mutableStateOf(lesson?.subject ?: "") }
     val room = rememberSaveable { mutableStateOf(lesson?.room ?: "") }
     val teacher = rememberSaveable { mutableStateOf(lesson?.teacher ?: "") }
+    val email = rememberSaveable { mutableStateOf(lesson?.teacherMail ?: "") }
     val type = rememberSaveable { mutableStateOf(lesson?.lessonType ?: LessonType.LECTURE) }
     val occurrence = rememberSaveable { mutableStateOf(lesson?.occurrence ?: Occurrence.WEEKLY) }
     val day = rememberSaveable { mutableStateOf(initialDay) }
@@ -114,6 +128,6 @@ fun rememberLessonFormState(lesson: Lesson?, initialDay: DayOfWeek): LessonFormS
     val dates = remember { mutableStateListOf<LocalDate>().apply { lesson?.activeDays?.let { addAll(it) } } }
 
     return remember {
-        LessonFormState(subject, room, teacher, type, occurrence, day, start, end, date, range, dates)
+        LessonFormState(subject, room, teacher, email, type, occurrence, day, start, end, date, range, dates)
     }
 }

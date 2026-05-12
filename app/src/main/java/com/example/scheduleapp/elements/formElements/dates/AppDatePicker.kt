@@ -1,5 +1,6 @@
 package com.example.scheduleapp.elements.formElements.dates
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.getSelectedDate
 import androidx.compose.runtime.Composable
@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.scheduleapp.elements.formElements.choice.selectorFieldColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,31 +53,39 @@ fun AppDatePicker(
         OutlinedTextField(
             value = datePickerState.getSelectedDate().toString(),
             onValueChange = {  },
-            Modifier.weight(4f).padding(end = 8.dp),
+            Modifier.weight(4f),
             label = {
                 Text(label)
             },
             enabled = false,
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                disabledBorderColor = MaterialTheme.colorScheme.outline,
-                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            colors = selectorFieldColors(enabled)
         )
         if(enabled) {
-            OutlinedButton(
+            DateEditButton(
+                Modifier.weight(1.2f),
                 onClick = {
                     showDatePicker = true
-                },
-                Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .padding(top = 8.dp),
-                shape = RoundedCornerShape(4.dp),
-            ) {
-                Icon(Icons.Default.Edit, "")
-            }
+                }
+            )
         }
+    }
+}
+
+@Composable
+fun DateEditButton(
+    modifier: Modifier,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = {
+            onClick()
+        },
+        modifier
+            .fillMaxHeight()
+            .padding(top = 8.dp, start = 8.dp),
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)
+    ) {
+        Icon(Icons.Default.Edit, "")
     }
 }

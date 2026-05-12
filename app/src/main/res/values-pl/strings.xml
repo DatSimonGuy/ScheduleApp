@@ -88,4 +88,13 @@
     <string name="notes">Notatki</string>
     <string name="lessonInfo">info lekcji</string>
     <string name="saveNotes">Zapisz notatki</string>
+    <string name="teacherMail">Teacher\'s mail</string>
+    <string name="sortMode">Sort mode</string>
+    <string name="alphabetical">Alphabetical</string>
+    <string name="alphabeticalDesc">Alphabetical(Descending)</string>
+    <string name="recentlyUsed">Recently used</string>
+    <string name="sortButtonText">Sort</string>
+    <string name="emailError">This field must be a valid email or empty</string>
+    <string name="timeError">End time must be at least 45 minutes after the start time</string>
+    <string name="subjectError">Subject name cannot be empty</string>
 </resources>

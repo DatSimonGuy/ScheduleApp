@@ -1,5 +1,7 @@
 package com.example.scheduleapp.elements.forms.fields
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,8 +16,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.R
 import com.example.scheduleapp.data.classes.LessonType
@@ -37,13 +44,15 @@ fun LessonFormFields(
     state: LessonFormState,
     subjectError: String? = null,
     timeError: String? = null,
+    emailError: String? = null,
     editing: Boolean = true,
 ) {
     val fieldModifier = Modifier.fillMaxWidth(0.95f)
                                 .padding(bottom = 16.dp)
+    val clipboard = LocalClipboardManager.current
+    val uriHandler = LocalUriHandler.current
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         disabledTextColor = MaterialTheme.colorScheme.onSurface,
-        disabledBorderColor = MaterialTheme.colorScheme.outline,
         disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
         disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -62,15 +71,17 @@ fun LessonFormFields(
             singleLine = true,
             isError = subjectError != null,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            colors = textFieldColors
+            colors = textFieldColors,
+            supportingText = {
+                subjectError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = fieldModifier
+                    )
+                }
+            }
         )
-        subjectError?.let {
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.error,
-                modifier = fieldModifier
-            )
-        }
         OutlinedTextField(
             value = state.room.value,
             modifier = fieldModifier,
@@ -92,7 +103,43 @@ fun LessonFormFields(
                 state.teacher.value = it
             },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             colors = textFieldColors
+        )
+        OutlinedTextField(
+            value = state.teacherMail.value,
+            modifier = fieldModifier.combinedClickable(
+                onClick = {
+                    if (state.teacherMail.value.isEmpty()) {
+                        return@combinedClickable
+                    }
+                    uriHandler.openUri("mailto:${state.teacherMail.value}")
+                },
+                onLongClick = {
+                    clipboard.setText(AnnotatedString(
+                        state.teacherMail.value
+                    ))
+                }
+            ),
+            enabled = editing,
+            label = { Text(stringResource(R.string.teacherMail)) },
+            onValueChange = {
+                state.teacherMail.value = it
+            },
+            singleLine = true,
+            colors = textFieldColors,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email
+            ),
+            supportingText = {
+                emailError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = fieldModifier
+                    )
+                }
+            }
         )
         FormSelector(
             fieldModifier,

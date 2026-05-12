@@ -121,7 +121,7 @@ fun ScheduleScreen(
                 showScheduleSelector = false
             },
             label = stringResource(R .string.selectSchedule),
-            items = ui.schedules.schedules.map { it.key },
+            items = viewModel.sortedSchedules().map { it.first },
             selectedItem = ui.selectedSchedule ?: ""
         )
     }

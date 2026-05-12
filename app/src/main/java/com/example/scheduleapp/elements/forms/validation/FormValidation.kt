@@ -1,19 +1,30 @@
 package com.example.scheduleapp.elements.forms.validation
 
+import android.content.Context
+import android.util.Patterns
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.scheduleapp.R
 import java.time.Duration
 import java.time.LocalTime
 
 fun addLessonFormValidate(
     subject: String,
     start: LocalTime,
-    end: LocalTime
-): Pair<String?, String?> {
+    end: LocalTime,
+    teacherMail: String,
+    context: Context
+): Triple<String?, String?, String?> {
     val subjectError =
-        if (subject.isBlank()) "Subject cannot be empty" else null
+        if (subject.isBlank()) context.getString(R.string.subjectError) else null
 
     val timeError = if (Duration.between(start, end).toMinutes() < 45) {
-        "End time must be at least 45 minutes after the start time"
+        context.getString(R.string.timeError)
     } else null
 
-    return subjectError to timeError
+    val emailError = if(!teacherMail.isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(teacherMail).matches()) {
+        context.getString(R.string.emailError)
+    } else null
+
+    return Triple(subjectError, timeError, emailError)
 }

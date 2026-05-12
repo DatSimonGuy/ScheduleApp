@@ -27,6 +27,8 @@ data class Lesson @OptIn(ExperimentalMultiplatform::class) constructor(
     val endTime: LocalTime,
     val room: String,
     val teacher: String = "",
+    @SerialName("teacher_mail")
+    val teacherMail: String = "",
     @SerialName("type")
     val lessonType: LessonType,
     val occurrence: Occurrence,

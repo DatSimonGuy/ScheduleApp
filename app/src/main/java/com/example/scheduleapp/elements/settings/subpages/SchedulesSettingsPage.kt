@@ -4,18 +4,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -46,6 +47,8 @@ import androidx.navigation.NavController
 import com.example.scheduleapp.R
 import com.example.scheduleapp.data.classes.SaveLocation
 import com.example.scheduleapp.data.classes.Schedule
+import com.example.scheduleapp.data.classes.ScheduleSortMode
+import com.example.scheduleapp.elements.formElements.choice.ChoiceDialog
 import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.forms.ImportForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
@@ -72,6 +75,7 @@ fun SchedulesSettingsPage(
     val scheduleFormState = rememberScheduleFormState()
     val importFormState = rememberImportFormState()
     val context = LocalContext.current
+    var sortModeDialogExpanded by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(importFormExpanded) {
         importFormState.fillFields(ui.recentChatId)
@@ -203,6 +207,20 @@ fun SchedulesSettingsPage(
         )
     }
 
+    if (sortModeDialogExpanded) {
+        ChoiceDialog(
+            onDismiss = {
+                sortModeDialogExpanded = false
+            },
+            onSelectionChange = { _, i ->
+                viewModel.onScheduleSortModeChange(ScheduleSortMode.entries[i])
+            },
+            stringResource(R.string.sortMode),
+            ScheduleSortMode.entries.map { stringResource(it.displayName) },
+            selectedItem = stringResource(ui.scheduleSortMode.displayName)
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -217,21 +235,22 @@ fun SchedulesSettingsPage(
                     }
                 },
                 actions = {
-                    if (!ui.textButtons) {
-                        IconButton(onClick = { newScheduleFormExpanded = true }) {
-                            Icon(Icons.Default.Add, "")
-                        }
-                        IconButton(onClick = { importFormExpanded = true }) {
-                            Icon(Icons.Default.ImportExport, "")
-                        }
-                        if (selectionMap.containsValue(true)) {
-                            IconButton(
-                                onClick = {
-                                    showDeleteDialog = true
-                                }
-                            ) {
-                                Icon(Icons.Default.Delete, "")
+                    IconButton(onClick = { newScheduleFormExpanded = true }) {
+                        Icon(Icons.Default.Add, "")
+                    }
+                    IconButton(onClick = { importFormExpanded = true }) {
+                        Icon(Icons.Default.ImportExport, "")
+                    }
+                    IconButton(onClick = { sortModeDialogExpanded = true }) {
+                        Icon(Icons.AutoMirrored.Filled.Sort, "")
+                    }
+                    if (selectionMap.containsValue(true)) {
+                        IconButton(
+                            onClick = {
+                                showDeleteDialog = true
                             }
+                        ) {
+                            Icon(Icons.Default.Delete, "")
                         }
                     }
                 }
@@ -261,59 +280,31 @@ fun SchedulesSettingsPage(
         Column (
             Modifier.padding(paddingValues).fillMaxSize()
         ) {
-            if (ui.textButtons) {
-                Row (
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ){
-                    OutlinedButton(
-                        onClick = { newScheduleFormExpanded = true },
-                        Modifier.padding(end = 8.dp)
-                    ) {
-                        Text(stringResource(R.string.add))
-                    }
-                    OutlinedButton(
-                        onClick = { importFormExpanded = true },
-                        Modifier.padding(end = 8.dp)
-                    ) {
-                        Text(stringResource(R.string.importText))
-                    }
-                    if (selectionMap.containsValue(true)) {
-                        OutlinedButton(
-                            onClick = { showDeleteDialog = true },
-                            Modifier.padding(end = 8.dp)
-                        ) {
-                            Text(stringResource(R.string.delete))
-                        }
-                    }
-                }
-            }
+            val displayList = viewModel.sortedSchedules()
             LazyColumn {
-                ui.schedules.schedules.forEach { (key, schedule) ->
-                    item {
-                        ListItem(
-                            modifier = Modifier.clickable {
-                                selectionMap[key] = !(selectionMap[key] ?: false)
-                            },
-                            headlineContent = { Text(key) },
-                            trailingContent = {
-                                Checkbox(
-                                    selectionMap[key] == true,
-                                    onCheckedChange = { selectionMap[key] = it }
-                                )
-                            },
-                            leadingContent = {
-                                IconButton(
-                                    onClick = {
-                                        editedSchedule = Pair(key, schedule)
-                                        newScheduleFormExpanded = true
-                                    }
-                                ) {
-                                    Icon(Icons.Default.Edit, "")
+                items(displayList) { (scheduleName, schedule) ->
+                    ListItem(
+                        modifier = Modifier.clickable {
+                            selectionMap[scheduleName] = !(selectionMap[scheduleName] ?: false)
+                        },
+                        headlineContent = { Text(scheduleName) },
+                        trailingContent = {
+                            Checkbox(
+                                selectionMap[scheduleName] == true,
+                                onCheckedChange = { selectionMap[scheduleName] = it }
+                            )
+                        },
+                        leadingContent = {
+                            IconButton(
+                                onClick = {
+                                    editedSchedule = Pair(scheduleName, schedule)
+                                    newScheduleFormExpanded = true
                                 }
+                            ) {
+                                Icon(Icons.Default.Edit, "")
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }

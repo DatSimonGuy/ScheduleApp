@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,15 +50,24 @@ fun LessonBlock(
     date: LocalDate,
     currentTheme: ColorTheme
 ) {
-    var currentIndex by remember { mutableStateOf(0) }
+    var currentIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val currentLesson = lessons[currentIndex]
     val topOffset = (hourHeight.value + 10.dp) * (currentLesson.start - startHour) + 16.dp
     val blockHeight = (hourHeight.value + 10.dp) * currentLesson.duration - 8.dp
-    var style by rememberSaveable { mutableStateOf(displayStyle) }
     val colors = getColors(currentTheme, context)
     val lessonColor = colors[currentLesson.lessonType] ?: currentLesson.lessonType.color
     val textColor = textColorForBackground(lessonColor)
+    val style = if (blockHeight < 120.dp) {
+        LessonBlockDisplayStyle.COMPACT
+    } else if (blockHeight < 240.dp) {
+        when(displayStyle) {
+            LessonBlockDisplayStyle.COMPACT -> displayStyle
+            else -> LessonBlockDisplayStyle.NORMAL
+        }
+    } else {
+        displayStyle
+    }
 
     Row(
         Modifier

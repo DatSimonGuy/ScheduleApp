@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.R
@@ -51,17 +50,6 @@ fun AccessibilitySettingsPage(
             modifier = Modifier.fillMaxWidth().padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ToggleCard(
-                Modifier
-                    .fillMaxWidth(0.95f)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 8.dp),
-                stringResource(R.string.textButtons),
-                checked = ui.textButtons,
-                onCheckedChange = {
-                    viewModel.onTextButtonsChange(it)
-                }
-            )
             ToggleCard(
                 Modifier.fillMaxWidth(0.95f).align(Alignment.CenterHorizontally),
                 stringResource(R.string.bigButton),

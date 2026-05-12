@@ -99,7 +99,7 @@ fun TimeTable(
                     }
                 }
                 val groupedLessons = remember(lessons) {
-                    viewModel.groupOverlappingLessons(lessons)
+                    viewModel.groupOverlappingLessons(lessons, date)
                 }
 
                 groupedLessons.forEach { group ->

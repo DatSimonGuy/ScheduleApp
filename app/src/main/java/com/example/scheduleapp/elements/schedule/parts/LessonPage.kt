@@ -74,6 +74,7 @@ fun LessonPage(
     var editing by rememberSaveable { mutableStateOf(false) }
     var subjectError by rememberSaveable { mutableStateOf<String?>(null) }
     var timeError by rememberSaveable { mutableStateOf<String?>(null) }
+    var emailError by rememberSaveable { mutableStateOf<String?>(null) }
     val pagerOptions = listOf(
         stringResource(R.string.lessonInfo),
         stringResource(R.string.notes)
@@ -157,51 +158,50 @@ fun LessonPage(
                     }
                 },
                 actions = {
-                    if (!ui.textButtons) {
-                        IconButton(
-                            onClick = {
-                                showConfirmDialog = true
-                            }
-                        ) {
-                            Icon(Icons.Default.Delete, "")
+                    IconButton(
+                        onClick = {
+                            showConfirmDialog = true
                         }
-                        IconButton(
-                            onClick = {
-                                editing = !editing
-                                if (!editing) {
-                                    lesson?.let {
-                                        formState.fillFields(it)
-                                    }
+                    ) {
+                        Icon(Icons.Default.Delete, "")
+                    }
+                    IconButton(
+                        onClick = {
+                            editing = !editing
+                            if (!editing) {
+                                lesson?.let {
+                                    formState.fillFields(it)
                                 }
                             }
-                        ) {
-                            if(!editing) {
-                                Icon(Icons.Default.Edit, "")
-                            } else {
-                                Icon(Icons.Default.Close, "")
-                            }
                         }
-                        if (editing) {
-                            IconButton(
-                                onClick = {
-                                    val (lesson, errs) = formState.validateAndMap(lessonId)
-                                    if (lesson == null) {
-                                        subjectError = errs.first
-                                        timeError = errs.second
-                                        return@IconButton
-                                    }
-                                    viewModel.updateLesson(
-                                        ui.selectedSchedule ?: "",
-                                        lesson,
-                                        selectedDay,
-                                        formState.dayOfWeek.value,
-                                        context
-                                    )
-                                    editing = false
+                    ) {
+                        if(!editing) {
+                            Icon(Icons.Default.Edit, "")
+                        } else {
+                            Icon(Icons.Default.Close, "")
+                        }
+                    }
+                    if (editing) {
+                        IconButton(
+                            onClick = {
+                                val (lesson, errs) = formState.validateAndMap(lessonId, context)
+                                if (lesson == null) {
+                                    subjectError = errs.first
+                                    timeError = errs.second
+                                    emailError = errs.third
+                                    return@IconButton
                                 }
-                            ) {
-                                Icon(Icons.Default.Check, "")
+                                viewModel.updateLesson(
+                                    ui.selectedSchedule ?: "",
+                                    lesson,
+                                    selectedDay,
+                                    formState.dayOfWeek.value,
+                                    context
+                                )
+                                editing = false
                             }
+                        ) {
+                            Icon(Icons.Default.Check, "")
                         }
                     }
                 }
@@ -211,60 +211,6 @@ fun LessonPage(
         Column(
             Modifier.padding(paddingValues).fillMaxSize()
         ) {
-            if (ui.textButtons) {
-                Row (
-                    Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            showConfirmDialog = true
-                        },
-                        Modifier.padding(end = 8.dp)
-                    ) {
-                        Text(stringResource(R.string.delete))
-                    }
-                    OutlinedButton(
-                        onClick = {
-                            editing = !editing
-                            if (!editing) {
-                                lesson?.let {
-                                    formState.fillFields(it)
-                                }
-                            }
-                        },
-                        Modifier.padding(end = 8.dp)
-                    ) {
-                        if(!editing) {
-                            Text(stringResource(R.string.edit))
-                        } else {
-                            Text(stringResource(R.string.cancel))
-                        }
-                    }
-                    if (editing) {
-                        OutlinedButton (
-                            onClick = {
-                                val (lesson, errs) = formState.validateAndMap(lessonId)
-                                if (lesson == null) {
-                                    subjectError = errs.first
-                                    timeError = errs.second
-                                    return@OutlinedButton
-                                }
-                                viewModel.updateLesson(
-                                    ui.selectedSchedule ?: "", lesson,
-                                    selectedDay,
-                                    formState.dayOfWeek.value,
-                                    context
-                                )
-                                editing = false
-                            },
-                            Modifier.padding(end = 8.dp)
-                        ) {
-                            Text(stringResource(R.string.confirm))
-                        }
-                    }
-                }
-            }
             SingleChoiceSegmentedButtonRow(
                 Modifier.fillMaxWidth().padding(bottom = 8.dp)
             ) {
@@ -294,6 +240,7 @@ fun LessonPage(
                         formState,
                         subjectError,
                         timeError,
+                        emailError,
                         editing
                     )
                     1 -> {

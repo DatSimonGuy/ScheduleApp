@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import com.example.scheduleapp.data.classes.ColorTheme
 import com.example.scheduleapp.data.classes.RefreshType
+import com.example.scheduleapp.data.classes.ScheduleSortMode
 import com.example.scheduleapp.data.datastore.SettingKeys
 import com.example.scheduleapp.data.datastore.settingsDataStore
 import com.example.scheduleapp.elements.schedule.timetable.HourHeight
@@ -20,10 +21,10 @@ data class UserSettings(
     val defaultSchedule: String?,
     val startTime: String?,
     val startPage: Int?,
-    val textButtons: Boolean,
     val bigButton: Boolean,
     val refreshType: String,
-    val currentTheme: String
+    val currentTheme: String,
+    val sortMode: String
 )
 
 class SettingsRepository(private val context: Context) {
@@ -36,12 +37,18 @@ class SettingsRepository(private val context: Context) {
                 defaultSchedule = preferences[SettingKeys.defaultSchedule],
                 startTime = preferences[SettingKeys.startTime],
                 startPage = preferences[SettingKeys.startPage],
-                textButtons = preferences[SettingKeys.textButtons] ?: false,
                 bigButton = preferences[SettingKeys.bigButton] ?: false,
                 refreshType = preferences[SettingKeys.refreshType] ?: RefreshType.AUTOMATIC.name,
-                currentTheme = preferences[SettingKeys.currentTheme] ?: ColorTheme.DEFAULT.name
+                currentTheme = preferences[SettingKeys.currentTheme] ?: ColorTheme.DEFAULT.name,
+                sortMode = preferences[SettingKeys.scheduleSortMode] ?: ScheduleSortMode.ALPHABETICAL.name
             )
         }
+
+    suspend fun setScheduleSortMode(sortMode: ScheduleSortMode) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.scheduleSortMode] = sortMode.name
+        }
+    }
 
     suspend fun setCurrentTheme(theme: ColorTheme) {
         context.settingsDataStore.edit {
@@ -58,12 +65,6 @@ class SettingsRepository(private val context: Context) {
     suspend fun setBigButton(value: Boolean) {
         context.settingsDataStore.edit {
             it[SettingKeys.bigButton] = value
-        }
-    }
-
-    suspend fun setTextButtons(value: Boolean) {
-        context.settingsDataStore.edit {
-            it[SettingKeys.textButtons] = value
         }
     }
 

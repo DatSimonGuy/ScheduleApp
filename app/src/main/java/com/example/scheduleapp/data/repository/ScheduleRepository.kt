@@ -47,21 +47,8 @@ class ScheduleRepository(private val context: Context) {
             }
 
             context.scheduleDataStore.updateData { currentDb ->
-                val localSchedule = currentDb.schedules[scheduleName]
-
-                val mergedLessons = remoteSchedule.lessons.mapValues { (day, remoteLessons) ->
-                    remoteLessons.map { remoteLesson ->
-                        val localLesson = localSchedule?.lessons?.get(day)?.find { it.id == remoteLesson.id }
-                        if (localLesson != null) {
-                            remoteLesson.copy(notes = localLesson.notes)
-                        } else {
-                            remoteLesson
-                        }
-                    }
-                }
-                val updatedSchedule = remoteSchedule.copy(lessons = mergedLessons)
                 currentDb.copy(
-                    schedules = currentDb.schedules + (scheduleName to updatedSchedule)
+                    schedules = currentDb.schedules + (scheduleName to remoteSchedule)
                 )
             }
         }

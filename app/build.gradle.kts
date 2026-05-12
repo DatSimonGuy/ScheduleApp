@@ -33,8 +33,8 @@ android {
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 9000
-        versionName = "0.9.0"
+        versionCode = 10000
+        versionName = "0.10.0"
 
         androidResources {
             generateLocaleConfig = true
@@ -103,6 +103,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.0")
     implementation("com.kborowy:kolor-picker-android:2.0.0")
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.foundation.layout)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("io.ktor:ktor-client-core:3.4.0")

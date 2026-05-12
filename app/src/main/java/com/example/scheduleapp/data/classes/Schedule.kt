@@ -12,7 +12,7 @@ data class Schedule(
 
 @Serializable
 data class ScheduleMap(
-    val schedules: Map<String, Schedule> = emptyMap()
+    val schedules: Map<String, Schedule> = mapOf()
 ) {
     operator fun get(key: String): Schedule? {
         return schedules[key]
