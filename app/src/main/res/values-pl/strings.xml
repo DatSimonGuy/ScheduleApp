@@ -88,13 +88,13 @@
     <string name="notes">Notatki</string>
     <string name="lessonInfo">info lekcji</string>
     <string name="saveNotes">Zapisz notatki</string>
-    <string name="teacherMail">Teacher\'s mail</string>
-    <string name="sortMode">Sort mode</string>
-    <string name="alphabetical">Alphabetical</string>
-    <string name="alphabeticalDesc">Alphabetical(Descending)</string>
-    <string name="recentlyUsed">Recently used</string>
-    <string name="sortButtonText">Sort</string>
-    <string name="emailError">This field must be a valid email or empty</string>
-    <string name="timeError">End time must be at least 45 minutes after the start time</string>
-    <string name="subjectError">Subject name cannot be empty</string>
+    <string name="teacherMail">Mail nauczyciela</string>
+    <string name="sortMode">Tryb sortowania</string>
+    <string name="alphabetical">Alfabetycznie</string>
+    <string name="alphabeticalDesc">Alfabetycznie (malejąco)</string>
+    <string name="recentlyUsed">Ostatnio użyte</string>
+    <string name="sortButtonText">Sortowanie</string>
+    <string name="emailError">To pole musi zawierać poprawny adres email lub pozostać puste</string>
+    <string name="timeError">Zajęcia muszą trwać co najmniej 45 minut</string>
+    <string name="subjectError">Nazwa przedmiotu nie może pozostać pusta</string>
 </resources>
