@@ -23,12 +23,11 @@ import androidx.compose.ui.unit.dp
 fun SettingsCategory(
     categoryName: String,
     onClick: () -> Unit,
-    icon: ImageVector
+    icon: ImageVector,
+    modifier: Modifier = Modifier
 ) {
     ElevatedCard(
-        Modifier
-            .padding(horizontal = 8.dp)
-            .padding(bottom = 8.dp)
+        modifier
             .background(MaterialTheme.colorScheme.surface)
             .clip(RoundedCornerShape(16.dp))
             .clickable {

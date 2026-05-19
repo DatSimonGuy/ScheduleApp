@@ -161,7 +161,6 @@ fun ScheduleScreen(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             FloatingActionButtonMenu (
                 expanded = fabExpanded,

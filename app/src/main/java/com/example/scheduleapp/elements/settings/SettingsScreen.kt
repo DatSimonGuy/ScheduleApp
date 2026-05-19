@@ -3,6 +3,8 @@ package com.example.scheduleapp.elements.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.Brush
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.scheduleapp.R
 import com.example.scheduleapp.elements.settings.parts.SettingsCategory
@@ -38,14 +41,18 @@ fun SettingsScreen(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.settings)) }) }
     ) { paddingValues ->
         Column(
-            Modifier.fillMaxSize().padding(paddingValues),
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             categories.forEach {
                 SettingsCategory(
                     it.key.second,
                     {navController.navigate(it.value)},
-                    it.key.first
+                    it.key.first,
+                    Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
         }

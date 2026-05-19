@@ -1,8 +1,13 @@
 package com.example.scheduleapp.elements.settings.subpages
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ColorLens
@@ -55,7 +60,10 @@ fun AppearanceSettingsPage(
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxWidth().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ToggleCard(
@@ -109,7 +117,8 @@ fun AppearanceSettingsPage(
                 onClick = {
                     navController.navigate(SettingsDestination.ColorSettings)
                 },
-                icon = Icons.Default.ColorLens
+                icon = Icons.Default.ColorLens,
+                modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp)
             )
         }
     }
