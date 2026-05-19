@@ -96,6 +96,14 @@ fun AppearanceSettingsPage(
             ) {
                 viewModel.onStartHourChange(it)
             }
+            ToggleCard(
+                modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
+                label = stringResource(R.string.showWeekendsInWeek),
+                checked = ui.showWeekends,
+                onCheckedChange = {
+                    viewModel.onShowWeekendsChange(it)
+                }
+            )
             SettingsCategory(
                 stringResource(R.string.colors),
                 onClick = {

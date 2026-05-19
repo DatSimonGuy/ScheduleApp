@@ -43,7 +43,8 @@ data class Settings(
     val customTheme: Map<LessonType, Color> = emptyMap(),
     val currentTheme: ColorTheme = ColorTheme.DEFAULT,
     val scheduleSortMode: ScheduleSortMode = ScheduleSortMode.ALPHABETICAL,
-    val scheduleOrder: List<String> = emptyList()
+    val scheduleOrder: List<String> = emptyList(),
+    val showWeekends: Boolean = true
 )
 
 class SettingsViewModel(
@@ -69,6 +70,7 @@ class SettingsViewModel(
                         refreshType = RefreshType.valueOf(settings.refreshType),
                         currentTheme = ColorTheme.valueOf(settings.currentTheme),
                         scheduleSortMode = ScheduleSortMode.valueOf(settings.sortMode),
+                        showWeekends = settings.showWeekends
                     )
                 }
             }
@@ -108,6 +110,12 @@ class SettingsViewModel(
             currentState.copy(
                 scheduleOrder = fullList,
             )
+        }
+    }
+
+    fun onShowWeekendsChange(value: Boolean) {
+        viewModelScope.launch {
+            repository.setShowWeekends(value)
         }
     }
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -43,7 +44,7 @@ fun DeleteScheduleDialog(
         Card(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.4f)
+                .height(200.dp)
                 .padding(8.dp),
             shape = RoundedCornerShape(16.dp)
         ) {

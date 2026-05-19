@@ -66,54 +66,24 @@ fun TimeTable(
         Row (
             Modifier.verticalScroll(scrollState)
         ) {
-            Column(
-                Modifier.weight(1f)
-            ) {
-                 for(i in timeTableStartHour..23) {
-                    val time = LocalTime.of(i, 0)
-                    Text(
-                        time.toString(),
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .height(hourHeight.value)
-                            .align(Alignment.CenterHorizontally),
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-            Box (
-                Modifier.weight(5f)
-            ) {
-                Column(
-                    Modifier.padding(top = 16.dp)
-                ) {
-                    repeat(24-timeTableStartHour) {
-                        ElevatedCard(
-                            Modifier
-                                .padding(bottom = 10.dp)
-                                .height(hourHeight.value)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.surfaceContainer)
-                        ) { }
-                    }
-                }
-                val groupedLessons = remember(lessons) {
+            HoursColumn(
+                timeTableStartHour,
+                Modifier.weight(1f),
+                hourHeight
+            )
+            LessonsBox(
+                Modifier.weight(5f),
+                timeTableStartHour,
+                hourHeight,
+                lessons,
+                { lessons, date ->
                     viewModel.groupOverlappingLessons(lessons, date)
-                }
-
-                groupedLessons.forEach { group ->
-                    LessonBlock(
-                        hourHeight = hourHeight,
-                        startHour = timeTableStartHour,
-                        lessons = group,
-                        onLessonClick = onLessonClick,
-                        displayStyle = lessonBlockDisplayStyle,
-                        date = date,
-                        ui.currentTheme
-                    )
-                }
-            }
+                },
+                date,
+                onLessonClick,
+                lessonBlockDisplayStyle,
+                ui.currentTheme
+            )
         }
     }
 }

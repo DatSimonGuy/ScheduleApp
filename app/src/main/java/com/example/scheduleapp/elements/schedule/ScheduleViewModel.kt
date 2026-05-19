@@ -50,7 +50,8 @@ data class ScheduleUiState(
     val customTheme: Map<LessonType, Color> = emptyMap(),
     val currentTheme: ColorTheme = ColorTheme.DEFAULT,
     val sortMode: ScheduleSortMode = ScheduleSortMode.ALPHABETICAL,
-    val scheduleOrder: List<String> = emptyList()
+    val scheduleOrder: List<String> = emptyList(),
+    val showWeekends: Boolean = true
 )
 
 class ScheduleViewModel(
@@ -81,7 +82,8 @@ class ScheduleViewModel(
                         bigButton = settings.bigButton,
                         refreshType = RefreshType.valueOf(settings.refreshType),
                         currentTheme = ColorTheme.valueOf(settings.currentTheme),
-                        sortMode = ScheduleSortMode.valueOf(settings.sortMode)
+                        sortMode = ScheduleSortMode.valueOf(settings.sortMode),
+                        showWeekends = settings.showWeekends
                     )
                 }
             }

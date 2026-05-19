@@ -1,6 +1,9 @@
 package com.example.scheduleapp.elements.schedule
 
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -31,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,6 +47,7 @@ import com.example.scheduleapp.elements.forms.NewScheduleForm
 import com.example.scheduleapp.elements.forms.states.rememberScheduleFormState
 import com.example.scheduleapp.elements.schedule.parts.AddSchedulePrompt
 import com.example.scheduleapp.elements.schedule.timetable.TimeTable
+import com.example.scheduleapp.elements.schedule.timetable.WeekViewTable
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -68,6 +73,9 @@ fun ScheduleScreen(
     val context = LocalContext.current
     val scheduleFormState = rememberScheduleFormState()
     val pagerState = rememberPagerState(initialPage = LocalDate.now().dayOfWeek.ordinal) { Int.MAX_VALUE }
+    val landscapePagerState = rememberPagerState { Int.MAX_VALUE }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     LaunchedEffect(ui.selectedSchedule) {
         if ((ui.refreshType == RefreshType.ON_APP_RELOAD && refreshedOnce) || ui.refreshType == RefreshType.MANUAL) {
@@ -226,23 +234,50 @@ fun ScheduleScreen(
                 }
             }
         ) {
-            HorizontalPager(
-                state = pagerState
-            ) { page ->
-                val day = DayOfWeek.of(page % 7 + 1)
-                TimeTable(
-                    title = "${ui.selectedSchedule} - ${day.getDisplayName(TextStyle.FULL, Locale.getDefault())}",
-                    hourHeight = ui.hourHeight,
-                    startHour = ui.startTime?.hour ?: 0,
-                    lessons = currentSchedule?.lessons[day] ?: emptyList(),
-                    onLessonClick = {
-                        navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))
-                    },
-                    lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
-                    date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong()),
-                    viewModel = viewModel
-                )
+            if (isLandscape) {
+                HorizontalPager(
+                    state = landscapePagerState
+                ) {
+                    WeekViewTable(
+                        title = "${ui.selectedSchedule}",
+                        hourHeight = ui.hourHeight,
+                        startHour = ui.startTime?.hour ?: 0,
+                        lessons = currentSchedule?.lessons?.values?.toList() ?: emptyList(),
+                        onLessonClick = { lessonId, day ->
+                            navController.navigate(
+                                ScheduleDestination.LessonScreen(
+                                    DayOfWeek.of(day),
+                                    lessonId
+                                )
+                            )
+                        },
+                        lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
+                        startDate = LocalDate.now().minusDays(
+                            LocalDate.now().dayOfWeek.ordinal.toLong()
+                        ).plusDays((7 * landscapePagerState.settledPage).toLong()),
+                        viewModel = viewModel
+                    )
+                }
+            } else {
+                HorizontalPager(
+                    state = pagerState
+                ) { page ->
+                    val day = DayOfWeek.of(page % 7 + 1)
+                    TimeTable(
+                        title = "${ui.selectedSchedule} - ${day.getDisplayName(TextStyle.FULL, Locale.getDefault())}",
+                        hourHeight = ui.hourHeight,
+                        startHour = ui.startTime?.hour ?: 0,
+                        lessons = currentSchedule?.lessons[day] ?: emptyList(),
+                        onLessonClick = {
+                            navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))
+                        },
+                        lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
+                        date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong()),
+                        viewModel = viewModel
+                    )
+                }
             }
+
         }
     }
 }

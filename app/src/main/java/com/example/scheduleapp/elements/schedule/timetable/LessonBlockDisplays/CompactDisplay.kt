@@ -15,19 +15,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
 
 @Composable
 fun CompactDisplay(
     lesson: Lesson,
-    textColor: Color
+    textColor: Color,
+    fontSize: TextUnit = TextUnit.Unspecified
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.Transparent)
-            .padding(8.dp),
+            .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -37,13 +39,15 @@ fun CompactDisplay(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold,
-            color = textColor
+            color = textColor,
+            fontSize = fontSize
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text =  "${lesson.room} | ${lesson.startTime} - ${lesson.endTime}",
             textAlign = TextAlign.Center,
-            color = textColor
+            color = textColor,
+            fontSize = fontSize
         )
     }
 }

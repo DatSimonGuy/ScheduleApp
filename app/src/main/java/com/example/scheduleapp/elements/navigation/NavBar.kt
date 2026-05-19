@@ -3,7 +3,11 @@ package com.example.scheduleapp.elements.navigation
 import Destination
 import ScheduleDestination
 import SettingsDestination
+import android.content.res.Configuration
 import android.util.Log
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BorderVertical
@@ -14,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -43,6 +50,8 @@ fun Navbar(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val startDestination = Destination.Home
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     LaunchedEffect(Unit) {
         val dest = Destination.main.firstOrNull { destination ->
@@ -53,12 +62,12 @@ fun Navbar(modifier: Modifier = Modifier) {
         }
     }
 
-    Scaffold(
-        modifier = modifier,
-        bottomBar = {
-            NavigationBar (
-                windowInsets = NavigationBarDefaults.windowInsets
-            ) {
+    if (isLandscape) {
+        Row(
+            Modifier.fillMaxSize()
+        ) {
+            NavigationRail{
+                Spacer(Modifier.weight(1f))
                 Destination.main.forEach { destination ->
                     val isSelected = navBackStackEntry?.destination?.let { currentNavDest ->
                         when (destination) {
@@ -68,7 +77,7 @@ fun Navbar(modifier: Modifier = Modifier) {
                             else -> false
                         }
                     } ?: false
-                    NavigationBarItem(
+                    NavigationRailItem(
                         selected = isSelected,
                         onClick = {
                             navController.navigate(destination) {
@@ -94,14 +103,65 @@ fun Navbar(modifier: Modifier = Modifier) {
                         },
                         label = { Text(stringResource(destination.displayName!!)) }
                     )
+                    Spacer(Modifier.weight(1f))
                 }
             }
+            AppNavHost(
+                navController,
+                startDestination,
+            )
         }
-    ) { innerPadding ->
-        AppNavHost(
-            navController,
-            startDestination,
-            Modifier.padding(innerPadding)
-        )
+    } else {
+        Scaffold(
+            modifier = modifier,
+            bottomBar = {
+                NavigationBar (
+                    windowInsets = NavigationBarDefaults.windowInsets
+                ) {
+                    Destination.main.forEach { destination ->
+                        val isSelected = navBackStackEntry?.destination?.let { currentNavDest ->
+                            when (destination) {
+                                Destination.Home -> currentNavDest.hasRoute<Destination.Home>()
+                                Destination.Schedule -> currentNavDest.isScheduleDestination()
+                                Destination.Settings -> currentNavDest.isSettingsDestination()
+                                else -> false
+                            }
+                        } ?: false
+                        NavigationBarItem(
+                            selected = isSelected,
+                            onClick = {
+                                navController.navigate(destination) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    when(destination) {
+                                        Destination.Home -> Icons.Default.Home
+                                        Destination.Schedule -> Icons.Default.DateRange
+                                        Destination.Settings -> Icons.Default.Settings
+                                        else -> {
+                                            Icons.Default.BorderVertical
+                                        }
+                                    },
+                                    contentDescription = stringResource(destination.displayName!!)
+                                )
+                            },
+                            label = { Text(stringResource(destination.displayName!!)) }
+                        )
+                    }
+                }
+            }
+        ) { innerPadding ->
+            AppNavHost(
+                navController,
+                startDestination,
+                Modifier.padding(innerPadding)
+            )
+        }
     }
 }

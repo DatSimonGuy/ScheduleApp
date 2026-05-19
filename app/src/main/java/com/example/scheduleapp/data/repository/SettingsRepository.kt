@@ -24,7 +24,8 @@ data class UserSettings(
     val bigButton: Boolean,
     val refreshType: String,
     val currentTheme: String,
-    val sortMode: String
+    val sortMode: String,
+    val showWeekends: Boolean
 )
 
 class SettingsRepository(private val context: Context) {
@@ -40,9 +41,16 @@ class SettingsRepository(private val context: Context) {
                 bigButton = preferences[SettingKeys.bigButton] ?: false,
                 refreshType = preferences[SettingKeys.refreshType] ?: RefreshType.AUTOMATIC.name,
                 currentTheme = preferences[SettingKeys.currentTheme] ?: ColorTheme.DEFAULT.name,
-                sortMode = preferences[SettingKeys.scheduleSortMode] ?: ScheduleSortMode.ALPHABETICAL.name
+                sortMode = preferences[SettingKeys.scheduleSortMode] ?: ScheduleSortMode.ALPHABETICAL.name,
+                showWeekends = preferences[SettingKeys.showWeekends] ?: true
             )
         }
+
+    suspend fun setShowWeekends(value: Boolean) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.showWeekends] = value
+        }
+    }
 
     suspend fun setScheduleSortMode(sortMode: ScheduleSortMode) {
         context.settingsDataStore.edit {

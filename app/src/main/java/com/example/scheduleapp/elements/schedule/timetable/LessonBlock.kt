@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.ColorTheme
 import com.example.scheduleapp.data.classes.Lesson
@@ -48,7 +49,8 @@ fun LessonBlock(
     onLessonClick: (String) -> Unit,
     displayStyle: LessonBlockDisplayStyle,
     date: LocalDate,
-    currentTheme: ColorTheme
+    currentTheme: ColorTheme,
+    fontSize: TextUnit = TextUnit.Unspecified
 ) {
     var currentIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
@@ -69,12 +71,12 @@ fun LessonBlock(
         displayStyle
     }
 
-    Row(
+    Column (
         Modifier
             .fillMaxWidth()
             .offset(y = topOffset)
             .height(blockHeight),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         ElevatedCard(
             modifier = Modifier
@@ -87,17 +89,17 @@ fun LessonBlock(
             )
         ) {
             when (style) {
-                LessonBlockDisplayStyle.NORMAL -> NormalDisplay(currentLesson, textColor)
-                LessonBlockDisplayStyle.COMPACT -> CompactDisplay(currentLesson, textColor)
-                LessonBlockDisplayStyle.EXTENDED -> ExtendedDisplay(currentLesson, textColor)
+                LessonBlockDisplayStyle.NORMAL -> NormalDisplay(currentLesson, textColor, fontSize)
+                LessonBlockDisplayStyle.COMPACT -> CompactDisplay(currentLesson, textColor, fontSize)
+                LessonBlockDisplayStyle.EXTENDED -> ExtendedDisplay(currentLesson, textColor, fontSize)
             }
         }
 
         if (lessons.size > 1) {
             ElevatedCard(
                 modifier = Modifier
-                    .width(48.dp)
-                    .fillMaxHeight()
+                    .height(48.dp)
+                    .fillMaxWidth()
                     .clickable {
                         currentIndex = (currentIndex + 1) % lessons.size
                     },

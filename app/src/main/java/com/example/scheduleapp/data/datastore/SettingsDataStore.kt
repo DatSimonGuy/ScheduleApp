@@ -22,4 +22,5 @@ object SettingKeys {
     val refreshType = stringPreferencesKey("refreshType")
     val currentTheme = stringPreferencesKey("currentTheme")
     val scheduleSortMode = stringPreferencesKey("scheduleSortMode")
+    val showWeekends = booleanPreferencesKey("showWeekends")
 }

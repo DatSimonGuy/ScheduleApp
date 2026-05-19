@@ -97,4 +97,5 @@
     <string name="emailError">This field must be a valid email or empty</string>
     <string name="timeError">End time must be at least 45 minutes after the start time</string>
     <string name="subjectError">Subject name cannot be empty</string>
+    <string name="showWeekendsInWeek">Show weekends in week view</string>
 </resources>
