@@ -3,6 +3,7 @@ package com.example.scheduleapp.elements.schedule
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -19,6 +20,7 @@ import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -37,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.R
@@ -219,7 +223,7 @@ fun ScheduleScreen(
         }
     ) { paddingValues ->
         PullToRefreshBox(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier,
             isRefreshing = isRefreshing,
             onRefresh = {
                 isRefreshing = true
@@ -235,7 +239,8 @@ fun ScheduleScreen(
         ) {
             if (isLandscape) {
                 HorizontalPager(
-                    state = landscapePagerState
+                    state = landscapePagerState,
+                    Modifier.padding(paddingValues),
                 ) {
                     WeekViewTable(
                         title = "${ui.selectedSchedule}",

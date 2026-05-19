@@ -41,6 +41,11 @@ fun WeekViewTable(
 ) {
     val scrollState = rememberScrollState()
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
+    val timeTableStartHour = startHour.coerceAtMost(
+        lessons.take(
+            if (ui.showWeekends) 7 else 5
+        ).flatten().minByOrNull { it.startTime }?.startTime?.hour ?: startHour
+    )
     val dateFormatter = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
         .withLocale(Locale.getDefault())
@@ -74,7 +79,7 @@ fun WeekViewTable(
                 .verticalScroll(scrollState)
         ) {
             HoursColumn(
-                startHour = startHour,
+                startHour = timeTableStartHour,
                 modifier = Modifier.weight(1f),
                 hourHeight = hourHeight
             )
@@ -86,7 +91,7 @@ fun WeekViewTable(
                 ) {
                     LessonsBox(
                         modifier = Modifier.fillMaxWidth(),
-                        startHour = startHour,
+                        startHour = timeTableStartHour,
                         hourHeight = hourHeight,
                         lessons = lessons.getOrNull(dayIndex) ?: emptyList(),
                         groupFunction = { lessons, date ->
