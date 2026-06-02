@@ -102,7 +102,7 @@ class SettingsViewModel(
         _uiState.update { currentState ->
             val currentOrder = currentState.scheduleOrder.ifEmpty {
                 currentState.schedules.schedules.keys.toList()
-            }
+            }.filter { uiState.value.schedules[it] != null }
             val fullList = (currentOrder + currentState.schedules.schedules.keys).distinct()
             viewModelScope.launch {
                 preferenceRepository.setScheduleOrder(Json.encodeToString(fullList))
@@ -202,14 +202,14 @@ class SettingsViewModel(
     }
 
     @Composable
-    fun sortedSchedules(): List<Pair<String, Schedule>> {
+    fun sortedSchedules(): List<Pair<String, Schedule?>> {
         val ui by uiState.collectAsStateWithLifecycle()
         val displayList = remember(ui.schedules.schedules, ui.scheduleSortMode) {
             val list = ui.schedules.schedules.toList()
             when (ui.scheduleSortMode) {
                 ScheduleSortMode.ALPHABETICAL -> list.sortedBy { it.first }
                 ScheduleSortMode.ALPHABETICAL_DESC -> list.sortedByDescending { it.first }
-                ScheduleSortMode.RECENTLY_USED -> ui.scheduleOrder.map { it to _uiState.value.schedules[it]!! }
+                ScheduleSortMode.RECENTLY_USED -> ui.scheduleOrder.map { it to _uiState.value.schedules[it] }
             }
         }
         return displayList
@@ -221,6 +221,7 @@ class SettingsViewModel(
         if (uiState.value.schedules.count() < 1) {
             onDefaultScheduleChange(null)
         }
+        updateScheduleOrder()
         return null
     }
 

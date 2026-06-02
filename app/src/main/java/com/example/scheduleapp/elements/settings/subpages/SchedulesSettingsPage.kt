@@ -285,6 +285,9 @@ fun SchedulesSettingsPage(
             val displayList = viewModel.sortedSchedules()
             LazyColumn {
                 items(displayList) { (scheduleName, schedule) ->
+                    if (schedule == null) {
+                        return@items
+                    }
                     ListItem(
                         modifier = Modifier.clickable {
                             selectionMap[scheduleName] = !(selectionMap[scheduleName] ?: false)

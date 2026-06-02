@@ -44,7 +44,7 @@ fun DeleteScheduleDialog(
         Card(
             Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(300.dp)
                 .padding(8.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
