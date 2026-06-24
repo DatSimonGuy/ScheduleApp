@@ -1,33 +1,22 @@
-package com.example.scheduleapp.elements.schedule.timetable
+package com.example.scheduleapp.elements.schedule.parts.timetable
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.elements.schedule.ScheduleViewModel
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -63,7 +52,7 @@ fun TimeTable(
             text = dateFormatter.format(date),
             textAlign = TextAlign.Center
         )
-        Row (
+        Row(
             Modifier.verticalScroll(scrollState)
         ) {
             HoursColumn(
@@ -71,19 +60,31 @@ fun TimeTable(
                 Modifier.weight(1f),
                 hourHeight
             )
-            LessonsBox(
-                Modifier.weight(5f),
-                timeTableStartHour,
-                hourHeight,
-                lessons,
-                { lessons, date ->
-                    viewModel.groupOverlappingLessons(lessons, date)
-                },
-                date,
-                onLessonClick,
-                lessonBlockDisplayStyle,
-                ui.currentTheme
-            )
+
+            Box(
+                modifier = Modifier.weight(5f)
+            ) {
+                LessonsBox(
+                    Modifier.fillMaxWidth(),
+                    timeTableStartHour,
+                    hourHeight,
+                    lessons,
+                    { lessons, date ->
+                        viewModel.groupOverlappingLessons(lessons, date)
+                    },
+                    date,
+                    onLessonClick,
+                    lessonBlockDisplayStyle,
+                    ui.currentTheme
+                )
+
+                if (ui.showTimeBar && date == LocalDate.now()) {
+                    val elapsedHours = ui.currentTime.toSecondOfDay() / 3600f - timeTableStartHour
+                    val totalRowHeight = hourHeight.value + 10.dp
+                    val calculatedOffset = (totalRowHeight * elapsedHours) + 16.dp
+                    TimeBar(topOffset = calculatedOffset)
+                }
+            }
         }
     }
 }

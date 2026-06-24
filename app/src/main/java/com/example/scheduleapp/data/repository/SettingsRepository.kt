@@ -7,8 +7,8 @@ import com.example.scheduleapp.data.classes.RefreshType
 import com.example.scheduleapp.data.classes.ScheduleSortMode
 import com.example.scheduleapp.data.datastore.SettingKeys
 import com.example.scheduleapp.data.datastore.settingsDataStore
-import com.example.scheduleapp.elements.schedule.timetable.HourHeight
-import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.parts.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.parts.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalTime
@@ -25,7 +25,8 @@ data class UserSettings(
     val refreshType: String,
     val currentTheme: String,
     val sortMode: String,
-    val showWeekends: Boolean
+    val showWeekends: Boolean,
+    val showTimeBar: Boolean
 )
 
 class SettingsRepository(private val context: Context) {
@@ -42,9 +43,16 @@ class SettingsRepository(private val context: Context) {
                 refreshType = preferences[SettingKeys.refreshType] ?: RefreshType.AUTOMATIC.name,
                 currentTheme = preferences[SettingKeys.currentTheme] ?: ColorTheme.DEFAULT.name,
                 sortMode = preferences[SettingKeys.scheduleSortMode] ?: ScheduleSortMode.ALPHABETICAL.name,
-                showWeekends = preferences[SettingKeys.showWeekends] ?: true
+                showWeekends = preferences[SettingKeys.showWeekends] ?: true,
+                showTimeBar = preferences[SettingKeys.showTimeBar] ?: true
             )
         }
+
+    suspend fun setShowTimeBar(value: Boolean) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.showTimeBar] = value
+        }
+    }
 
     suspend fun setShowWeekends(value: Boolean) {
         context.settingsDataStore.edit {

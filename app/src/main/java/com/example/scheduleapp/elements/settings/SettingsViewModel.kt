@@ -18,13 +18,12 @@ import com.example.scheduleapp.data.classes.ScheduleSortMode
 import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
-import com.example.scheduleapp.elements.schedule.timetable.HourHeight
-import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.parts.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.parts.timetable.LessonBlockDisplayStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.time.LocalTime
 
@@ -44,7 +43,8 @@ data class Settings(
     val currentTheme: ColorTheme = ColorTheme.DEFAULT,
     val scheduleSortMode: ScheduleSortMode = ScheduleSortMode.ALPHABETICAL,
     val scheduleOrder: List<String> = emptyList(),
-    val showWeekends: Boolean = true
+    val showWeekends: Boolean = true,
+    val showTimeBar: Boolean = true
 )
 
 class SettingsViewModel(
@@ -70,7 +70,8 @@ class SettingsViewModel(
                         refreshType = RefreshType.valueOf(settings.refreshType),
                         currentTheme = ColorTheme.valueOf(settings.currentTheme),
                         scheduleSortMode = ScheduleSortMode.valueOf(settings.sortMode),
-                        showWeekends = settings.showWeekends
+                        showWeekends = settings.showWeekends,
+                        showTimeBar = settings.showTimeBar
                     )
                 }
             }
@@ -110,6 +111,12 @@ class SettingsViewModel(
             currentState.copy(
                 scheduleOrder = fullList,
             )
+        }
+    }
+
+    fun onShowTimeBarChange(value: Boolean) {
+        viewModelScope.launch {
+            repository.setShowTimeBar(value)
         }
     }
 

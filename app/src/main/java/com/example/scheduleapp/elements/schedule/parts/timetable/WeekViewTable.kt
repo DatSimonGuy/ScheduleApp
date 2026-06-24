@@ -1,6 +1,6 @@
-package com.example.scheduleapp.elements.schedule.timetable
+package com.example.scheduleapp.elements.schedule.parts.timetable
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,22 +87,31 @@ fun WeekViewTable(
                         .padding(end = 4.dp)
                         .weight(2f)
                 ) {
-                    LessonsBox(
-                        modifier = Modifier.fillMaxWidth(),
-                        startHour = timeTableStartHour,
-                        hourHeight = hourHeight,
-                        lessons = lessons.getOrNull(dayIndex) ?: emptyList(),
-                        groupFunction = { lessons, date ->
-                            viewModel.groupOverlappingLessons(lessons, date)
-                        },
-                        date = startDate.plusDays(dayIndex.toLong()),
-                        onLessonClick = {
-                            onLessonClick(it, dayIndex+1)
-                        },
-                        lessonBlockDisplayStyle = lessonBlockDisplayStyle,
-                        theme = ui.currentTheme,
-                        10.sp
-                    )
+                    val date = startDate.plusDays(dayIndex.toLong())
+                    Box {
+                        LessonsBox(
+                            Modifier.fillMaxWidth(),
+                            timeTableStartHour,
+                            hourHeight,
+                            lessons.getOrNull(dayIndex) ?: emptyList(),
+                            { lessons, date ->
+                                viewModel.groupOverlappingLessons(lessons, date)
+                            },
+                            date,
+                            onLessonClick = {
+                                onLessonClick(it, dayIndex+1)
+                            },
+                            lessonBlockDisplayStyle,
+                            ui.currentTheme
+                        )
+
+                        if (ui.showTimeBar && date == LocalDate.now()) {
+                            val elapsedHours = (ui.currentTime.toSecondOfDay()) / 3600f - timeTableStartHour
+                            val totalRowHeight = hourHeight.value + 10.dp
+                            val calculatedOffset = (totalRowHeight * elapsedHours) + 16.dp
+                            TimeBar(topOffset = calculatedOffset)
+                        }
+                    }
                 }
             }
 

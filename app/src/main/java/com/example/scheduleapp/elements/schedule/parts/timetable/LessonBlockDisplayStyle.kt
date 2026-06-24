@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.schedule.timetable
+package com.example.scheduleapp.elements.schedule.parts.timetable
 
 import androidx.annotation.StringRes
 import com.example.scheduleapp.R

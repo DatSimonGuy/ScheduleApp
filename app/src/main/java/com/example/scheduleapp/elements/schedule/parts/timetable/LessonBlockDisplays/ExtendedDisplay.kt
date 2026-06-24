@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays
+package com.example.scheduleapp.elements.schedule.parts.timetable.LessonBlockDisplays
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

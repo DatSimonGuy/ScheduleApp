@@ -1,8 +1,5 @@
 package com.example.scheduleapp.elements.settings.subpages
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,8 +28,8 @@ import com.example.scheduleapp.elements.formElements.choice.SettingsSelector
 import com.example.scheduleapp.elements.formElements.time.SettingsTimePicker
 import com.example.scheduleapp.elements.formElements.choice.ToggleCard
 import com.example.scheduleapp.elements.settings.SettingsViewModel
-import com.example.scheduleapp.elements.schedule.timetable.HourHeight
-import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.parts.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.parts.timetable.LessonBlockDisplayStyle
 import com.example.scheduleapp.elements.settings.parts.SettingsCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,6 +107,14 @@ fun AppearanceSettingsPage(
                 checked = ui.showWeekends,
                 onCheckedChange = {
                     viewModel.onShowWeekendsChange(it)
+                }
+            )
+            ToggleCard(
+                modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
+                label = stringResource(R.string.timeBar),
+                checked = ui.showTimeBar,
+                onCheckedChange = {
+                    viewModel.onShowTimeBarChange(it)
                 }
             )
             SettingsCategory(

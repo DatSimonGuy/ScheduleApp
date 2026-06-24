@@ -1,9 +1,7 @@
 package com.example.scheduleapp.elements.schedule
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -13,14 +11,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -35,12 +32,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.R
@@ -50,8 +46,9 @@ import com.example.scheduleapp.elements.forms.AddLessonForm
 import com.example.scheduleapp.elements.forms.NewScheduleForm
 import com.example.scheduleapp.elements.forms.states.rememberScheduleFormState
 import com.example.scheduleapp.elements.schedule.parts.AddSchedulePrompt
-import com.example.scheduleapp.elements.schedule.timetable.TimeTable
-import com.example.scheduleapp.elements.schedule.timetable.WeekViewTable
+import com.example.scheduleapp.elements.schedule.parts.timetable.TimeTable
+import com.example.scheduleapp.elements.schedule.parts.timetable.WeekViewTable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -80,6 +77,16 @@ fun ScheduleScreen(
     val landscapePagerState = rememberPagerState { Int.MAX_VALUE }
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    var isInitialLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(ui.schedules) {
+        if (ui.schedules.schedules.isNotEmpty()) {
+            isInitialLoading = false
+        } else {
+            delay(400)
+            isInitialLoading = false
+        }
+    }
 
     LaunchedEffect(ui.selectedSchedule) {
         if ((ui.refreshType == RefreshType.ON_APP_RELOAD && refreshedOnce) || ui.refreshType == RefreshType.MANUAL) {
@@ -93,6 +100,7 @@ fun ScheduleScreen(
                     viewModel.updateSchedule(selected, it)
                 }
             }
+            delay(1000)
             isRefreshing = false
         }
     }
@@ -157,6 +165,16 @@ fun ScheduleScreen(
             },
             DayOfWeek.of(pagerState.currentPage%7+1)
         )
+    }
+
+    if (isInitialLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
     }
 
     if (ui.schedules.count() < 1) {
@@ -233,6 +251,7 @@ fun ScheduleScreen(
                             viewModel.updateSchedule(selected, it)
                         }
                     }
+                    delay(1000)
                     isRefreshing = false
                 }
             }

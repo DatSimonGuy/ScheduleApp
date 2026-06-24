@@ -20,18 +20,17 @@ import com.example.scheduleapp.data.repository.PreferenceRepository
 import com.example.scheduleapp.data.repository.ScheduleRepository
 import com.example.scheduleapp.data.repository.SettingsRepository
 import com.example.scheduleapp.data.repository.UserPreferences
-import com.example.scheduleapp.elements.schedule.timetable.HourHeight
-import com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplayStyle
+import com.example.scheduleapp.elements.schedule.parts.timetable.HourHeight
+import com.example.scheduleapp.elements.schedule.parts.timetable.LessonBlockDisplayStyle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -51,7 +50,9 @@ data class ScheduleUiState(
     val currentTheme: ColorTheme = ColorTheme.DEFAULT,
     val sortMode: ScheduleSortMode = ScheduleSortMode.ALPHABETICAL,
     val scheduleOrder: List<String> = emptyList(),
-    val showWeekends: Boolean = true
+    val showWeekends: Boolean = true,
+    val currentTime: LocalTime = LocalTime.now(),
+    val showTimeBar: Boolean = true
 )
 
 class ScheduleViewModel(
@@ -71,6 +72,14 @@ class ScheduleViewModel(
 
     init {
         viewModelScope.launch {
+            while (true) {
+                _uiState.update {
+                    it.copy(currentTime = LocalTime.now())
+                }
+                delay(60000)
+            }
+        }
+        viewModelScope.launch {
             settingsRepository.settingsFlow.collect { settings ->
                 _uiState.update { currentState ->
                     currentState.copy(
@@ -83,7 +92,8 @@ class ScheduleViewModel(
                         refreshType = RefreshType.valueOf(settings.refreshType),
                         currentTheme = ColorTheme.valueOf(settings.currentTheme),
                         sortMode = ScheduleSortMode.valueOf(settings.sortMode),
-                        showWeekends = settings.showWeekends
+                        showWeekends = settings.showWeekends,
+                        showTimeBar = settings.showTimeBar
                     )
                 }
             }

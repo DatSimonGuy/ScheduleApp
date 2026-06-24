@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.schedule.timetable.LessonBlockDisplays
+package com.example.scheduleapp.elements.schedule.parts.timetable.LessonBlockDisplays
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.Lesson
 
 @Composable
-fun NormalDisplay(
+fun CompactDisplay(
     lesson: Lesson,
     textColor: Color,
     fontSize: TextUnit = TextUnit.Unspecified
@@ -34,33 +34,17 @@ fun NormalDisplay(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            modifier = Modifier,
-            text = lesson.subject,
+            text = "(${stringResource(lesson.lessonType.displayName).first()}) ${lesson.subject}",
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = fontSize,
-            color = textColor
-        )
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = lesson.startTime.toString() + " - " + lesson.endTime.toString(),
-            textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            fontSize = fontSize,
-            color = textColor
-        )
-        Text(
-            text = stringResource(lesson.lessonType.displayName),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
             color = textColor,
             fontSize = fontSize
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = lesson.room,
+            text =  "${lesson.room} | ${lesson.startTime} - ${lesson.endTime}",
             textAlign = TextAlign.Center,
             color = textColor,
             fontSize = fontSize

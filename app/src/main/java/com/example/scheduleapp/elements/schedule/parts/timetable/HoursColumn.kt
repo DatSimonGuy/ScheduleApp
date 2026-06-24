@@ -1,4 +1,4 @@
-package com.example.scheduleapp.elements.schedule.timetable
+package com.example.scheduleapp.elements.schedule.parts.timetable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
