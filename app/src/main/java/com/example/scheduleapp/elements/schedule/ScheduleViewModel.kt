@@ -142,7 +142,7 @@ class ScheduleViewModel(
             val fullList = (currentOrder + currentState.schedules.schedules.keys).distinct()
             val newOrder = fullList.toMutableList().apply {
                 remove(name)
-                addFirst(name)
+                add(0, name)
             }
             viewModelScope.launch {
                 preferenceRepository.setScheduleOrder(Json.encodeToString(newOrder))

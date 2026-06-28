@@ -98,5 +98,6 @@
     <string name="timeError">Zajęcia muszą trwać co najmniej 45 minut</string>
     <string name="subjectError">Nazwa przedmiotu nie może pozostać pusta</string>
     <string name="showWeekendsInWeek">Pokaż weekendy w widoku tygodnia</string>
-    <string name="timeBar">Time indicator bar enabled</string>
+    <string name="timeBar">Pokazuj wskaźnik czasu</string>
+    <string name="navBarRight">Postaw nawigację po prawej w poziomym ustawieniu aplikacji</string>
 </resources>

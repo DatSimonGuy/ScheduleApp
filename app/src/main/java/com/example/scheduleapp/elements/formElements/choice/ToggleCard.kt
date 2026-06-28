@@ -36,7 +36,7 @@ fun ToggleCard(
             Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(label)
+            Text(label, modifier = Modifier.weight(7f))
             Spacer(Modifier.weight(1f))
             Switch(
                 checked = checked,

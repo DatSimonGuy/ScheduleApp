@@ -26,7 +26,8 @@ data class UserSettings(
     val currentTheme: String,
     val sortMode: String,
     val showWeekends: Boolean,
-    val showTimeBar: Boolean
+    val showTimeBar: Boolean,
+    val navBarRight: Boolean
 )
 
 class SettingsRepository(private val context: Context) {
@@ -44,9 +45,16 @@ class SettingsRepository(private val context: Context) {
                 currentTheme = preferences[SettingKeys.currentTheme] ?: ColorTheme.DEFAULT.name,
                 sortMode = preferences[SettingKeys.scheduleSortMode] ?: ScheduleSortMode.ALPHABETICAL.name,
                 showWeekends = preferences[SettingKeys.showWeekends] ?: true,
-                showTimeBar = preferences[SettingKeys.showTimeBar] ?: true
+                showTimeBar = preferences[SettingKeys.showTimeBar] ?: true,
+                navBarRight = preferences[SettingKeys.navBarRight] ?: true
             )
         }
+
+    suspend fun setNavBarRight(value: Boolean) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.navBarRight] = value
+        }
+    }
 
     suspend fun setShowTimeBar(value: Boolean) {
         context.settingsDataStore.edit {

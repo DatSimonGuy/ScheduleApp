@@ -44,7 +44,8 @@ data class Settings(
     val scheduleSortMode: ScheduleSortMode = ScheduleSortMode.ALPHABETICAL,
     val scheduleOrder: List<String> = emptyList(),
     val showWeekends: Boolean = true,
-    val showTimeBar: Boolean = true
+    val showTimeBar: Boolean = true,
+    val navBarRight: Boolean = true
 )
 
 class SettingsViewModel(
@@ -71,7 +72,8 @@ class SettingsViewModel(
                         currentTheme = ColorTheme.valueOf(settings.currentTheme),
                         scheduleSortMode = ScheduleSortMode.valueOf(settings.sortMode),
                         showWeekends = settings.showWeekends,
-                        showTimeBar = settings.showTimeBar
+                        showTimeBar = settings.showTimeBar,
+                        navBarRight = settings.navBarRight
                     )
                 }
             }
@@ -111,6 +113,12 @@ class SettingsViewModel(
             currentState.copy(
                 scheduleOrder = fullList,
             )
+        }
+    }
+
+    fun onNavBarRightChange(value: Boolean) {
+        viewModelScope.launch {
+            repository.setNavBarRight(value)
         }
     }
 

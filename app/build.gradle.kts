@@ -33,8 +33,8 @@ android {
         applicationId = "com.example.scheduleapp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 11004
-        versionName = "0.11.4"
+        versionCode = 12000
+        versionName = "0.12.0"
 
         androidResources {
             generateLocaleConfig = true

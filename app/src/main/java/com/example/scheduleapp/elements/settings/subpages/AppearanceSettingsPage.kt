@@ -117,6 +117,14 @@ fun AppearanceSettingsPage(
                     viewModel.onShowTimeBarChange(it)
                 }
             )
+            ToggleCard(
+                modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
+                label = stringResource(R.string.navBarRight),
+                checked = ui.navBarRight,
+                onCheckedChange = {
+                    viewModel.onNavBarRightChange(it)
+                }
+            )
             SettingsCategory(
                 stringResource(R.string.colors),
                 onClick = {
