@@ -28,7 +28,7 @@ fun CompactDisplay(
     fontSize: TextUnit = TextUnit.Unspecified,
     isLandscape: Boolean
 ) {
-    val lineHeight = 8.sp
+    val lineHeight = 12.sp
     Column(
         modifier = Modifier
             .fillMaxWidth()
