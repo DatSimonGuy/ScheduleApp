@@ -1,9 +1,7 @@
 package com.example.scheduleapp.elements.schedule
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -19,7 +17,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -36,10 +33,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.scheduleapp.R
@@ -70,7 +67,7 @@ fun ScheduleScreen(
     var showScheduleSelector by rememberSaveable { mutableStateOf(false) }
     var showAddLessonFrom by rememberSaveable { mutableStateOf(false) }
     var isRefreshing by rememberSaveable { mutableStateOf(false) }
-    var refreshedOnce by rememberSaveable{ mutableStateOf(false) }
+    var refreshedOnce by rememberSaveable { mutableStateOf(false) }
     val currentSchedule by viewModel.currentScheduleFlow.collectAsStateWithLifecycle()
     val snackHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -144,7 +141,7 @@ fun ScheduleScreen(
                 viewModel.setCurrentSchedule(value)
                 showScheduleSelector = false
             },
-            label = stringResource(R .string.selectSchedule),
+            label = stringResource(R.string.selectSchedule),
             items = viewModel.sortedSchedules().map { it.first },
             selectedItem = ui.selectedSchedule ?: ""
         )
@@ -166,7 +163,7 @@ fun ScheduleScreen(
                     }
                 }
             },
-            DayOfWeek.of(pagerState.currentPage%7+1)
+            DayOfWeek.of(pagerState.currentPage % 7 + 1)
         )
     }
 
@@ -185,66 +182,9 @@ fun ScheduleScreen(
         return
     }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButtonMenu (
-                expanded = fabExpanded,
-                button = {
-                    ToggleFloatingActionButton(
-                        checked = fabExpanded,
-                        onCheckedChange = {
-                            fabExpanded = !fabExpanded
-                        },
-                        containerSize = {
-                            if (ui.bigButton) {
-                                ToggleFloatingActionButtonDefaults.containerSize()(it) * 1.5f
-                            } else {
-                                ToggleFloatingActionButtonDefaults.containerSize()(it)
-                            }
-                        }
-                    ) {
-                        if (!fabExpanded) {
-                            Icon(Icons.Default.MoreVert, "")
-                        } else {
-                            Icon(Icons.Default.Close, "")
-                        }
-                    }
-                }
-            ) {
-                if (ui.showAddSchedule) {
-                    FloatingActionButtonMenuItem(
-                        onClick = {
-                            showScheduleForm = true
-                            fabExpanded = false
-                        },
-                        text = { Text(stringResource(R.string.addNewSchedule)) },
-                        icon = { Icon(Icons.Default.Add, "") }
-                    )
-                }
-                FloatingActionButtonMenuItem(
-                    onClick = {
-                        showScheduleSelector = true
-                        fabExpanded = false
-                    },
-                    text = { Text(stringResource(R.string.selectSchedule)) },
-                    icon = { Icon(Icons.Default.CalendarToday, "") }
-                )
-                FloatingActionButtonMenuItem(
-                    onClick = {
-                        showAddLessonFrom = true
-                        fabExpanded = false
-                    },
-                    text = { Text(stringResource(R.string.addNewLesson)) },
-                    icon = { Icon(Icons.Default.AddCircleOutline, "") }
-                )
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(snackHostState)
-        }
-    ) { paddingValues ->
+    Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxSize(),
             isRefreshing = isRefreshing,
             onRefresh = {
                 isRefreshing = true
@@ -262,7 +202,7 @@ fun ScheduleScreen(
             if (isLandscape || ui.showEntireWeek) {
                 HorizontalPager(
                     state = landscapePagerState,
-                    Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding()),
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     WeekViewTable(
                         title = "${ui.selectedSchedule}",
@@ -287,7 +227,8 @@ fun ScheduleScreen(
                 }
             } else {
                 HorizontalPager(
-                    state = pagerState
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
                 ) { page ->
                     val day = DayOfWeek.of(page % 7 + 1)
                     TimeTable(
@@ -296,7 +237,12 @@ fun ScheduleScreen(
                         startHour = ui.startTime?.hour ?: 0,
                         lessons = currentSchedule?.lessons[day] ?: emptyList(),
                         onLessonClick = {
-                            navController.navigate(ScheduleDestination.LessonScreen(DayOfWeek.of(pagerState.currentPage%7+1), it))
+                            navController.navigate(
+                                ScheduleDestination.LessonScreen(
+                                    DayOfWeek.of(pagerState.currentPage % 7 + 1),
+                                    it
+                                )
+                            )
                         },
                         lessonBlockDisplayStyle = ui.lessonBlockDisplayStyle,
                         date = LocalDate.now().plusDays((pagerState.settledPage - LocalDate.now().dayOfWeek.ordinal).toLong()),
@@ -304,7 +250,67 @@ fun ScheduleScreen(
                     )
                 }
             }
-
         }
+
+        // Floating Action Button Overlay
+        FloatingActionButtonMenu(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            expanded = fabExpanded,
+            button = {
+                ToggleFloatingActionButton(
+                    checked = fabExpanded,
+                    onCheckedChange = {
+                        fabExpanded = !fabExpanded
+                    },
+                    containerSize = {
+                        if (ui.bigButton) {
+                            ToggleFloatingActionButtonDefaults.containerSize()(it) * 1.5f
+                        } else {
+                            ToggleFloatingActionButtonDefaults.containerSize()(it)
+                        }
+                    }
+                ) {
+                    if (!fabExpanded) {
+                        Icon(Icons.Default.MoreVert, contentDescription = null)
+                    } else {
+                        Icon(Icons.Default.Close, contentDescription = null)
+                    }
+                }
+            }
+        ) {
+            if (ui.showAddSchedule) {
+                FloatingActionButtonMenuItem(
+                    onClick = {
+                        showScheduleForm = true
+                        fabExpanded = false
+                    },
+                    text = { Text(stringResource(R.string.addNewSchedule)) },
+                    icon = { Icon(Icons.Default.Add, contentDescription = null) }
+                )
+            }
+            FloatingActionButtonMenuItem(
+                onClick = {
+                    showScheduleSelector = true
+                    fabExpanded = false
+                },
+                text = { Text(stringResource(R.string.selectSchedule)) },
+                icon = { Icon(Icons.Default.CalendarToday, contentDescription = null) }
+            )
+            FloatingActionButtonMenuItem(
+                onClick = {
+                    showAddLessonFrom = true
+                    fabExpanded = false
+                },
+                text = { Text(stringResource(R.string.addNewLesson)) },
+                icon = { Icon(Icons.Default.AddCircleOutline, contentDescription = null) }
+            )
+        }
+
+        SnackbarHost(
+            hostState = snackHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
