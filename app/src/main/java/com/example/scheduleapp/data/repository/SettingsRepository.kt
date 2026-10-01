@@ -27,7 +27,8 @@ data class UserSettings(
     val sortMode: String,
     val showWeekends: Boolean,
     val showTimeBar: Boolean,
-    val navBarRight: Boolean
+    val navBarRight: Boolean,
+    val showEntireWeek: Boolean
 )
 
 class SettingsRepository(private val context: Context) {
@@ -46,9 +47,16 @@ class SettingsRepository(private val context: Context) {
                 sortMode = preferences[SettingKeys.scheduleSortMode] ?: ScheduleSortMode.ALPHABETICAL.name,
                 showWeekends = preferences[SettingKeys.showWeekends] ?: true,
                 showTimeBar = preferences[SettingKeys.showTimeBar] ?: true,
-                navBarRight = preferences[SettingKeys.navBarRight] ?: true
+                navBarRight = preferences[SettingKeys.navBarRight] ?: true,
+                showEntireWeek = preferences[SettingKeys.showEntireWeek] ?: false
             )
         }
+
+    suspend fun setShowEntireWeek(value: Boolean) {
+        context.settingsDataStore.edit {
+            it[SettingKeys.showEntireWeek] = value
+        }
+    }
 
     suspend fun setNavBarRight(value: Boolean) {
         context.settingsDataStore.edit {

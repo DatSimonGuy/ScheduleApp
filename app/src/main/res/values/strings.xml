@@ -100,4 +100,6 @@
     <string name="showWeekendsInWeek">Show weekends in week view</string>
     <string name="timeBar">Time indicator bar enabled</string>
     <string name="navBarRight">Position navigation rail on the right in landscape mode</string>
+    <string name="ultraShort">Ultra-short</string>
+    <string name="showEntireWeek">Show entire week instead of a single day in portrait mode</string>
 </resources>

@@ -45,7 +45,8 @@ data class Settings(
     val scheduleOrder: List<String> = emptyList(),
     val showWeekends: Boolean = true,
     val showTimeBar: Boolean = true,
-    val navBarRight: Boolean = true
+    val navBarRight: Boolean = true,
+    val showEntireWeek: Boolean = false
 )
 
 class SettingsViewModel(
@@ -73,7 +74,8 @@ class SettingsViewModel(
                         scheduleSortMode = ScheduleSortMode.valueOf(settings.sortMode),
                         showWeekends = settings.showWeekends,
                         showTimeBar = settings.showTimeBar,
-                        navBarRight = settings.navBarRight
+                        navBarRight = settings.navBarRight,
+                        showEntireWeek = settings.showEntireWeek
                     )
                 }
             }
@@ -113,6 +115,12 @@ class SettingsViewModel(
             currentState.copy(
                 scheduleOrder = fullList,
             )
+        }
+    }
+
+    fun onShowEntireWeekChange(value: Boolean) {
+        viewModelScope.launch {
+            repository.setShowEntireWeek(value)
         }
     }
 

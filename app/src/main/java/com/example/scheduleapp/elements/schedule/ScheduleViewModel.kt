@@ -52,7 +52,8 @@ data class ScheduleUiState(
     val scheduleOrder: List<String> = emptyList(),
     val showWeekends: Boolean = true,
     val currentTime: LocalTime = LocalTime.now(),
-    val showTimeBar: Boolean = true
+    val showTimeBar: Boolean = true,
+    val showEntireWeek: Boolean = false
 )
 
 class ScheduleViewModel(
@@ -93,7 +94,8 @@ class ScheduleViewModel(
                         currentTheme = ColorTheme.valueOf(settings.currentTheme),
                         sortMode = ScheduleSortMode.valueOf(settings.sortMode),
                         showWeekends = settings.showWeekends,
-                        showTimeBar = settings.showTimeBar
+                        showTimeBar = settings.showTimeBar,
+                        showEntireWeek = settings.showEntireWeek
                     )
                 }
             }

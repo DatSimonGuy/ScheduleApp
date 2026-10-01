@@ -76,8 +76,11 @@ fun AppearanceSettingsPage(
                 label = stringResource(R.string.hourCellHeight),
                 onSelectionChange = { _, i ->
                     viewModel.onHourHeightChange(HourHeight.entries[i])
-                    if (ui.hourHeight == HourHeight.SHORT && ui.lessonBlockDisplayStyle == LessonBlockDisplayStyle.EXTENDED) {
+                    if (HourHeight.entries[i] == HourHeight.SHORT && ui.lessonBlockDisplayStyle == LessonBlockDisplayStyle.EXTENDED) {
                         viewModel.onLessonBlockDisplayStyleChange(LessonBlockDisplayStyle.NORMAL)
+                    }
+                    else if (HourHeight.entries[i] == HourHeight.ULTRASHORT) {
+                        viewModel.onLessonBlockDisplayStyleChange((LessonBlockDisplayStyle.COMPACT))
                     }
                 },
                 items = HourHeight.entries.map { stringResource(it.displayName) },
@@ -90,7 +93,7 @@ fun AppearanceSettingsPage(
                     viewModel.onLessonBlockDisplayStyleChange(LessonBlockDisplayStyle.entries[i])
                 },
                 items = LessonBlockDisplayStyle.entries.filter {
-                    it.ordinal - 1 <= ui.hourHeight.ordinal
+                    it.ordinal <= ui.hourHeight.ordinal
                 }.map { stringResource(it.displayName) },
                 selectedItem = stringResource(ui.lessonBlockDisplayStyle.displayName)
             )
@@ -123,6 +126,14 @@ fun AppearanceSettingsPage(
                 checked = ui.navBarRight,
                 onCheckedChange = {
                     viewModel.onNavBarRightChange(it)
+                }
+            )
+            ToggleCard(
+                modifier = Modifier.fillMaxWidth(0.95f).padding(bottom = 8.dp),
+                label = stringResource(R.string.showEntireWeek),
+                checked = ui.showEntireWeek,
+                onCheckedChange = {
+                    viewModel.onShowEntireWeekChange(it)
                 }
             )
             SettingsCategory(

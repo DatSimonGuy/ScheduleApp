@@ -39,6 +39,7 @@ fun TimeTable(
     val dateFormatter = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
         .withLocale(Locale.getDefault())
+    val boxesPadding = hourHeight.value / 20
     Column (
         modifier.fillMaxSize()
     ) {
@@ -58,7 +59,8 @@ fun TimeTable(
             HoursColumn(
                 timeTableStartHour,
                 Modifier.weight(1f),
-                hourHeight
+                hourHeight,
+                boxesPadding
             )
 
             Box(
@@ -75,12 +77,13 @@ fun TimeTable(
                     date,
                     onLessonClick,
                     lessonBlockDisplayStyle,
-                    ui.currentTheme
+                    ui.currentTheme,
+                    bottomPadding = boxesPadding
                 )
 
                 if (ui.showTimeBar && date == LocalDate.now()) {
                     val elapsedHours = ui.currentTime.toSecondOfDay() / 3600f - timeTableStartHour
-                    val totalRowHeight = hourHeight.value + 10.dp
+                    val totalRowHeight = hourHeight.value + boxesPadding
                     val calculatedOffset = (totalRowHeight * elapsedHours) + 16.dp
                     TimeBar(topOffset = calculatedOffset)
                 }

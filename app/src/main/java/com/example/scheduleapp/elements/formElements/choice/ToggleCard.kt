@@ -43,7 +43,8 @@ fun ToggleCard(
                 enabled = enabled,
                 onCheckedChange = { value ->
                     onCheckedChange(value)
-                }
+                },
+                modifier = Modifier.weight(1f)
             )
         }
     }

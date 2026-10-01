@@ -259,7 +259,7 @@ fun ScheduleScreen(
                 }
             }
         ) {
-            if (isLandscape) {
+            if (isLandscape || ui.showEntireWeek) {
                 HorizontalPager(
                     state = landscapePagerState,
                     Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding()),
@@ -281,7 +281,8 @@ fun ScheduleScreen(
                         startDate = LocalDate.now().minusDays(
                             LocalDate.now().dayOfWeek.ordinal.toLong()
                         ).plusDays((7 * landscapePagerState.settledPage).toLong()),
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        isLandscape = isLandscape
                     )
                 }
             } else {

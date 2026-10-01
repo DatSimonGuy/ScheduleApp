@@ -11,10 +11,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.scheduleapp.utils.textColorForBackground
 
 @Composable
 fun TimeBar(
-    lineColor: Color = MaterialTheme.colorScheme.primary,
+    lineColor: Color = Color.Gray,
     topOffset: Dp,
     circleRadius: Float = 8f,
 ) {
@@ -29,7 +30,7 @@ fun TimeBar(
             color = lineColor,
             start = Offset(0f, topOff),
             end = Offset(size.width, topOff),
-            strokeWidth = 4f
+            strokeWidth = 6f
         )
         drawCircle(
             color = lineColor,

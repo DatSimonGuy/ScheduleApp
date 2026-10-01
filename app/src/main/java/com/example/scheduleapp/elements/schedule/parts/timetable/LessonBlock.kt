@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.ColorTheme
@@ -45,13 +46,15 @@ fun LessonBlock(
     displayStyle: LessonBlockDisplayStyle,
     date: LocalDate,
     currentTheme: ColorTheme,
-    fontSize: TextUnit = TextUnit.Unspecified
+    fontSize: TextUnit = TextUnit.Unspecified,
+    boxesPadding: Dp = 10.dp,
+    isLandscape: Boolean = false
 ) {
     var currentIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val currentLesson = lessons[currentIndex]
-    val topOffset = (hourHeight.value + 10.dp) * (currentLesson.start - startHour) + 16.dp
-    val blockHeight = (hourHeight.value + 10.dp) * currentLesson.duration - 8.dp
+    val topOffset = (hourHeight.value + boxesPadding) * (currentLesson.start - startHour) + 16.dp
+    val blockHeight = (hourHeight.value + boxesPadding) * currentLesson.duration - boxesPadding * 0.8f
     val colors = getColors(currentTheme, context)
     val lessonColor = colors[currentLesson.lessonType] ?: currentLesson.lessonType.color
     val textColor = textColorForBackground(lessonColor)
@@ -85,7 +88,7 @@ fun LessonBlock(
         ) {
             when (style) {
                 LessonBlockDisplayStyle.NORMAL -> NormalDisplay(currentLesson, textColor, fontSize)
-                LessonBlockDisplayStyle.COMPACT -> CompactDisplay(currentLesson, textColor, fontSize)
+                LessonBlockDisplayStyle.COMPACT -> CompactDisplay(currentLesson, textColor, fontSize, isLandscape)
                 LessonBlockDisplayStyle.EXTENDED -> ExtendedDisplay(currentLesson, textColor, fontSize)
             }
         }

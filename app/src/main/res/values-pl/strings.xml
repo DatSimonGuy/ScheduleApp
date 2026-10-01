@@ -100,4 +100,6 @@
     <string name="showWeekendsInWeek">Pokaż weekendy w widoku tygodnia</string>
     <string name="timeBar">Pokazuj wskaźnik czasu</string>
     <string name="navBarRight">Postaw nawigację po prawej w poziomym ustawieniu aplikacji</string>
+    <string name="ultraShort">Ultra-short</string>
+    <string name="showEntireWeek">Show entire week instead of a single day in portrait mode</string>
 </resources>

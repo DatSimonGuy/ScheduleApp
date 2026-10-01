@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.scheduleapp.data.classes.Lesson
 import com.example.scheduleapp.data.classes.Occurrence
 import java.time.LocalDate
@@ -38,6 +39,7 @@ fun ExtendedDisplay(
     fontSize: TextUnit = TextUnit.Unspecified
 ) {
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+    val lineHeight = 12.sp
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -54,7 +56,8 @@ fun ExtendedDisplay(
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.ExtraBold,
             fontSize = fontSize,
-            color = textColor
+            color = textColor,
+            lineHeight = lineHeight
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -62,21 +65,24 @@ fun ExtendedDisplay(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
-            color = textColor
+            color = textColor,
+            lineHeight = lineHeight
         )
         Text(
             text = "${stringResource(lesson.lessonType.displayName)} - ${stringResource(lesson.occurrence.displayName)}",
             textAlign = TextAlign.Center,
             maxLines = 1,
             color = textColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            lineHeight = lineHeight
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = "${lesson.room} | ${lesson.teacher}",
             textAlign = TextAlign.Center,
             color = textColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            lineHeight = lineHeight
         )
         Spacer(Modifier.weight(1f))
         when (lesson.occurrence) {
@@ -85,7 +91,8 @@ fun ExtendedDisplay(
                     text = lesson.startDate?.format(dateFormatter) ?: "",
                     textAlign = TextAlign.Center,
                     color = textColor,
-                    fontSize = fontSize
+                    fontSize = fontSize,
+                    lineHeight = lineHeight
                 )
             }
             Occurrence.SELECTED_DAYS -> {
@@ -93,9 +100,10 @@ fun ExtendedDisplay(
                     text = lesson.activeDays?.filter { it >= LocalDate.now() }?.joinToString { it.format(dateFormatter) } ?: "",
                     textAlign = TextAlign.Center,
                     color = textColor,
-                    maxLines = 1,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
-                    fontSize = fontSize
+                    fontSize = fontSize,
+                    lineHeight = lineHeight
                 )
             }
             else -> {
@@ -103,8 +111,9 @@ fun ExtendedDisplay(
                     text = "${lesson.startDate?.format(dateFormatter)} - ${lesson.endDate?.format(dateFormatter)}",
                     textAlign = TextAlign.Center,
                     color = textColor,
-                    maxLines = 1,
-                    fontSize = fontSize
+                    maxLines = 3,
+                    fontSize = fontSize,
+                    lineHeight = lineHeight
                 )
             }
         }

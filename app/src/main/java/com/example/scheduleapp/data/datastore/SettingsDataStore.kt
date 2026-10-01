@@ -25,4 +25,5 @@ object SettingKeys {
     val showWeekends = booleanPreferencesKey("showWeekends")
     val showTimeBar = booleanPreferencesKey("showTimeBar")
     val navBarRight = booleanPreferencesKey("navBarRight")
+    val showEntireWeek = booleanPreferencesKey("showEntireWeek")
 }

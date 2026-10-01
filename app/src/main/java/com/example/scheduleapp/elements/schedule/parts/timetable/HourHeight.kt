@@ -9,6 +9,7 @@ enum class HourHeight(
     val value: Dp,
     @StringRes val displayName: Int
 ) {
+    ULTRASHORT(40.dp, R.string.ultraShort),
     SHORT(80.dp, R.string.shortHeight),
     MEDIUM(120.dp, R.string.medium),
     TALL(160.dp, R.string.tall)

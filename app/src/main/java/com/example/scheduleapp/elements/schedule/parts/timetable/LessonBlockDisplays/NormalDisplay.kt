@@ -13,11 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.scheduleapp.data.classes.Lesson
+import java.time.format.TextStyle
 
 @Composable
 fun NormalDisplay(
@@ -25,6 +28,8 @@ fun NormalDisplay(
     textColor: Color,
     fontSize: TextUnit = TextUnit.Unspecified
 ) {
+    val lineHeight: TextUnit = 12.sp
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +46,8 @@ fun NormalDisplay(
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.ExtraBold,
             fontSize = fontSize,
-            color = textColor
+            color = textColor,
+            lineHeight = lineHeight
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -49,21 +55,24 @@ fun NormalDisplay(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
-            color = textColor
+            color = textColor,
+            lineHeight = lineHeight
         )
         Text(
             text = stringResource(lesson.lessonType.displayName),
             textAlign = TextAlign.Center,
             maxLines = 1,
             color = textColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            lineHeight = lineHeight
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = lesson.room,
             textAlign = TextAlign.Center,
             color = textColor,
-            fontSize = fontSize
+            fontSize = fontSize,
+            lineHeight = lineHeight
         )
     }
 }

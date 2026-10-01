@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +36,8 @@ fun WeekViewTable(
     onLessonClick: (String, Int) -> Unit,
     lessonBlockDisplayStyle: LessonBlockDisplayStyle,
     startDate: LocalDate,
-    viewModel: ScheduleViewModel
+    viewModel: ScheduleViewModel,
+    isLandscape: Boolean
 ) {
     val scrollState = rememberScrollState()
     val ui by viewModel.uiState.collectAsStateWithLifecycle()
@@ -47,6 +49,7 @@ fun WeekViewTable(
     val dateFormatter = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
         .withLocale(Locale.getDefault())
+    val boxesPadding = hourHeight.value / 20
 
     Column (
         modifier = modifier.fillMaxSize()
@@ -78,8 +81,9 @@ fun WeekViewTable(
         ) {
             HoursColumn(
                 startHour = timeTableStartHour,
-                modifier = Modifier.weight(1f),
-                hourHeight = hourHeight
+                modifier = Modifier.weight(if (ui.showEntireWeek) 2f else 1f),
+                hourHeight = hourHeight,
+                bottomPadding = boxesPadding
             )
             repeat(if (ui.showWeekends) 7 else 5) { dayIndex ->
                 Column(
@@ -102,12 +106,15 @@ fun WeekViewTable(
                                 onLessonClick(it, dayIndex+1)
                             },
                             lessonBlockDisplayStyle,
-                            ui.currentTheme
+                            ui.currentTheme,
+                            if(isLandscape) 10.sp else 8.sp,
+                            bottomPadding = boxesPadding,
+                            isLandscape = true
                         )
 
                         if (ui.showTimeBar && date == LocalDate.now()) {
                             val elapsedHours = (ui.currentTime.toSecondOfDay()) / 3600f - timeTableStartHour
-                            val totalRowHeight = hourHeight.value + 10.dp
+                            val totalRowHeight = hourHeight.value + boxesPadding
                             val calculatedOffset = (totalRowHeight * elapsedHours) + 16.dp
                             TimeBar(topOffset = calculatedOffset)
                         }

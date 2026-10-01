@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.example.scheduleapp.data.classes.ColorTheme
@@ -28,7 +29,9 @@ fun LessonsBox(
     onLessonClick: (String) -> Unit,
     lessonBlockDisplayStyle: LessonBlockDisplayStyle,
     theme: ColorTheme,
-    fontSize: TextUnit = TextUnit.Unspecified
+    fontSize: TextUnit = TextUnit.Unspecified,
+    bottomPadding: Dp = 10.dp,
+    isLandscape: Boolean = false
 ) {
     Box (
         modifier
@@ -39,7 +42,7 @@ fun LessonsBox(
             repeat(24-startHour) {
                 ElevatedCard(
                     Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = bottomPadding)
                         .height(hourHeight.value)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
@@ -59,7 +62,9 @@ fun LessonsBox(
                 displayStyle = lessonBlockDisplayStyle,
                 date = date,
                 theme,
-                fontSize
+                fontSize,
+                bottomPadding,
+                isLandscape
             )
         }
     }

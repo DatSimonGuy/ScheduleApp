@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import java.time.LocalTime
 
@@ -15,7 +16,8 @@ import java.time.LocalTime
 fun HoursColumn(
     startHour: Int,
     modifier: Modifier,
-    hourHeight: HourHeight
+    hourHeight: HourHeight,
+    bottomPadding: Dp = 10.dp
 ) {
     Column(
         modifier
@@ -25,7 +27,7 @@ fun HoursColumn(
             Text(
                 time.toString(),
                 modifier = Modifier
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = bottomPadding)
                     .height(hourHeight.value)
                     .align(Alignment.CenterHorizontally),
                 textAlign = TextAlign.Center,
